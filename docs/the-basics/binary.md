@@ -2,8 +2,6 @@
 
 Another important counting system is “binary”. Binary has only two possible digits for each place value: 0 and 1. A binary digit is also called a "bit". In assembly syntax, bits are prefixed by "%".
 
-In assembly, a hexadecimal number with two digits is called a “byte”. This means that values between $00-$FF are considered a byte.
-
 A byte is made of eight “bits”. Because a binary digit has two possible values, and a byte has 8 bits, this means there are 2⁸ possible values in a byte.
 
 For example, a byte can consist of the following bits: `1001 0110` or `1001 0101`. The first bit from the left is called “bit 7” and the final bit is called “bit 0”. They are NOT called bits 0-7, nor bits 8-1. The table below shows a relatively easy way to memorize binary.
