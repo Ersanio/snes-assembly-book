@@ -84,7 +84,7 @@ The above opcodes behave exactly like LDA and STA. The only difference is that t
 LDY #$03
 STY $0001
 ```
-Would store the number $03 into RAM address $7E0001, by utilizing the Y register. To use the X register, use LDX and STX. As for why the address is $0001 instead of $7E0001, see the end of the chapter for an explanation.
+Would store the number $03 into RAM address $7E0001, by utilizing the Y register. To use the X register, use LDX and STX. As for why the address is $0001 instead of $7E0001, please refer to this chapter: [Shorter addresses](./shorter-addresses.md)
 
 ## STZ
 There is another opcode which stores the number $00 into addresses directly.
