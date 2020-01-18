@@ -23,6 +23,7 @@ To program in 65c816 ASM, you will need to grasp the basics of hexadecimal. Hexa
 |16|10|
 |17|11|
 |...|...|
+|255|FF|
 
 There are various ways to write hex numbers so readers cannot confuse them with actual decimal numbers. They are as follows:
 
@@ -44,4 +45,4 @@ In the real world, numbers can be positive or negative. In assembly, depending o
 |...|...|
 |-1|$FF|
 
-The presence of negative numbers depends on the game’s programming. For example, a player can have positive and negative speed (resulting in going forward or backward), but a player cannot have negative extra lives or points (because it doesn’t make sense). Needless to say, the value -0 does not exist.
+The presence of negative numbers depends on the game’s programming. For example, a player can have positive and negative speed (resulting in going forward or backward), but a player cannot have negative extra lives or points (because normally that doesn’t make sense). Needless to say, the value -0 does not exist.
