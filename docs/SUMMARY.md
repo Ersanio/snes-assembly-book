@@ -6,4 +6,4 @@
 ## The basics
 
 * [Hexadecimal](the-basics/hexadecimal.md)
-
+* [Binary](the-basics/binary.md)
