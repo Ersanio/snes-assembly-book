@@ -73,4 +73,4 @@ In 16-bit:
 * `11` becomes `00000000 00000011`
 * `1100000` becomes `00000000 01100000`
 
-It's possible to convert between decimal, hexadecimal and binary by using Windows calculator’s programming mode. There are also many calculators online which can do this. Assembly syntax accepts decimal numbers so usually the conversion isn't needed.
+You can convert between decimal, hexadecimal and binary, by using Windows calculator’s "programming" mode. There are also many calculators online which can do this. Assembly syntax accepts decimal numbers also, so you usually don't need to convert between decimal and hexadecimal.

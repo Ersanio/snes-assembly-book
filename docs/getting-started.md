@@ -12,5 +12,5 @@ Assembly files are generally saved with the file extension ".asm".
 
 ## Assemblers
 
-This tutorial uses syntax which is used by an assembler called "Asar", originally written by Alcaro, now maintained by various members of the SMW Central community. This assembler is hosted on SMW Central and can be downloaded [here](https://www.smwcentral.net/?p=section&a=details&id=19043). The GitHub project of Asar can be found [here](https://github.com/RPGHacker/asar).
+This tutorial uses syntax which is used by an assembler called "Asar", originally written by Alcaro, now maintained by various members of the SMW Central community. This assembler is hosted on SMW Central and can be downloaded [here](https://www.smwcentral.net/?p=section&a=details&id=19043). The GitHub repository of Asar can be found [here](https://github.com/RPGHacker/asar).
 
