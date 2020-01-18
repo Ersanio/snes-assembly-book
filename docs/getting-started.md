@@ -2,10 +2,10 @@
 
 ## IDE
 
-There are no dedicated IDEs for 65c816 assembly. An ASCII editor, such as Notepad or VS Code, is sufficient. However, some people made various plugins for existing code editors to add extra features, such as syntax highlighting:
+There are no dedicated IDEs for 65c816 assembly. You can use any ASCII editor, such as Notepad or VS Code. However, some people made various plugins for existing code editors to add extra features, such as syntax highlighting:
 
 * Josh Neta's "[65816 Assembly](https://marketplace.visualstudio.com/items?itemName=joshneta.65816-assembly)" plugin for VS Code
-* Vice's "65816 SNES Assembly Language Server" plugin for VS Code
+* Vice's "[65816 SNES Assembly Language Server](https://marketplace.visualstudio.com/items?itemName=vicerust.snes-asm)" plugin for VS Code
 * MatthewCallis'  "[65xx Assembly Language Support](https://atom.io/packages/language-65asm)" for Atom
 
 Assembly files are generally saved with the file extension ".asm".
