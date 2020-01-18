@@ -3,7 +3,7 @@
 There are different addressing modes in 65c816. Addressing modes are used to make opcodes access addresses and values differently, such as "indexed" or "direct indirect" (explained later in this tutorial). Using them wisely, you can access values and memory addresses in many ways. For example, you can immediately load a value into a register, such as A, or load a byte from the ROM into A. Keep in mind that not all the opcodes supports all the types of addressing modes. Here are some of the important addressing modes you’ll find yourself use very often.
 
 ## Immediate 8/16 bit
-This addressing mode defines an absolute value, which is written as `#$XX` in 8-bit mode, or `#$XXXX` in 16-bit mode. The # means ‘immediate’, while the $ stands for hexadecimal. Using # alone makes the input decimal. For example, #10 is the same as #$0A. Think of an absolute value as a number you're directly defining.
+This addressing mode defines an absolute value, which is written as `#$XX` in 8-bit mode, or `#$XXXX` in 16-bit mode. The # means "immediate value", while the $ stands for hexadecimal. Using # alone makes the input decimal. For example, #10 is the same as #$0A. Think of an immediate value as a number you're directly defining.
 
 ## Direct page 
 This addressing mode defines a direct page address, which is written as `$XX`.
