@@ -7,5 +7,7 @@
 
 * [Hexadecimal](the-basics/hexadecimal.md)
 * [Binary](the-basics/binary.md)
-* [The SNES Memory](the-basics/memory.md)
-* [The SNES Registers](the-basics/registers.md)
+* [The SNES memory](the-basics/memory.md)
+* [The SNES registers](the-basics/registers.md)
+* [Addressing modes](the-basics/addressing.md)
+* [Little-endian](the-basics/endian.md)

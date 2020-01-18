@@ -1,4 +1,4 @@
-# The SNES Registers
+# The SNES registers
 
 In SNES, there are several “registers” used for different purposes. They cannot be missed; they’re one of the reasons why the SNES can function properly. Basically, registers are “global variables” which can be used to hold values, or can be used for math and logic and all those fancy stuffs! These registers can be accessed anytime.
 

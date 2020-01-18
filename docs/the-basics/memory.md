@@ -1,4 +1,4 @@
-# The SNES Memory
+# The SNES memory
 
 Writing assembly involves writing a bunch of instructions where you load a "value" and store it at an "address" in order to get a desired effect, such as changing the player's powerup. When writing assembly, you will work with the SNES memory most of the time.
 
