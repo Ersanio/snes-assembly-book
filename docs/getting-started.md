@@ -1,7 +1,3 @@
----
-description: Everything you need!
----
-
 # Getting started
 
 ## IDE
