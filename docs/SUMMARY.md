@@ -12,9 +12,22 @@
 * [Addressing modes](the-basics/addressing.md)
 * [Little-endian](the-basics/endian.md)
 
-## Programming
+## The basics (again)
 * [Loading and storing](programming/loading-and-storing.md)
 * [Shorter addresses](programming/shorter-addresses.md)
 * [8-bit and 16-bit mode](programming/816.md)
 * [Comparing, branching, labels](programming/branches.md)
 * [Jumping to subroutines](programming/subroutine.md)
+
+## Math and logic
+* [Carry flag](math/carry.md)
+* [Arithmetic](math/arithmetic.md)
+* [Bit shifting](math/shift.md)
+* [Bitwise Operations](math/logic.md)
+
+## Processor operations
+* [Changing the processor flags](processor/repsep.md)
+
+## Deep dives
+
+## Additional information

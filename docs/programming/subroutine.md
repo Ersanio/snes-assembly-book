@@ -67,7 +67,7 @@ JMP is limited to the current bank, like JSR. JML can jump anywhere like JSL. JM
 LDA #$01
 STA $00
 JSR Label1  ;Jump to subroutine "Label1"
-RTS		    ;Label2 returns here. The code ends here.
+RTS         ;Label2 returns here. The code ends here.
 
 Label1:
 JMP Label2	;Jump to Label2
