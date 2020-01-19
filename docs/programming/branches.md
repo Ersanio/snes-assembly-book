@@ -115,7 +115,7 @@ There are branch opcodes which branch depending on if a value results in a mathe
 
 The “overflow” flag is a processor flag, explained later in the tutorial.
 
-# BRA and BRL
+## BRA and BRL
 There are unconditional branches which are always taken.
 |Opcode|Full name|Explanation|
 |-|-|-|
