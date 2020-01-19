@@ -16,3 +16,4 @@
 * [Loading and storing](programming/loading-and-storing.md)
 * [Shorter addresses](programming/shorter-addresses.md)
 * [8-bit and 16-bit mode](programming/816.md)
+* [Comparing, branching, labels](programming/branches.md)
