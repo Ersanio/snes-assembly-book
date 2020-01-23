@@ -21,13 +21,15 @@
 
 ## Math and logic
 * [Carry flag](math/carry.md)
-* [Arithmetic](math/arithmetic.md)
-* [Bit shifting](math/shift.md)
-* [Bitwise Operations](math/logic.md)
+* [Arithmetic operations](math/arithmetic.md)
+* [Bitshifting operations](math/shift.md)
+* [Bitwise operations](math/logic.md)
 
 ## Processor operations
 * [Changing the processor flags](processor/repsep.md)
 
 ## Deep dives
+
+## Techniques
 
 ## Additional information

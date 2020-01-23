@@ -1,1 +1,1 @@
-# Bit shifting
+# Bitshifting operations
