@@ -109,25 +109,25 @@ The overflow flag is set when the result of an operation doesn't make sense in t
 * Subtracting a positive value from a negative value, and getting a positive value as a result, when the negative value should be even more negative
 * Subtracting a negative value from a positive value, and getting a negative value as a result, when the value should be even more positive
 
-Math rules are at play here. Adding two negative numbers results in a negative number (e.g. `-10 + -1 = -11`). Subtracting two negative numbers results in a negative number (e.g. `-10 - -1 = -9`). Subtracting a negative value equals an addition (e.g. `10- -1 = 11`). Adding a negative value equals a subtraction (e.g. `10 + -1 = 9`). The scenarios described in those bullet points break these rules. 
+Math rules are at play here. Adding two negative numbers results in a negative number (e.g. `-10 + -1 = -11`). Subtracting two negative numbers results in a negative number (e.g. `-10 - -1 = -9`). Subtracting a negative value equals an addition (e.g. `10 - -1 = 11`). Adding a negative value equals a subtraction (e.g. `10 + -1 = 9`). The scenarios described in those bullet points break these rules. 
 
 Here are some examples of the overflow flags getting set:
 ```
-LDA #$88  ;Number -120
-CLC	      ;We do -120 + -16, which should result in -136
-ADC #$F0  ;$88 + $F0 = $78, which is 120, which doesn't make sense mathematically
+LDA #$88  ; Number -120
+CLC	      ; We do -120 + -16, which should result in -136
+ADC #$F0  ; $88 + $F0 = $78, which is 120, which doesn't make sense mathematically
 ```
 
 ```
-LDA #$80  ;Number -128
-SEC       ;We do -128 - 10, which should result in -138
-SBC #$10  ;$80 - $10 = $70, which is 112, which doesn't make sense mathematically
+LDA #$80  ; Number -128
+SEC       ; We do -128 - 10, which should result in -138
+SBC #$10  ; $80 - $10 = $70, which is 112, which doesn't make sense mathematically
 ```
 
 ```
 LDA #$30  ; Number 48
 CLC       ; We do 48 + 112, which should result in 160
-ADC #$70  ;	$30 + $70 = $A0, which is -96, which doesn't make sense mathematically
+ADC #$70  ; $30 + $70 = $A0, which is -96, which doesn't make sense mathematically
 ```
 
 ```

@@ -53,9 +53,9 @@ What JMP and JML do is jumping to another location and executing the code there,
 ```
 JML Label1
 
-LDA #$03    ;Ignored
-STA $00     ;Ignored
-RTS         ;Ignored
+LDA #$03    ; Ignored
+STA $00     ; Ignored
+RTS         ; Ignored
 
 Label1:
 STZ $00
@@ -66,14 +66,14 @@ JMP is limited to the current bank, like JSR. JML can jump anywhere like JSL. JM
 ```
 LDA #$01
 STA $00
-JSR Label1  ;Jump to subroutine "Label1"
-RTS         ;Label2 returns here. The code ends here.
+JSR Label1  ; Jump to subroutine "Label1"
+RTS         ; Label2 returns here. The code ends here.
 
 Label1:
-JMP Label2	;Jump to Label2
+JMP Label2	; Jump to Label2
 
 Label2:
-RTS	        ;This DOESN’T return to Label1. Instead, it returns to the RTS above.
+RTS	        ; This DOESN’T return to Label1. Instead, it returns to the RTS above.
 ```
 
 It is good practice to put a blank line after a JMP or JML, so the reader knows that the program flow changes from that point on.
