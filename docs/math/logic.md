@@ -55,13 +55,13 @@ If one of the bits has 1, the resulting bit will be 1. After ORA, the result wil
 So basically, whenever A or the ORA value’s bit is 1, the resulting bit is also 1.
 
 ## EOR
-ORA is an opcode which affects the accumulator by applying a logical exclusive OR (XOR) on all bits.
+EOR is an opcode which affects the accumulator by applying a logical exclusive OR (XOR) on all bits.
 
 |Opcode|Full name|Explanation|
 |-|-|-|
 |**EOR**|Logical XOR|Logical XOR, also known as a "`^`" in some other programming languages|
 
-The result of `x XOR y` is `true` if `x` evaluates to true and `y` evaluates to false, or `x` evaluates to false and `y` evaluates to true. Otherwise, the result is false.
+The result of `x XOR y` is `true` if `x` evaluates to `true` and `y` evaluates to `false`, or `x` evaluates to `false` and `y` evaluates to `true`. Otherwise, the result is `false`.
 
 Here's an example of an XOR:
 ```
