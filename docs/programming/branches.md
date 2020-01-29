@@ -87,16 +87,16 @@ BEQ Equal
 CMP $02 would try to compare address $7E0002 with the register A, instead of X. This will cause unexpected results.
 
 ## BMI and BPL
-There are branch opcodes which branch depending on if a value is signed or unsigned.
+These are branch opcodes which branch depending on if a value is signed or unsigned.
 |Opcode|Full name|Explanation|
 |-|-|-|
 |**BMI**|Branch if minus|Branches if the last operation resulted in a negative value|
 |**BPL**|Branch if plus|Branches if the last operation resulted in a positive value|
 
-BMI branches if the last operation is a minus/negative value. Minus values are the values $80-$FF. BPL branches if the last operation is not a minus value; it branches Branch when value $00-$7F
+BMI branches if the last operation is a minus/negative value. Minus values are the values $80-$FF. BPL branches if the last operation is not a minus value; it branches when the value is $00-$7F.
 
 ## BCS and BCC
-There are branch opcodes which branch depending on if a value is greater than or less than.
+These are branch opcodes which branch depending on if a value is greater than or less than.
 |Opcode|Full name|Explanation|
 |-|-|-|
 |**BCS**|Branch if carry set|Basically branches if the loaded value is greater than or equal to the compared value|
@@ -107,7 +107,7 @@ BCS branches if the loaded value is equal or greater than the compared value. Al
 BCC branches if the loaded value is lesser than the compared value. Alternatively, this also branches when the carry flag is clear. Please note that this BCC doesn’t get taken if the compared value is equal, unlike BCS.
 
 ## BVS and BVC
-There are branch opcodes which branch depending on if a value results in a mathematical overflow or not.
+These are branch opcodes which branch depending on if a value results in a mathematical overflow or not.
 |Opcode|Full name|Explanation|
 |-|-|-|
 |**BVS**|Branch if overflow set|Branches if the comparison causes a mathematical overflow|
@@ -116,11 +116,11 @@ There are branch opcodes which branch depending on if a value results in a mathe
 The “overflow” flag is a processor flag, explained later in the tutorial.
 
 ## BRA and BRL
-There are unconditional branches which are always taken.
+These are unconditional branches which are always taken.
 |Opcode|Full name|Explanation|
 |-|-|-|
 |**BRA**|Branch always|Always branches|
 |**BRL**|Branch always long|Always branches, but with greater reach|
 
 BRA will ALWAYS branch; it doesn’t even check for conditions.
-BRL does the same, but it has a longer reach.
+BRL does the same, but it has a longer reach, enough to cover half a bank for each direction.

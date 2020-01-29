@@ -12,7 +12,6 @@ With 65c816 ASM you can code things for SNES games \(such as custom features for
 
 ### Special thanks
 
-Many special thanks go to certain members of SMW Central for teaching me assembly: **Bio,  Killozapit, MiOr, schwa, Smallhacker, smkdan, Roy**
+Many special thanks go to the following people for reviewing the original tutorial on SMW Central: **[spigmike](https://www.smwcentral.net/?p=profile&id=132), [Roy](https://www.smwcentral.net/?p=profile&id=845), [smkdan](https://www.smwcentral.net/?p=profile&id=411), [S.N.N](https://www.smwcentral.net/?p=profile&id=23), [andy\_k\_250](https://www.smwcentral.net/?p=profile&id=67), [Domiok](https://www.smwcentral.net/?p=profile&id=7211), [reghrhre](https://www.smwcentral.net/?p=profile&id=4176), [ChaoticFox](https://www.smwcentral.net/?p=profile&id=3462), [Tails\_155](https://www.smwcentral.net/?p=profile&id=6151), [GreenHammerBro](https://www.smwcentral.net/?p=profile&id=18802), [Vitor Vilela](https://www.smwcentral.net/?p=profile&id=8251)**
 
-Many special thanks go to the following members of SMW Central for reviewing this tutorial: **spigmike, Roy, smkdan, S.N.N, andy\_k\_250, Domiok, reghrhre, Chaoticfox, Tails\_155, GreenHammerBro, VitorVilela**
-
+Many special thanks also go to the [contributors](https://github.com/Ersanio/snes-assembly-book/graphs/contributors) of this repository!

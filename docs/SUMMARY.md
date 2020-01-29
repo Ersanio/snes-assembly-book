@@ -19,10 +19,10 @@
 * [Comparing, branching, labels](programming/branches.md)
 * [Jumping to subroutines](programming/subroutine.md)
 
-## Math and logic
+## Mathemathics and logic
 * [Carry flag](math/carry.md)
 * [Arithmetic operations](math/arithmetic.md)
-* [Bitshifting operations](math/shift.md)
+* [Bit shifting operations](math/shift.md)
 * [Bitwise operations](math/logic.md)
 
 ## Processor operations
