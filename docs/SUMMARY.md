@@ -24,12 +24,13 @@
 * [The stack](collections/stack.md)
 * [Copying data](collections/moves.md)
 
-## Processor operations
+## Processor flags and registers
 * [Changing the processor flags](processor/repsep.md)
 * [Transfers](processor/transfer.md)
+* [Carry flag](processor/carry.md)
+* [Stack pointer register](processor/stackpointer.md)
 
 ## Mathemathics and logic
-* [Carry flag](math/carry.md)
 * [Arithmetic operations](math/arithmetic.md)
 * [Bit shifting operations](math/shift.md)
 * [Bitwise operations](math/logic.md)

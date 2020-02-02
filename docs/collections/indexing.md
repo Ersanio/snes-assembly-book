@@ -5,6 +5,7 @@ Indexing is the act of accessing a *table of data* from a certain offset, that o
 'Tables' are simply a sequence of values. They are used in at least two cases:
 * Conditional cases (e.g. a collection of speed values, depending on the entity's direction)
 * Values that represent an 'asset' (e.g. graphics data, music data, level data)
+
 Tables have very practical applications in SNES games. You can, for example, store text data in tables. Or level data. Or palette data. Tables can contain anything and can have any size, as long as they fit within the ROM.
 
 There are four types of values which you can use to write tables:
