@@ -1,7 +1,7 @@
 # Carry flag
 The SNES supports math in the form of adding and subtracting numbers. It also supports bitwise operations such as bitshifting. Finally, the SNES supports logical operations such as a logical AND or XOR.
 
-The “carry flag” is an additional bit used for most of these arithmetic and bitshifting operations. Additionally, the carry flag is also used for branching. The carry flag is the same concept as the "carry" you learn in elementary school. In a typical pencil-and-paper addition, you'd write it out like this:
+The “carry flag” is a processor flag used for most of these arithmetic and bitshifting operations. Additionally, the carry flag is also used for branching. The carry flag is the same concept as the "carry" you learn in elementary school. In a typical pencil-and-paper addition, you'd write it out like this:
 ```
   ¹
   27
