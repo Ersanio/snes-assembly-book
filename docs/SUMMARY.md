@@ -4,7 +4,6 @@
 * [Getting started](getting-started.md)
 
 ## The basics
-
 * [Hexadecimal](the-basics/hexadecimal.md)
 * [Binary](the-basics/binary.md)
 * [The SNES memory](the-basics/memory.md)
@@ -27,7 +26,7 @@
 ## Processor flags and registers
 * [Changing the processor flags](processor/repsep.md)
 * [Transfers](processor/transfer.md)
-* [Carry flag](processor/carry.md)
+* [Carry flag](processor/flags.md)
 * [Stack pointer register](processor/stackpointer.md)
 
 ## Mathemathics and logic
@@ -36,6 +35,7 @@
 * [Bitwise operations](math/logic.md)
 
 ## Deep dives
+* [Miscellaneous opcodes](indepth/misc.md)
 
 ## Techniques
 

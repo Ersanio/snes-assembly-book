@@ -8,9 +8,9 @@ The stack pointer register is a 16-bit register which the processor uses to dete
 |Push (16-bit)|Stack pointer location|-2|
 |Pull (16-bit)|Stack pointer location +1|+2|
 
-The stack pointer register assumes that it works with bank $00, regardless of the current value of the data bank register. This means that from the SNES memory mapping point of view, if the stack pointer ever starts pointing to absolute address $8000 or above, it'll start pointing to the ROM. If it points to absolute address $2000 or above, it'll start pointing to the SNES hardware registers. Therefore, the only useable stack area is $00000-$7E1FFF.
+The stack pointer register assumes that it works with bank $00, regardless of the current value of the data bank register. This means that from the SNES memory mapping point of view, if the stack pointer ever starts pointing to absolute address $8000 or above, it'll start pointing to the ROM. If it points to absolute address $2000 or above, it'll start pointing to the SNES hardware registers. Therefore, the only useable stack area is $000000-$001FFF.
 
-The stack doesn’t have a defined size. Instead, you, as a programmer, just reserve an area of RAM for the stack you think you need. The reason it doesn’t have a defined size is because as long as you keep pushing, the stack pointer keeps decreasing without any set limits. If you push too many values, you might accidentally overwrite RAM addresses with actual purposes.
+The stack doesn’t have a defined size. Instead, you, as a programmer, just reserve an area of RAM for the stack you think you need. The reason it doesn’t have a defined size is because as long as you keep pushing, the stack pointer keeps decreasing without any set limits. If you push too many values, you might accidentally overwrite other RAM addresses which have other predetermined purposes.
 
 ## Push
 Here is an example of how the stack works from the RAM’s point of view, when you push an 8-bit value:

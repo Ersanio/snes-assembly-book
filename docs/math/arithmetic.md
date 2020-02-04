@@ -88,7 +88,7 @@ STA $0F  ; Store A in $0F
 This will subtract 4 from the RAM address’ content (`$0F-#$04`). You'll notice that for subtracting, we set the carry flag rather than clear it. If you didn’t set the carry flag, it would subtract $05 instead of $04. This might seem backwards, but it's just how the processor works.
 
 {% hint style="info" %}
-In short: when adding, use `CLC`. When subtracting, use `SEC`.`
+In short: when adding, use `CLC`. When subtracting, use `SEC`.
 {% endhint %}
 
 ### Carry flag
