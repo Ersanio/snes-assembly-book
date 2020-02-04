@@ -24,9 +24,9 @@
 * [Copying data](collections/moves.md)
 
 ## Processor flags and registers
+* [The processor flags](processor/flags.md)
 * [Changing the processor flags](processor/repsep.md)
 * [Transfers](processor/transfer.md)
-* [Carry flag](processor/flags.md)
 * [Stack pointer register](processor/stackpointer.md)
 
 ## Mathemathics and logic

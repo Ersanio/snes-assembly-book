@@ -1,24 +1,5 @@
 # Processor flags
-As you saw in the "8-bit and 16-bit mode" chapter earlier, the SNES can switch between 8-bit and 16-bit mode by using the opcodes REP and SEP. These affect the processor flags, which affect the behaviour of the SNES. Two of the prcoessor flags are dedicated to A and X & Y being 8-bit or 16-bit mode. There are in total 8 processor flags stored in the processor flags register as a single byte:
-
-```
-Processor flags
-Bits: 7   6   5   4   3   2   1   0
-
-                                 |e├─── Emulation: 0 = Native Mode
-     |n| |v| |m| |x| |d| |i| |z| |c|
-     └┼───┼───┼───┼───┼───┼───┼───┼┘
-      │   │   │   │   │   │   │   └──────── Carry: 1 = Carry set
-      │   │   │   │   │   │   └───────────── Zero: 1 = Result is zero
-      │   │   │   │   │   └────────── IRQ Disable: 1 = Disabled
-      │   │   │   │   └───────────── Decimal Mode: 1 = Decimal, 0 = Hexadecimal
-      │   │   │   └──────── Index Register Select: 1 = 8-bit, 0 = 16-bit
-      │   │   └─────────────── Accumulator Select: 1 = 8-bit, 0 = 16-bit
-      │   └───────────────────────────── Overflow: 1 = Overflow set
-      └───────────────────────────────── Negative: 1 = Negative set
-```
-
-In above diagram, `m` and `x` are described as "Index Register/Accumulator select". The index register is in fact the X and Y 8-bit or 16-bit mode register, while the accumulator select is the same, just for the A register.
+As seen in the [previous chapter](../processor/flags.md), the SNES supports 9 processor flags. There are ways to affect these processor flags, which are explained in this chapter.
 
 ## SEP
 |Opcode|Full name|Explanation|
@@ -51,9 +32,7 @@ REP #$08 ;= 0000 1000
 In the beginning, the decimal mode was enabled, and the negative flag was set, but after `REP #$08`, the decimal mode flag got disabled and the negative flag is still set.
 
 ## XCE and the emulation mode
-You might be wondering why that `e` in the diagram is at such a peculiar position.
-
-It is the ‘hidden’ emulation mode of the SNES. When it is set, SNES basically acts like 6502 (NES CPU), which is far more limited. While in emulation mode, the accumulator, X and Y register are forced to be 8-bit and one of the processor flag is used to indicate BRK. It also uses different vectors for interrupt. You can’t set the emulation mode using REP and SEP. Emulation mode is basically an ‘improved’ 6502 processor emulation.
+Because the emulation mode bit is 'hidden' above the carry flag, there's an opcode which exchanges the carry flag with the emulation mode bit.
 
 |Opcode|Full name|Explanation|
 |-|-|-|

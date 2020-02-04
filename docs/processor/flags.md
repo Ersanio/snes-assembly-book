@@ -1,5 +1,24 @@
 # Processor flags
-As established in the [Changing the processor flags](../processor/repsep.md) chapter, there are 9 processor flags. You can memorize these processor flags by memorizing the 'word' `nvmxdizc`. This chapter will explain all the processor flags.
+As you saw in the "8-bit and 16-bit mode" chapter earlier, the SNES can switch between 8-bit and 16-bit mode by using the opcodes REP and SEP. These affect the processor flags, which affect the behaviour of the SNES. Two of the prcoessor flags are dedicated to A and X & Y being 8-bit or 16-bit mode. There are in total 9 processor flags stored in the processor flags register as a single byte:
+
+```
+Processor flags
+Bits: 7   6   5   4   3   2   1   0
+
+                                 |e├─── Emulation: 0 = Native Mode
+     |n| |v| |m| |x| |d| |i| |z| |c|
+     └┼───┼───┼───┼───┼───┼───┼───┼┘
+      │   │   │   │   │   │   │   └──────── Carry: 1 = Carry set
+      │   │   │   │   │   │   └───────────── Zero: 1 = Result is zero
+      │   │   │   │   │   └────────── IRQ Disable: 1 = Disabled
+      │   │   │   │   └───────────── Decimal Mode: 1 = Decimal, 0 = Hexadecimal
+      │   │   │   └──────── Index Register Select: 1 = 8-bit, 0 = 16-bit
+      │   │   └─────────────── Accumulator Select: 1 = 8-bit, 0 = 16-bit
+      │   └───────────────────────────── Overflow: 1 = Overflow set
+      └───────────────────────────────── Negative: 1 = Negative set
+```
+
+You can memorize these processor flags by memorizing the 'word' `nvmxdizc`. This chapter will explain all the processor flags in detail.
 
 ## Negative flag (n)
 Most opcodes modify the negative flag depending on the results of that opcode. These opcodes generally are opcodes which are handled in the mathematics chapter, but also loads, comparisons and pulls.
@@ -24,13 +43,13 @@ When it's set to 1, both X and Y are 8-bit.
 When it's set to 0, both X and Y are 16-bit.
 
 ## Decimal mode flag (d)
-Setting this flag to 1 means the SNES enters decimal mode. This *only* affects the `ADC`, `SBC` and `CMP` operations.
+Setting this flag to 1 means the SNES enters decimal mode. This *only* affects the `ADC`, `SBC` and `CMP` opcodes.
 
 These opcodes adjust the accumulator on-the-fly. This means that, if you for example add `$03` to `$09`, the result is `$12` instead of `$0C`.
 
 Although decimal-mode math properly affects the carry flag and negative flag, it doesn't do this with the overflow flag.
 
-## Binary-coded decimal
+# Binary-coded decimal
 Because these numbers are stored in decimal, they're stored in 'binary-coded decimal' (BCD). BCD is basically the same as hexadecimal, with the values $0A-0F, $1A-1F, et cetera 'cut out'. Here's a table showing how counting in BCD goes like:
 
 |Binary|Hexadecimal|Decimal|BCD|
@@ -103,4 +122,32 @@ Setting this flag causes the 65c816 to behave as the 6502. When you enter emulat
 * The program bank and data bank registers are set to $00
 * The direct page register is initialized to $0000, and the high byte remains static as $00
 
-The emulation mode of the 65c816 also fixes some of the bugs that the 6502 had. For example, indirect addressing mode now wraps addresses properly. For example: `JMP ($20FF)` will now get the high byte from `$2100`, rather than `$2000`.
+The emulation mode of the 65c816 also fixes some of the bugs that the 6502 had. For example, indirect addressing mode `JMP` now wraps addresses properly. For example: `JMP ($10FF)` will now get the high byte from `$1100`, rather than `$1000`.
+
+### Processor flags
+The emulation mode has a different set of processor flags.
+
+```
+Processor flags
+Bits: 7   6   5   4   3   2   1   0
+
+                                 |e├─── Emulation: 0 = Native Mode
+     |n| |v| |1| |b| |d| |i| |z| |c|
+     └┼───┼───┼───┼───┼───┼───┼───┼┘
+      │   │   │   │   │   │   │   └──────── Carry: 1 = Carry set
+      │   │   │   │   │   │   └───────────── Zero: 1 = Result is zero
+      │   │   │   │   │   └────────── IRQ Disable: 1 = Disabled
+      │   │   │   │   └───────────── Decimal Mode: 1 = Decimal, 0 = Hexadecimal
+      │   │   │   └─────────────────── Break Flag: 1 = Break executed
+      │   │   └─────────────────────────── Unused: 1
+      │   └───────────────────────────── Overflow: 1 = Overflow set
+      └───────────────────────────────── Negative: 1 = Negative set
+```
+
+As you can see, it's very similar to the processor flags of the SNES, with a few exceptions. The A and X & Y memory select bits are replaced.
+
+### Unused flag
+This processor flag is unused and is always set to 1.
+
+### Break flag
+This processor flag is set to 1 when the emulation mode comes across a `BRK` opcode, thus it only indicates that there was a break; the processor flag doesn't actually affect the SNES.
