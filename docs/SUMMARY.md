@@ -10,6 +10,7 @@
 * [The SNES registers](the-basics/registers.md)
 * [Addressing modes](the-basics/addressing.md)
 * [Little-endian](the-basics/endian.md)
+* [Glossary](the-basics/glossary.md)
 
 ## The basics (again)
 * [Loading and storing](programming/loading-and-storing.md)
