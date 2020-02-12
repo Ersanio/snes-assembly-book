@@ -37,6 +37,7 @@
 
 ## Deep dives
 * [Miscellaneous opcodes](indepth/misc.md)
+* [Machine cycles](indepth/cycles.md)
 
 ## Techniques
 
