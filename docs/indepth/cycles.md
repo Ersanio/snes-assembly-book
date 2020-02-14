@@ -1,10 +1,10 @@
 # Machine cycles
 
-The SNES processes instructions, but each opcode takes up a predetermined amount of time to execute. The time an instruction takes to execute is called “machine cycle” (or "cycle" in short).
+The SNES processes instructions, but each instruction takes up a predetermined amount of time to execute. The time an instruction takes to execute is called “machine cycle” (or "cycle" in short).
 
-Each opcode has its own cycle. [This page](https://wiki.superfamicom.org/65816-reference) has a full reference of how many cycles each opcode takes. Pay attention to the footnotes, as the amount of used cycles can differ depending on the context of the code. For example, a taken branch takes 1 cycle longer.
+Each instruction has its own cycle. [This page](https://wiki.superfamicom.org/65816-reference) has a full reference of how many cycles each instruction takes. Pay attention to the footnotes, as the amount of used cycles can differ depending on the context of the code. For example, a taken branch takes 1 cycle longer compared to a branch that's not taken.
 
-The less cycles, the less slowdown the code suffers from. This is often noticeable in the form of slowdown in the SNES game itself. To avoid slowdown, you need to write efficient code. Here is an example of inefficient vs. efficient code:
+The less cycles, the less slowdown the code suffers from. Slowdown is often noticeable in games with many sprites on the screen. To avoid slowdown, you need to write efficient code. Here is an example of inefficient vs. efficient code:
 
 ```
 ; Inefficient

@@ -20,6 +20,13 @@ LDA #$0231  ; A = $0231
 XBA         ; A is now $3102
 ```
 
+This even works with 8-bit A, as the high byte of A is 'hidden' rather than set to $00:
+```
+LDA #$12    ; A = $xx12
+XBA         ; A = $12xx
+LDA #$05    ; A = $1205
+```
+
 ## WAI
 |Opcode|Full name|Explanation|
 |-|-|-|

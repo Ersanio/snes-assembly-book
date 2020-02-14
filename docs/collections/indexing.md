@@ -50,6 +50,8 @@ The code will load a value from the table into A. Basically, this does `LDA Valu
 
 Indexing is quite useful when you don’t want to write very repetitive instructions all the time. Indexing can be performed with the X register too. X and Y behave exactly the same, after all.
 
+Indexing is actually one of the many addressing modes. The basic addressing modes are covered [here](../the-basics/addressing.md) and the more advanced addressing modes [here](../indepth/addressing.md).
+
 ## Indexing with RAM
 So far, the above examples were about ROM. You can also index values in RAM. You can treat the RAM as one giant table you could index. You simply replace loaded label with an address. For example:
 
