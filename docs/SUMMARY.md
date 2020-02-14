@@ -36,9 +36,11 @@
 * [Bitwise operations](math/logic.md)
 
 ## Deep dives
+* [Addressing modes revisted](indepth/addressing.md)
 * [Miscellaneous opcodes](indepth/misc.md)
 * [Machine cycles](indepth/cycles.md)
-
-## Techniques
-
-## Additional information
+* [Hardware vectors](indepth/vector.md)
+* [Hardware math](indepth/math.md)
+* [Techniques](indepth/techniques.md)
+* [Advanced assembler syntax](indepth/syntax.md)
+* [Programming cautions](indepth/cautions.md)
