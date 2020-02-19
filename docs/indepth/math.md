@@ -71,12 +71,12 @@ The SNES has a set of hardware registers used for unsigned division. They are la
 |$4206|Write|Divisor, 8-bit, unsigned. Writing to this also starts the division process.|
 |$4214|Read|Unsigned division 16-bit quotient, low byte|
 |$4215|Read|Unsigned division 16-bit quotient, high byte|
-|$4216|Read|Unsigned division remainder, i.e. modulo, low byte|
-|$4217|Read|Unsigned division remainder, i.e. modulo, high byte|
+|$4216|Read|Unsigned division remainder, low byte|
+|$4217|Read|Unsigned division remainder, high byte|
 
 Quotient means how many times the dividend can "fit" in the divisor. For example: `6 / 3 = 2`. Thus, 6 fits two times in 3. Another way you can read this is: You can extract 3 two times from 6 and end up with exactly 0 as leftover.
 
-Modulo means the remainder of the dividend that couldn't "fit" into the divisor. For example: `8 / 3 = 2`. You can subtract 3 two times from 8, but at the end, you have a 2 as a remainder. Thus, the modulo for this equation is `2`.
+Modulo is an operation that determines the remainder of the dividend that couldn't "fit" into the divisor. For example: `8 / 3 = 2`. You can subtract 3 two times from 8, but at the end, you have a 2 as a remainder. Thus, the modulo for this equation is `2`. Because there are hardware registers that support remainders, the SNES also supports the modulo operation.
 
 After you write to `$4206` to start the division process, you will need to wait 16 [machine cycles](../indepth/cycles.md), which is typically done by adding eight `NOP` instructions to the code. If you don't wait 16 machine cycles, the results are unpredictable.
 
