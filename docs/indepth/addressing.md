@@ -20,7 +20,7 @@ Pointers can point to both *code* and *data*. Depending on the type of instructi
 
 
 ## Indirect
-Indirect addressing modes are basically accessing addresses in such a way, that you access the address they point to, rather than directly accessing its contents.
+Indirect addressing modes are basically accessing addresses in such a way, that you access the address they point to, rather than directly accessing the contents of the specified address.
 
 ### Direct, Indirect
 As paradoxical as it may sound, the naming actually makes sense. 'Direct' stands for direct page addressing mode, while 'indirect' means that we're accessing a pointer at the direct page address, rather than a value. Here's an example:
@@ -130,7 +130,7 @@ LDA [$00]   ; Load the value at address $7F1FFF into A
 ```
 `LDA [$00]` resolves into `LDA $7F1FFF`.
 
-## Direct, Indirect Indexed Long with Y
+### Direct, Indirect Indexed Long with Y
 Exactly the same as `Direct, Indirect Indexed with Y`, except the pointer located at an address is now 24-bits instead of 16-bits, meaning the bank byte of a pointer is also specified. Example:
 ```
 ; Setup indirect pointer
@@ -198,6 +198,7 @@ LDA $01,s ;($001FF1) Loads the last pushed value into A.
 LDA $02,s ;($001FF2) Loads the second last pushed value into A.
 LDA $03,s ;($001FF3) ...
 ```
+In 16-bit A mode, the address increments would be 2, rather than 1, like in the example above.
 
 ### Stack Relative, Indirect Indexed with Y
 This is pretty much the same as `Direct, Indirect Indexed with Y`, except the value is loaded from a stack relative address. Example:
@@ -211,4 +212,6 @@ SEP #$20
 LDY #$03
 LDA ($01,s),y	;→ LDA ($01FE),y → LDA $0100,y → LDA $0103
 ```
-It's probably hard to tell, but `LDA ($01,s),y` resolves into `LDA ($01FE),y`, then `LDA $0100,y`, then finally `LDA $0103`.
+`$01,s` refers to the last pushed value into A, which is $0100 in the case of this example. The parentheses applies on this stack relative address, resolving the instruction to an `LDA $0100,y`. This finally resolves into `LDA $0103` because of the indexer.
+
+This addressing mode is handy if you'd like to treat certain pushed values as an indexed memory address.
