@@ -34,13 +34,13 @@
 * [Arithmetic operations](math/arithmetic.md)
 * [Bit shifting operations](math/shift.md)
 * [Bitwise operations](math/logic.md)
+* [Hardware math](math/math.md)
 
 ## Deep dives
 * [Addressing modes revisted](indepth/addressing.md)
 * [Miscellaneous opcodes](indepth/misc.md)
 * [Machine cycles](indepth/cycles.md)
 * [Hardware vectors](indepth/vector.md)
-* [Hardware math](indepth/math.md)
 * [Techniques](indepth/techniques.md)
-* [Advanced assembler syntax](indepth/syntax.md)
+* [Common assembler syntax](indepth/syntax.md)
 * [Programming cautions](indepth/cautions.md)

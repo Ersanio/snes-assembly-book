@@ -7,7 +7,7 @@ This chapter explains opcodes which don't really fit in any other chapter.
 |-|-|-|
 |**NOP**|No operation|Does absolutely nothing|
 
-It is often used to disable existing opcodes in a ROM without shifting around the bytecode. It can also be used to give time for the [math hardware registers](../indepth/math.md) to do their work.
+It is often used to disable existing opcodes in a ROM without shifting around the bytecode. It can also be used to give time for the [math hardware registers](../math/math.md) to do their work.
 
 ## XBA
 |Opcode|Full name|Explanation|
@@ -31,11 +31,13 @@ LDA #$05    ; A = $1205
 |Opcode|Full name|Explanation|
 |-|-|-|
 |**WAI**|Wait for interrupt|Halts the SNES CPU until either an NMI or IRQ occurs.|
+Exactly what it says, it halts the SNES CPU until either an NMI or IRQ (both are interrupts) occurs. Practically speaking, the opcode loops itself infinitely until an interrupt occurs.
 
 ## STP
 |Opcode|Full name|Explanation|
 |-|-|-|
 |**STP**|Stop the clock|The 'clock' being the SNES CPU in this case, it halts the CPU completely until either a soft or hard reset occurs.|
+Exactly what it says, it stops the SNES CPU until you hit reset or power cycle the SNES. It does lower the power consumption of the SNES, if the couple of cents it'll shave off your power bill means that much to you.
 
 ## BRK
 |Opcode|Full name|Explanation|

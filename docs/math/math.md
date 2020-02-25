@@ -11,7 +11,7 @@ The SNES has a set of hardware registers used for unsigned multiplication:
 |$4217|Read|Unsigned multiply 16-bit product, high byte|
 After you write to `$4203` to start the multiplication process, you will need to wait 8 [machine cycles](../indepth/cycles.md), which is typically done by adding four `NOP` instructions to the code. If you don't wait 8 machine cycles, the results are unpredictable.
 
-Here's an example of `42 * 129 = 5418` (in hexadecimal: $2A * $81 = $152A):
+Here's an example of `42 * 129 = 5418` (in hexadecimal: `$2A * $81 = $152A`):
 ```
 	LDA #$2A           ; 42
 	STA $4202
@@ -24,7 +24,6 @@ Here's an example of `42 * 129 = 5418` (in hexadecimal: $2A * $81 = $152A):
 	LDA $4216          ; A = $2A (result low byte)
 	LDA $4217          ; A = $15 (result high byte)
 ```
-
 
 ## Hardware Signed Multiplication
 There's a set of hardware registers which can be used for fast, signed multiplication:
@@ -76,7 +75,7 @@ The SNES has a set of hardware registers used for unsigned division. They are la
 
 Quotient means how many times the dividend can "fit" in the divisor. For example: `6 / 3 = 2`. Thus, 6 fits two times in 3. Another way you can read this is: You can extract 3 two times from 6 and end up with exactly 0 as leftover.
 
-Modulo is an operation that determines the remainder of the dividend that couldn't "fit" into the divisor. For example: `8 / 3 = 2`. You can subtract 3 two times from 8, but at the end, you have a 2 as a remainder. Thus, the modulo for this equation is `2`. Because there are hardware registers that support remainders, the SNES also supports the modulo operation.
+Modulo is an operation that determines the remainder of the dividend that couldn't "fit" into the divisor. For example: `8 / 3 = 2`. You can subtract 3 two times from 8, but at the end, you have a 2 as a remainder. Thus, the remainder for this equation is `2`. Because there are hardware registers that support remainders, the SNES also supports the modulo operation.
 
 After you write to `$4206` to start the division process, you will need to wait 16 [machine cycles](../indepth/cycles.md), which is typically done by adding eight `NOP` instructions to the code. If you don't wait 16 machine cycles, the results are unpredictable.
 
