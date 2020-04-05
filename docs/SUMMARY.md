@@ -2,6 +2,7 @@
 
 * [Introduction](README.md)
 * [Getting started](getting-started.md)
+* [Contributing](contributing.md)
 
 ## The basics
 * [Hexadecimal](the-basics/hexadecimal.md)
