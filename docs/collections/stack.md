@@ -71,12 +71,12 @@ There are also opcodes to pull the current value from the stack into the A, X or
 ## Example
 Imagine the following scenario: The X register has to stay at the value $19, no matter what, but you really have to use X for something else. How would one do that? You use PHX to preserve the value in X in the stack, before you use an instruction which modifies the contents of X:
 ```
-            ; Imagine X has the value $19 in the stack
-PHX         ; Push X ($19) onto stack. Result: Stack 1st value = #$19
-LDX $91     ; Load $7E0091's value into X
-LDA $1000,x ; \ X is now modified, and we use it to index RAM
-STA $0100	  ; /
-PLX         ; Restore X. X is now $19 again
+                   ; Imagine X has the value $19 in the stack
+PHX                ; Push X ($19) onto stack. Result: Stack 1st value = #$19
+LDX $91            ; Load $7E0091's value into X
+LDA $1000,x        ; \ X is now modified, and we use it to index RAM
+STA $0100          ; /
+PLX                ; Restore X. X is now $19 again
 ```
 
 {% hint style="info" %}

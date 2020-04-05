@@ -16,15 +16,15 @@ It is often used to disable existing opcodes in a ROM without shifting around th
 
 Here's an example:
 ```
-LDA #$0231  ; A = $0231
-XBA         ; A is now $3102
+LDA #$0231         ; A = $0231
+XBA                ; A is now $3102
 ```
 
 This even works with 8-bit A, as the high byte of A is 'hidden' rather than set to $00:
 ```
-LDA #$12    ; A = $xx12
-XBA         ; A = $12xx
-LDA #$05    ; A = $1205
+LDA #$12           ; A = $xx12
+XBA                ; A = $12xx
+LDA #$05           ; A = $1205
 ```
 
 ## WAI

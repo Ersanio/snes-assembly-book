@@ -13,16 +13,16 @@ After you write to `$4203` to start the multiplication process, you will need to
 
 Here's an example of `42 * 129 = 5418` (in hexadecimal: `$2A * $81 = $152A`):
 ```
-	LDA #$2A           ; 42
-	STA $4202
-	LDA #$81           ; 129
-	STA $4203
-	NOP                ; Wait 8 machine cycles
-	NOP
-	NOP
-	NOP
-	LDA $4216          ; A = $2A (result low byte)
-	LDA $4217          ; A = $15 (result high byte)
+LDA #$2A           ; 42
+STA $4202
+LDA #$81           ; 129
+STA $4203
+NOP                ; Wait 8 machine cycles
+NOP
+NOP
+NOP
+LDA $4216          ; A = $2A (result low byte)
+LDA $4217          ; A = $15 (result high byte)
 ```
 
 ## Hardware Signed Multiplication

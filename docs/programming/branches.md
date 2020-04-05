@@ -31,36 +31,37 @@ There are branch opcodes which branch depending on if a value equals or doesn't 
 BEQ branches if the comparison is equal with the compared value. Here's an example:
 
 ```
-LDA $00	    ; Loads the current value of RAM address $7E0000 into A
-CMP #$02	; Compares A with the immediate value $02
-BEQ Label1	; If A = $02, go to the codes in Label1. NOTE: Case-Sensitive
-LDA #$01	; \Else
-STA $1245	; /Store value $01 into RAM $7E1245.
-RTS		    ; This instruction is used to end a routine.
-Label1:	    ;
-STZ $19	    ; Store zero in $7E0019
-RTS		    ; End.
+LDA $00            ; Loads the current value of RAM address $7E0000 into A
+CMP #$02           ; Compares A with the immediate value $02
+BEQ Label1         ; If A = $02, go to the codes in Label1. NOTE: Case-Sensitive
+LDA #$01           ; \ Else
+STA $1245          ; / Store value $01 into RAM $7E1245.
+RTS                ; This instruction is used to end a routine.
+
+Label1:           
+STZ $19            ; Store zero in $7E0019
+RTS                ; End.
 ```
 This code will store zero ($00) in $7E0019 when $7E0000 contains the value $02. If it doesn't have $02 as its value, the code will then store value $01 in $7E1245. As you can see, BEQ will "jump" to a portion of the code when compared values are equal, skipping certain code. In this case, the code jumps to the code located at the label “Label1”.
 
 BNE branches if the comparison doesn't equal with the compared value. Here's an example:
 ```
-LDA $00     ; Loads the current value of RAM address $7E0000 into A
-CMP #$02	; Compares A with $02
-BNE Label1	; A = NOT $02, finish the code, do nothing.
-LDA #$01	; \Else
-STA $1245	; /Store something in RAM $7E1245
-Label1:     ;
-RTS	        ; End.
+LDA $00            ; Loads the current value of RAM address $7E0000 into A
+CMP #$02           ; Compares A with $02
+BNE Label1         ; A = NOT $02, finish the code, do nothing.
+LDA #$01           ; \ Else
+STA $1245          ; / Store something in RAM $7E1245
+Label1:            ;
+RTS                ; End.
 ```
 This code will store $01 to $7E1245, if $7E0000 has the value $02. If RAM address $7E0000 doesn’t have the value $02, the code will instead do nothing and simply return.
 
 ## Comparing addresses
 You can also compare RAM addresses with each other. For example:
 ```
-LDA $00     ; Load $7E0000's value into A
-CMP $02     ; Compare A with $7E0002
-BEQ Equal   ; Branch if equal
+LDA $00            ; Load $7E0000's value into A
+CMP $02            ; Compare A with $7E0002
+BEQ Equal          ; Branch if equal
 ```
 When RAM addresses $7E0000 and $7E0002 have the same values, the branch will be taken.
 
@@ -74,9 +75,9 @@ You can also compare values by using the registers X and Y.
 It's not just A which is capable of doing comparisons. For example, you can load a value into X or Y and compare it with something else. Here's an example using X:
 
 ```
-LDX $00     ; Load $7E0000's value into X
-CPX $02     ; Compare X with $7E0002
-BEQ Equal   ; Branch if equal
+LDX $00            ; Load $7E0000's value into X
+CPX $02            ; Compare X with $7E0002
+BEQ Equal          ; Branch if equal
 ```
 It will have the same result as the example with comparing addresses. You can compare Y too by using CPY. However, you cannot mix registers. The the following is wrong:
 ```

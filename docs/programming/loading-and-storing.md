@@ -19,7 +19,7 @@ Although these registers can be either in 8-bit or 16-bit mode, in this tutorial
 We will use RAM addresses for the sake of simplicity. Here is an example for loading and storing values.
 
 ```
-LDA #$03                 ; A = $03
+LDA #$03           ; A = $03
 STA $7E0001
 ```
 
@@ -48,7 +48,7 @@ Remember, using $ instead of #$ after an opcode means that the parameter is an a
 Putting a semicolon (;) will allow everything beyond that to be ignored by the assembler, during the assembly of the code. In other words, ; is used to place comments. Example:
 
 ```
-LDA #$03			;This is a comment!
+LDA #$03           ; This is a comment!
 ```
 ### Loading and storing addresses
 
@@ -97,6 +97,6 @@ This opcode stores the number $00 into an address. It doesn’t even need the A,
 
 If you want to make a code that directly stores $00 in a RAM address, you could make it use 1 line:
 ```
-STZ $01	; $7E0001 = $00. The A register is unaffected.
+STZ $01            ; $7E0001 = $00. The A register is unaffected.
 ```
 STZ will store zero to a specified RAM address. After this opcode, RAM address $7E0001 will now contain the number $00. Using STZ when A is in 16-bit mode **will** store $0000 to both RAM addresses $7E0001 and $7E0002.

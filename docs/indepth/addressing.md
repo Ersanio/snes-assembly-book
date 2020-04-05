@@ -28,10 +28,10 @@ As paradoxical as it may sound, the naming actually makes sense. 'Direct' stands
 ```
 ; Setup indirect pointer
 REP #$20
-LDA #$1FFF  ; $1FFF to RAM $7E0000
+LDA #$1FFF         ; $1FFF to RAM $7E0000
 STA $00
 SEP #$20
-            ; $7E0000: FF 1F .. .. .. .. ..
+                    ; $7E0000: FF 1F .. .. .. .. ..
 
 ; Access indirect pointer
 LDA ($00)   ; Load the value at address $1FFF into A
@@ -48,16 +48,16 @@ As is the case with the previous addressing mode, the naming may seem contradict
 ```
 ; Setup indirect pointers
 REP #$20
-LDA #$1FFF  ; $1FFF to RAM $7E0000
+LDA #$1FFF         ; $1FFF to RAM $7E0000
 STA $00
-LDA #$0FFF  ; $0FFF to RAM $7E0002
+LDA #$0FFF         ; $0FFF to RAM $7E0002
 STA $02
 SEP #$20
-            ; $7E0000: FF 1F FF 0F .. .. ..
+                   ; $7E0000: FF 1F FF 0F .. .. ..
 
 ; Access indirect pointer
-LDX #$02    ; Set X to $02
-LDA ($00,x) ; Loads the value at address $0FFF into A
+LDX #$02           ; Set X to $02
+LDA ($00,x)        ; Loads the value at address $0FFF into A
 ```
 - The 16-bit value in address $7E0000 + $7E0001 is `$1FFF`.
 - The 16-bit value in address $7E0002 + $7E0003 is `$0FFF`.
@@ -69,14 +69,14 @@ This is practically the same as `Direct, Indirect` but the pointer is then index
 ```
 ; Setup indirect pointer
 REP #$20
-LDA #$1FF0    ; $1FF0 to RAM $7E0000
+LDA #$1FF0         ; $1FF0 to RAM $7E0000
 STA $00
 SEP #$20
-              ; $7E0000: F0 1F .. .. .. .. ..
+                   ; $7E0000: F0 1F .. .. .. .. ..
 
 ; Access indirect pointer
-LDY #$01      ; Set Y to $01
-LDA ($00),y   ; Load value at address $1FF1 into A
+LDY #$01           ; Set Y to $01
+LDA ($00),y        ; Load value at address $1FF1 into A
 ```
 As a result, `LDA ($00),y` resolves into `LDA $1FF0,y`, which then resolves into `LDA $1FF1` because Y contains the value $01.
 
@@ -85,13 +85,13 @@ Exactly the same as `Direct, Indirect`, except the specified address is now 16-b
 ```
 ; Setup indirect pointer
 REP #$20
-LDA #$8000    ; $8000 to RAM $7E0000
+LDA #$8000         ; $8000 to RAM $7E0000
 STA $00
 SEP #$20
-              ; $7E0000: 00 80 .. .. .. .. ..
+                   ; $7E0000: 00 80 .. .. .. .. ..
 
 ; Access indirect pointer
-JMP ($0000)   ; Jumps to $8000.
+JMP ($0000)        ; Jumps to $8000.
 ```
 This has the same exact effect as the example in `Direct, Indirect`. As a result, the `JMP ($0000)` resolves into `JMP $8000` and jumps to `address $8000` in the current bank.
 
@@ -100,16 +100,16 @@ Exactly the same as `Direct Indexed with X, Indirect`, except the specified addr
 
 ```
 REP #$20
-LDA #$8000    ; $8000 to RAM $7E0000
+LDA #$8000         ; $8000 to RAM $7E0000
 STA $00
-LDA #$9000    ; $9000 to RAM $7E0002
+LDA #$9000         ; $9000 to RAM $7E0002
 STA $02
 SEP #$20
-              ; $7E0000: 00 80 00 90 .. .. ..
+                   ; $7E0000: 00 80 00 90 .. .. ..
 
 ; Access indirect pointer
-LDX #$02      ; Set X to $02
-JMP ($0000,x) ; Jumps to $9000
+LDX #$02           ; Set X to $02
+JMP ($0000,x)      ; Jumps to $9000
 ```
 - The 16-bit value in address $7E0000 + $7E0001 is `$8000`. 
 - The 16-bit value in address $7E0002 + $7E0003 is `$9000`.
@@ -120,13 +120,13 @@ Thanks to using X as an indexer to the direct page address, `JMP ($0000,x)` is r
 Exactly the same as `Direct, Indirect`, except the pointer located at an address is now 24-bits instead of 16-bits, meaning the bank byte of a pointer is also specified. Example:
 ```
 REP #$20
-LDA #$1FFF  ; $1FFF to RAM $7E0000
+LDA #$1FFF         ; $1FFF to RAM $7E0000
 STA $00
 SEP #$20
-LDX #$7F    ; $7F to RAM $7E0002
-STX $02     ; $7E0000 now contains the 24-bit pointer $7F1FFF
-            ; $7E0000: FF 1F 7F .. .. .. ..
-LDA [$00]   ; Load the value at address $7F1FFF into A
+LDX #$7F           ; $7F to RAM $7E0002
+STX $02            ; $7E0000 now contains the 24-bit pointer $7F1FFF
+                   ; $7E0000: FF 1F 7F .. .. .. ..
+LDA [$00]          ; Load the value at address $7F1FFF into A
 ```
 `LDA [$00]` resolves into `LDA $7F1FFF`.
 
@@ -135,16 +135,16 @@ Exactly the same as `Direct, Indirect Indexed with Y`, except the pointer locate
 ```
 ; Setup indirect pointer
 REP #$20
-LDA #$1FF0    ; $1FF0 to RAM $7E0000
+LDA #$1FF0         ; $1FF0 to RAM $7E0000
 STA $00
 SEP #$20
-LDX #$7F      ; $7F to RAM $7E0002
-STX $02       ; $7E0000 now contains the 24-bit pointer $7F1FF0
-              ; $7E0000: F0 1F 7F .. .. .. ..
+LDX #$7F           ; $7F to RAM $7E0002
+STX $02            ; $7E0000 now contains the 24-bit pointer $7F1FF0
+                   ; $7E0000: F0 1F 7F .. .. .. ..
 
 ; Access indirect pointer
-LDY #$01      ; Set Y to $01
-LDA [$00],y   ; Load value at address $7F1FF1 into A
+LDY #$01           ; Set Y to $01
+LDA [$00],y        ; Load value at address $7F1FF1 into A
 ```
 As a result, `LDA [$00],y` resolves into `LDA $7F1FF0,y` (practically speaking), which then resolves into `LDA $7F1FF1` because Y contains the value $01.
 
@@ -155,35 +155,35 @@ Indexed addressing mode was actually briefly touched upon in an [earlier chapter
 This addressing mode indexes a direct page address with X. Example:
 ```
 LDX #$02
-LDA $00,x     ; Loads the value at address $7E0002 into A
+LDA $00,x          ; Loads the value at address $7E0002 into A
 ```
 
 ### Direct, Indexed with Y
 This addressing mode indexes a direct page address with Y. This addressing mode only exists on the `LDX` and `STX`-opcodes. Example:
 ```
 LDY #$02
-LDX $00,y     ; Loads the value at address $7E0002 into X
+LDX $00,y          ; Loads the value at address $7E0002 into X
 ```
 
 ### Absolute, Indexed with X
 This addressing mode indexes an absolute address with X. Example:
 ```
 LDX #$02
-LDA $0000,x     ; Loads the value at address $7E0002 into A
+LDA $0000,x        ; Loads the value at address $7E0002 into A
 ```
 
 ### Absolute, Indexed with Y
 This addressing mode indexes an absolute address with Y. Example:
 ```
 LDY #$02
-LDA $0000,y     ; Loads the value at address $7E0002 into A
+LDA $0000,y        ; Loads the value at address $7E0002 into A
 ```
 
 ### Absolute, Long Indexed with X
 This addressing mode indexes a long address with X. Example:
 ```
 LDX #$02
-LDA $7E0000,x     ; Loads the value at address $7E0002 into A
+LDA $7E0000,x      ; Loads the value at address $7E0002 into A
 ```
 
 ## Stack Relative
@@ -193,10 +193,10 @@ Stack relative is a special type of indexer addressing mode. It uses the stack p
 This loads a value from the RAM, relative to the stack pointer. The bank byte is always $00. Example:
 ```
 ; Stack pointer register: $1FF0
-LDA $00,s ;($001FF0) Loads the value in the current free slot in the stack, into A.
-LDA $01,s ;($001FF1) Loads the last pushed value into A.
-LDA $02,s ;($001FF2) Loads the second last pushed value into A.
-LDA $03,s ;($001FF3) ...
+LDA $00,s          ; ($001FF0) Loads the value in the current free slot in the stack, into A.
+LDA $01,s          ; ($001FF1) Loads the last pushed value into A.
+LDA $02,s          ; ($001FF2) Loads the second last pushed value into A.
+LDA $03,s          ; ($001FF3) ...
 ```
 In 16-bit A mode, the address increments would be 2, rather than 1, like in the example above.
 
@@ -210,7 +210,7 @@ LDA #$0100
 PHA
 SEP #$20
 LDY #$03
-LDA ($01,s),y	;→ LDA ($01FE),y → LDA $0100,y → LDA $0103
+LDA ($01,s),y      ; → LDA ($01FE),y → LDA $0100,y → LDA $0103
 ```
 `$01,s` refers to the last pushed value into A, which is $0100 in the case of this example. The parentheses applies on this stack relative address, resolving the instruction to an `LDA $0100,y`. This finally resolves into `LDA $0103` because of the indexer.
 

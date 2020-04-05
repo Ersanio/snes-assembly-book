@@ -22,10 +22,10 @@ STA !Address
 Be aware that Asar actually does a simple text search and replace, rather than evaluating the expression in a define. In other words, Asar isn't smart enough to figure out that a define is an "address", "immediate value" or anything else. Here's an example of improper define usage:
 
 ```
-!Value = #$03     ; Note the #
+!Value = #$03      ; Note the #
 
-LDA #!Value       ; A search and replace turns this into "LDA ##$03"
-STA $01           ; Therefore, it will throw an error!
+LDA #!Value        ; A search and replace turns this into "LDA ##$03"
+STA $01            ; Therefore, it will throw an error!
 ```
 
 ## Labels
@@ -159,20 +159,20 @@ Remember that a byte consists of 8 bits, thus you need to "skip" 8 bits to grab 
 ```
 !Size = $7FFF
 
-LDA.b #!Size>>8       ; only $7F remains
+LDA.b #!Size>>8    ; Only $7F remains
 STA $01
 ```
 Bitshifts are incredibly valuable when grabbing certain portions of addresses or values. They can also be used on labels, and thus, you can also grab bank bytes:
 
 ```
-LDA.b #somelabel>>16       ; Grab the bank byte of a label
+LDA.b #somelabel>>16 ; Grab the bank byte of a label
 STA $01
 ```
 The same goes for defines:
 ```
 !Address = $7E8000
 
-LDA.b #!Address>>16       ; Grab $7E of the define
+LDA.b #!Address>>16 ; Grab $7E of the define
 STA $02
 ```
 
@@ -186,16 +186,16 @@ LDA.b #Sometable>>8
 STA $01
 LDA.b #Sometable>>16
 STA $02
-LDA [$00]     ; This loads the value $01 into A
+LDA [$00]          ; This loads the value $01 into A
 RTS
 
-Sometable:    db $01,$02,$04,$08
+Sometable: db $01,$02,$04,$08
 ```
 ### Table sizes
 There are situations where it's handy to know the size of tables, such as for [moves](../collections/moves.md). To get the size of a table, you put a label at both begin and end of a table, such as this:
 
 ```
-Sometable:    db $01,$02,$04,$08
+Sometable: db $01,$02,$04,$08
 .end
 ```
 
@@ -206,7 +206,7 @@ LDA.b #Sometable_end-Sometable ; #$04
 STA $00
 RTS
 
-Sometable:    db $01,$02,$04,$08
+Sometable: db $01,$02,$04,$08
 .end
 ```
 Note that it's important to use opcode length specifiers, as we're still dealing with labels, thus, 24-bit values.

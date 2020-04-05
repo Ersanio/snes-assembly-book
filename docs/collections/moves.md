@@ -10,11 +10,11 @@ MVP and MVN practically do a mass amount of LDA and STA to some RAM addresses. Y
 
 It's highly recommended to have the A, X and Y registers at 16-bit mode. It's also highly recommended to preserve the data bank using the stack, as the MVN opcode implicitly changes this. Here's an example of a proper block move setup:
 ```
-PHB         ;Preserve data bank
-REP #$30    ;16-bit AXY
-            ;← Move instructions are located here
-SEP #$30    ;8-bit AXY
-PLB         ;Recover data bank
+PHB                ; Preserve data bank
+REP #$30           ; 16-bit AXY
+                   ; ← Move instructions are located here
+SEP #$30           ; 8-bit AXY
+PLB                ; Recover data bank
 ```
 
 ## MVN
@@ -30,7 +30,7 @@ The A register is 'minus 1'. This means that if you want to move 4 bytes of data
 MVN can be written in two ways: 
 ```
 MVN $xxyy
-;or
+; or
 MVN $yy, $xx
 ```
 Where `xx` is the source bank, and `yy` is the destination bank.
@@ -50,14 +50,14 @@ Seeing that A decreases by 1, eventually it will reach the value $0000, then it'
 
 Here's an example of a block move:
 ```
-PHB          ; Preserve data bank
-REP #$30     ; 16-bit AXY
-LDA #$0004   ; \
-LDX #$8908   ;  |
-LDY #$A000   ;  | Move 5 bytes of data from $1F8908 to $7FA000
-MVN $7F, $1F ; /
-SEP #$30     ; 8-bit AXY
-PLB          ; Recover data bank
+PHB                ; Preserve data bank
+REP #$30           ; 16-bit AXY
+LDA #$0004         ; \
+LDX #$8908         ;  |
+LDY #$A000         ;  | Move 5 bytes of data from $1F8908 to $7FA000
+MVN $7F, $1F       ; /
+SEP #$30           ; 8-bit AXY
+PLB                ; Recover data bank
 ```
 This example will move 5 bytes of data from address $1F8098 to $7FA000.
 
@@ -90,14 +90,14 @@ Considering that X and Y decrease, rather than increase, this means that MVP mov
 
 Here's an example of a block move:
 ```
-PHB          ; Preserve data bank
-REP #$30     ; 16-bit AXY
-LDA #$0004   ; \
-LDX #$8908   ;  |
-LDY #$A000   ;  | Move 5 bytes of data from ($1F8908-$0004) to ($7FA000-$0004)
-MVP $7F, $1F ; /
-SEP #$30     ; 8-bit AXY
-PLB          ; Recover data bank
+PHB                ; Preserve data bank
+REP #$30           ; 16-bit AXY
+LDA #$0004         ; \
+LDX #$8908         ;  |
+LDY #$A000         ;  | Move 5 bytes of data from ($1F8908-$0004) to ($7FA000-$0004)
+MVP $7F, $1F       ; /
+SEP #$30           ; 8-bit AXY
+PLB                ; Recover data bank
 ```
 This example will move 5 bytes of data from address $1F8904 to $7F9FFC. Although the transfer happens backwards, the transferred data isn't reversed. It still copies over as you'd expect.
 

@@ -8,17 +8,17 @@ The less cycles, the less slowdown the code suffers from. Slowdown is often noti
 
 ```
 ; Inefficient
-LDA #$00	   ; 2 cycles
-STA $7E0000	   ; 5 cycles
-               ; = 7 cycles
+LDA #$00           ; 2 cycles
+STA $7E0000        ; 5 cycles
+                   ; = 7 cycles
 ; Efficient
-LDA #$00       ; 2 cycles
-STA $00        ; 3 cycles
-               ; = 5 cycles
+LDA #$00           ; 2 cycles
+STA $00            ; 3 cycles
+                   ; = 5 cycles
 
 ; Very efficient
-STZ $00        ; 3 cycles
-               ; = 3 cycles
+STZ $00            ; 3 cycles
+                   ; = 3 cycles
 ```
 At first, we use a full notation to write the value $00 to address $7E0000. But then, in the next example, we shorten the address, saving 2 cycles. Finally, we figure that we can use `STZ`, as we store zero to an address anyway.
 

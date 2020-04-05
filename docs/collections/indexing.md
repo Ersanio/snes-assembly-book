@@ -39,8 +39,8 @@ ValuesTableExample: db $03,$86,$91,$38,$22
 However, what this code does is always reading the first value in that table, the value $03, and storing it into RAM $7E0000. This is because we haven't used any indexer.
 
 ```
-LDY #$03                    ;Y is now loaded with the number $03
-LDA ValuesTableExample,y    ;Load a number from the table into A, using Y as index
+LDY #$03           ; Y is now loaded with the number $03
+LDA ValuesTableExample,y ;Load a number from the table into A, using Y as index
 STA $00
 RTS
 

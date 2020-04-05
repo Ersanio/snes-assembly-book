@@ -14,24 +14,24 @@ These are opcodes to increase or decrease a value by 1.
 
 INC and DEC support both the accumulator as well as addresses. Here's an example of increasing the accumulator by 1:
 ```
-LDA #$02 ; Load the value $02 into the accumulator
-INC A    ; Increase the accumulator by 1. It is now $03
+LDA #$02           ; Load the value $02 into the accumulator
+INC A              ; Increase the accumulator by 1. It is now $03
 ```
 Here's an example to decrease the accumulator by 1:
 ```
-LDA #$02 ; Load the value $02 into the accumulator
-DEC A    ; Decrease the accumulator by 1. It is now $01
+LDA #$02           ; Load the value $02 into the accumulator
+DEC A              ; Decrease the accumulator by 1. It is now $01
 ```
 
 Here's an example to increase the value of an address by 1, without affecting the accumulator at all:
 ```
-INC $0F	; Increase the value in $7E000F by one
-RTS		; Return. A remains unchanged
+INC $0F            ; Increase the value in $7E000F by one
+RTS                ; Return. A remains unchanged
 ```
 Here's also an example to decrease a value by one
 ```
-DEC $0F	; Decrease the value in $7E000F by one
-RTS		; Return. A remains unchanged
+DEC $0F            ; Decrease the value in $7E000F by one
+RTS                ; Return. A remains unchanged
 ```
 
 When you use INC when the value being modified is currently $FF, it would result in a $00 and the zero flag being set. Conversely, when you use DEC and the value being modified is currently $00, it would result in a $FF.
@@ -68,10 +68,10 @@ Just for emphasis: ADC adds a value to the accumulator, not a RAM address. SBC s
 
 With ADC and SBC, you can do add and subtract operations on addresses. Here's an example which adds 4 to the value of an address:
 ```
-LDA $0F  ; Load the address value in A
-CLC      ; Clear carry flag
-ADC #$04 ; What you will add to A. It is $04 in this case.
-STA $0F  ; Store A in $0F
+LDA $0F            ; Load the address value in A
+CLC                ; Clear carry flag
+ADC #$04           ; What you will add to A. It is $04 in this case.
+STA $0F            ; Store A in $0F
 ```
 Because ADC modifies A rather than addresses, you must first load the address value into A, then do the addition, then store the result back into the address. 
 
@@ -80,10 +80,10 @@ If the carry flag wasn't cleared, the addition would've been $05 instead of $04,
 The opposite is also true for subtracting:
 
 ```
-LDA $0F  ; Load the current value in A
-SEC      ; Set Carry Flag
-SBC #$04 ; How many you will subtract from A. It is $04 in this case.
-STA $0F  ; Store A in $0F
+LDA $0F            ; Load the current value in A
+SEC                ; Set Carry Flag
+SBC #$04           ; How many you will subtract from A. It is $04 in this case.
+STA $0F            ; Store A in $0F
 ```
 This will subtract 4 from the RAM address’ content (`$0F-#$04`). You'll notice that for subtracting, we set the carry flag rather than clear it. If you didn’t set the carry flag, it would subtract $05 instead of $04. This might seem backwards, but it's just how the processor works.
 
@@ -113,27 +113,27 @@ Math rules are at play here. Adding two negative numbers results in a negative n
 
 Here are some examples of the overflow flag getting set:
 ```
-LDA #$88  ; Number -120
-CLC	      ; We do -120 + -16, which should result in -136
-ADC #$F0  ; $88 + $F0 = $78, which is 120, which doesn't make sense mathematically
+LDA #$88           ; Number -120
+CLC                ; We do -120 + -16, which should result in -136
+ADC #$F0           ; $88 + $F0 = $78, which is 120, which doesn't make sense mathematically
 ```
 
 ```
-LDA #$80  ; Number -128
-SEC       ; We do -128 - 16, which should result in -144
-SBC #$10  ; $80 - $10 = $70, which is 112, which doesn't make sense mathematically
+LDA #$80           ; Number -128
+SEC                ; We do -128 - 16, which should result in -144
+SBC #$10           ; $80 - $10 = $70, which is 112, which doesn't make sense mathematically
 ```
 
 ```
-LDA #$30  ; Number 48
-CLC       ; We do 48 + 112, which should result in 160
-ADC #$70  ; $30 + $70 = $A0, which is -96, which doesn't make sense mathematically
+LDA #$30           ; Number 48
+CLC                ; We do 48 + 112, which should result in 160
+ADC #$70           ; $30 + $70 = $A0, which is -96, which doesn't make sense mathematically
 ```
 
 ```
-LDA #$10  ; Number 16
-SEC       ; We do 16 - -128, which should result in 144
-SBC #$80  ; $10 - $80 = $90, which is -112, which doesn't make sense mathematically
+LDA #$10           ; Number 16
+SEC                ; We do 16 - -128, which should result in 144
+SBC #$80           ; $10 - $80 = $90, which is -112, which doesn't make sense mathematically
 ```
 
 ## 16-bit mode math
