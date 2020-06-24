@@ -25,11 +25,11 @@ These vectors come into play when the SNES runs in emulation mode (E=1).
 |`$00:FFF8`|ABORT vector|Unused by the SNES|
 |`$00:FFFA`|NMI vector||
 |`$00:FFFC`|RESET vector|Triggered by SNES soft/hard reset|
-|`$00:FFFE`|IRQ/BRK vector|It's possible to differentiate between the two using the [BRK flag](../processor/flags.md).|
+|`$00:FFFE`|IRQ/BRK vector|It's possible to differentiate between the two using the [BRK flag](../processor/flags.md)|
 
 
 ## Example setup
-Here's an example setup with the most commonly used vectors, which can be used in homebrew SNES ROMs. Note that the labels must be located in bank `$00`.
+Here's an example setup with the most commonly used vectors, which can be used in homebrew SNES ROMs. Note that the labels must be located in bank `$00` (which is located within the same bank as this setup).
 
 ```
 ORG $00FFE0
@@ -55,4 +55,4 @@ dw Reset           ; RESET
 dw $FFFF           ; IRQ/BRK
 ```
 
-Because homebrew programmers generally want to run their program in native mode, all vectors in Emulation mode, save for reset, have been ignored. Furthermore, nothing is done with the `BRK` and `COP` vectors as these are opcodes which generally are unused.
+Because homebrew programmers generally want to run their program in native mode, all vectors in emulation mode, save for reset, have been ignored. Furthermore, nothing is done with the `BRK` and `COP` vectors as these are opcodes which generally are unused.
