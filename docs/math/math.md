@@ -73,7 +73,7 @@ The SNES has a set of hardware registers used for unsigned division. They are la
 |$4216|Read|Unsigned division remainder, low byte|
 |$4217|Read|Unsigned division remainder, high byte|
 
-Quotient means how many times the dividend can "fit" in the divisor. For example: `6 / 3 = 2`. Thus, 6 fits two times in 3. Another way you can read this is: You can extract 3 two times from 6 and end up with exactly 0 as leftover.
+Quotient means how many times the dividend can "fit" in the divisor. For example: `6 / 3 = 2`. Thus, the quotient is 2. Another way you can read this is: You can extract 3 **two** times from 6 and end up with exactly 0 as leftover.
 
 Modulo is an operation that determines the remainder of the dividend that couldn't "fit" into the divisor. For example: `8 / 3 = 2`. You can subtract 3 two times from 8, but at the end, you have a 2 as a remainder. Thus, the remainder for this equation is `2`. Because there are hardware registers that support remainders, the SNES also supports the modulo operation.
 

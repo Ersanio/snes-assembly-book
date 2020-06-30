@@ -93,8 +93,169 @@ Table:   db $01,$02,$04,$FF
 ```
 In the case of this example, the code loops through four bytes of data, three of which are actual data and one of which is the end-of-data marker. Once the loop encounters this marker, in this case the value `$FF`, the loop is immediately terminated.
 
-## Longer branches
-invert branch + jmp
+## Bigger branch reach
+In the [branches chapter](../programming/branches), it is mentioned that branches have a limited distance of -128 to 127 bytes. When you do exceed that limit, the assembler automatically detects that and throws some kind of error, such as the following:
 
-## Jump tables
+```
+            LDA $00
+            CMP #$03
+            BEQ SomeLabel ; Branch when address $7E0000 contains the value $03
+            NOP #1000     ; 1000 times "NOP"
+SomeLabel:  RTS
+```
+Would cause the following error:
+```
+file.asm:3: error: (E5037): Relative branch out of bounds. (Distance is 1000). [BEQ SomeLabel]
+```
+This means that the distance between the branch and the label is 1000 bytes, which definitely exceeds the 127 bytes limit. If you necessarily have to jump to that one label, you can invert the conditional and make use of the `JMP` opcode for a longer jump reach:
 
+```
+            LDA $00
+            CMP #$03
+            BNE +         ; Skip the jump when address $7E0000 doesn't contain the value $03
+            JMP SomeLabel ; This runs when address $7E0000 *does* contain the value $03
+
++           NOP #1000     ; Shorthand for 1000 times "NOP"
+SomeLabel:  RTS
+```
+
+This way, the logic still remains the same, namely, the thousand NOPs run when address $7E0000 doesn't contain the value $03. The out-of-bounds error is solved. Additionally, replacing the `JMP` with `JML` will allow you to jump *anywhere* instead of being restricted to the current bank.
+
+## Pointer tables
+A pointer table is a table with a list of pointers. Depending on the context, the pointers can either point to code or data. Pointer tables are especially useful if you need to run certain routines or access certain data for an exhaustive list of values. Without pointer tables, you would have to do a massive amount of manual comparisons instead. Here's an example of a manual version:
+
+```
+  LDA $14
+  CMP #$00
+  BNE +
+  JMP FirstRoutine
+
++ CMP #$01
+  BNE +
+  JMP SecondRoutine
+
++ CMP #$02
+  BNE +
+  JMP ThirdRoutine
+
++ RTS
+
+FirstRoutine:
+  LDA #$95
+  STA $15
+  RTS
+
+SecondRoutine:
+  LDA #$95
+  STA $15
+  RTS
+
+ThirdRoutine:
+  LDA #$95
+  STA $15
+  RTS
+```
+You can imagine that with a lot of values that are associated with routines, this comparison logic can get huge pretty quickly. This is where pointer tables come in handy.
+
+This here is a pointer table:
+```
+Pointers: dw Label1
+          dw Label2
+          dw Label3
+          dw Label4
+```
+As you can see, it's nothing but a bunch of table entries pointing somewhere. You can use labels in order to point to ROM, or defines to point to RAM.
+
+### Pointer tables for code
+There are a few instructions designed for making use of pointer tables. They are as follows:
+
+|Instruction|Example|Explanation|
+|-|-|-|
+|**JMP (*absolute address*)**|JMP ($0000)|Jumps to the absolute address located at address $7E0000|
+|**JMP (*absolute address*,x)**|JMP ($0000,x)|Jumps to the absolute address located at address $7E0000, which is indexed by X|
+|**JML [*absolute address*]**|JML [$0000]|Jumps to the long address located at address $7E0000|
+|**JSR (*absolute address*,x)**|JSR ($0000,x)|Jumps to the absolute address located at address $7E0000, which is indexed by X, then returns|
+With these opcodes, as well as a pointer table, it is possible to run a subroutine depending on the value of a certain RAM address. Here's an example which runs a routine depending on the value of RAM address $7E0014:
+
+```
+LDA $14            ; Load the value into A...
+ASL A              ; ...Multiply it by two...
+TAX                ; ...then transfer it into X
+JSR (Pointers,x)   ; Execute routines.
+RTS
+
+Pointers: dw Label1 ; $7E0014 = $00
+          dw Label2 ; $7E0014 = $01
+          dw Label3 ; $7E0014 = $02
+          dw Label4 ; $7E0014 = $03
+
+Label1:   LDA #$01
+          STA $09
+          RTS
+
+Label2:   LDA #$02
+          STA $09
+          RTS
+
+Label3:   LDA #$03
+          STA $99
+          RTS
+
+Label4:   LDA #$55
+          STA $66
+          RTS
+```
+The short explanation is that depending on the value of RAM address $14, the four routines are executed. For value `$00`, the routine at `Label1` is executed. For value `$01`, the routine at `Label2` is executed, and so on.
+
+The long explanation is that we load the value into A and multiply it by two, because we use *words* for our pointer tables. Thus, we need to index every two bytes instead of every byte. This means that value `$00` stays as index value `$00` thus reading the `Label1` pointer. Value `$01` becomes index value `$02`, thus reading the `Label2` pointer. Value `$02` becomes index value `$04`, thus reading the `Label3` pointer. Value `$03` becomes index value `$06`, thus reading the `Label4` pointer. Because the JSR uses an "absolute, indirect" addressing mode, the labels are also absolute, thus they only run in the same bank as that JSR.
+
+### Pointer tables for data
+The same concept can be applied for data (i.e. tables). Imagine you want to read level data, depending on the level number. A pointer table would be a perfect solution for that. Here's an example:
+
+```
+  LDA $14            ; Load the level number into A...
+  ASL A              ; ...Multiply it by three...
+  CLC
+  ADC $14
+  TAY                ; ...then transfer it into Y
+  LDA Pointers,y
+  STA $00
+  LDA Pointers+1,y
+  STA $01
+  LDA Pointers+2,y ; Store the pointed address into RAM
+  STA $01          ; To use as an indirect pointer
+
+  REP #$10
+  LDY #$0000
+- LDA [$00],Y      ; Read level data until you reach an end-of-data marker
+  CMP #$FF
+  BEQ Return
+
+  INY
+  BRA -
+  ; Do something with level data here
+  
+Return:
+  SEP #$10
+  RTS
+
+Pointers: dl Level1 ; $7E0014 = $00
+          dl Level2 ; $7E0014 = $01
+          dl Level3 ; $7E0014 = $02
+          dl Level4 ; $7E0014 = $03
+
+Level1:   db $01,$02,$91,$86,$01,$82,$06,$FF
+
+Level2:   db $AB,$91,$06,$78,$75,$FF
+
+Level3:   db $D9,$B0,$A0,$21,$FF
+
+Level4:   db $C0,$92,$84,$81,$82,$99,$FF
+```
+In the first section, we use the same concept of multiplying a value to access a pointer table. Except this time, we multiply by three, because the pointer tables contain values that are *long*. We use this value as an index to the pointer table, and store the pointer in RAM $7E0000 to $7E0002, in little endian. After that, in the second section, we use RAM $7E0000 as an indirect pointer and start looping through its values, using Y as an index again. We keep looping indefinitely, until we hit an "end-of-data" marker, in this case the value `$FF`. We use this method because levels could be variable in length. We also use 16-bit Y because level data *could* be bigger than 256 bytes in size. Finally, we finish the routine by setting Y back to 8-bit and then returning.
+
+This example also shows how to use 24-bit pointers rather than 16-bit pointers. The pointer table contains long values. We use this in combination with a "direct, indirect *long*" addressing mode (i.e. the square brackets).
+
+## Pseudo 16-bit math
+
+## Addition and subtraction on X and Y
