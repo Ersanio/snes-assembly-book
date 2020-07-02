@@ -14,6 +14,38 @@ LDA $001122        ; AF 22 11 00
 
 An instruction without a hexadecimal parameter is only 1 byte, like `INC A` or `TAX`. An instruction with an 8-bit parameter is 2 bytes, like `LDA #$00`. An instruction with a 16-bit parameter is 3 bytes, like `LDA $0000`. An instruction with a 24-bit parameter is 4 bytes, like `LDA $000000`. It doesn’t matter if the addressing mode is indexed, direct indirect or something else. It all depends on the length of the `$`-value.
 
+## Shorthand zero comparison
+Faster comparison makes use of processor flags effectively, because branches actually depend on the processor flags. As mentioned in this tutorial earlier, `BEQ` branches if the zero flag is set, `BNE` branches if the zero flag is clear, `BCC` branches if the carry flag is clear, and so on. 
+
+Often, if the result of ​any​ operation is zero (`$00`, or `$0000` in 16-bit mode), the zero flag gets set. For example, if you do `LDA #$00`, the zero flag is set. Nearly all opcodes which modify an address or register affect the zero flag.
+
+By making use of the zero flag, it's possible to check if a certain instruction has zero as its result (including loads). This way, you can write shorthand methods to check if an address actually contains the value `$00` or `$0000`. Here's an example:
+
+```
+LDA $59
+BEQ IsZero
+
+LDA #$01
+STA $02
+
+IsZero:
+RTS
+```
+This code checks if address $7E0059 contains the value `$00`. If it does contain this value, then it immediately returns. If it does not contain the value `$00`, then it stores the value `$01` into address $7E0002.
+
+The reverse is also possible: checking if an address does *not* contain zero. here's an example:
+```
+LDA $59
+BNE IsNotZero
+
+LDA #$01
+STA $02
+
+IsNotZero:
+RTS
+```
+This code checks if address $7E0059 does *not* contain the value `$00`. If it indeed does not contain this value, then it immediately returns. If it does contain the value `$00`, then it stores the value `$01` into address $7E0002, instead.
+
 ## Looping
 Loops are certain type of code flow which allow you to execute code repeatedly. It is especially useful when you need to read out a table or a memory region value-by-value. A practical example is reading out level data from the SNES ROM, in order to build a playable level. Levels are essentially a long list of object and sprite data, therefore, this data can be read out in a repetetive way, until you reach the end of such data.
 
@@ -257,5 +289,113 @@ In the first section, we use the same concept of multiplying a value to access a
 This example also shows how to use 24-bit pointers rather than 16-bit pointers. The pointer table contains long values. We use this in combination with a "direct, indirect *long*" addressing mode (i.e. the square brackets).
 
 ## Pseudo 16-bit math
+It is possible to perform 16-­bit `ADC` and `SBC` without actually switching to 16-­bit mode. This is actually quite useful in cases a 16-bit value is stored across two separate addresses as two 8-bit values. This is possible with the help of the carry flag as well as the behaviour of the opcodes `ADC` and `SBC`.
 
-## Addition and subtraction on X and Y
+Pseudo 16-bit math also works with `INC` and `DEC`, although you'd have to use them on the addresses instead of the A, X and Y registers. By making clever usage of the negative flag, it's possible to perform pseudo 16-bit math with this opcode also.
+
+### ADC
+Here's an example of a pseudo 16-bit `ADC`:
+
+```
+LDA #$F0
+STA $00            ; Initialize address $7E0000 to value $F0 for this example
+LDA #$05
+STA $59            ; Initialize address $7E0059 to value $05 for this example
+                   ; These would make the 16-bit value $05F0
+
+LDA $00            ; Load the value $F0 into A
+CLC                ; Clear Carry flag for addition. C = 0
+ADC #$20           ; $F0+$20 = $10, C = 1
+STA $00            ; $7E0000 has now the value $10
+
+LDA $59            ; Load the value $05 into A
+ADC #$00           ; Add $00 to $7E0005. BUT because C = 1, this adds $01 to A instead
+STA $59            ; A is now $06, and we store it into $7E0059
+                   ; These would now make the 16-bit value $0610
+                   ; across two addresses
+```
+The carry flag is set after the first `ADC`. This means that the value has wrapped back to `$00` and increased from there. Because the carry flag is set, the second `ADC` adds $00 + carry, thus `$01`, thus increasing the second address by one.
+
+### SBC
+Here's an example of a pseudo 16-bit `SBC`:
+
+```
+LDA #$10
+STA $00            ; Initialize address $7E0000 to value $10 for this example
+LDA #$05
+STA $59            ; Initialize address $7E0059 to value $05 for this example
+                   ; These would make the 16-bit value $0510
+
+LDA $00            ; Load the value $10 into A
+SEC                ; Set Carry flag for subtraction. C = 1
+SBC #$20           ; $10-$20 = $F0, C = 0
+STA $00            ; $7E0000 has now the value $10
+
+LDA $59            ; Load the value $05 into A
+ADC #$00           ; Subtract $00 from $7E0005. BUT because C = 0, this subtracts $01 from A instead
+STA $59            ; A is now $04, and we store it into $7E0059
+                   ; These would now make the 16-bit value $04F0
+                   ; across two addresses
+```
+The carry flag is cleared after the first `SBC`. This means that the value has wrapped back to `$FF` and decreased from there. Because the carry flag is cleared, the second `SBC` subtracts $00 + carry, thus `$01`, thus decreasing the second address by one.
+
+### INC
+Here's an example of a pseudo 16-bit `INC`:
+
+```
+   LDA #$FF
+   STA $00          ; Initialize address $7E0000 to value $FF for this example
+   LDA #$03
+   STA $59          ; Initialize address $7E0059 to value $03 for this example
+                    ; These would make the 16-bit value $$03FF
+
+   INC $00          ; The value in $7E0000 is increased by 1, making it have the value $00
+   BNE +            ; This sets the zero flag, thus the branch is not taken
+   INC $59          ; Thus, the value in $7E0059 is also increased by 1
++  RTS              ; These would now make the 16-bit value $0400
+                    ; across two addresses
+```
+By making clever usage of the zero flag, we know that the result of `INC $00` is actually the value `$00`, because that's the only time the zero flag is set. If the result is indeed the value `$00`, then the other address needs to be increased also.
+
+### DEC
+Here's an example of a pseudo 16-bit `DEC`:
+
+```
+   LDA #$00
+   STA $00          ; Initialize address $7E0000 to value $00 for this example
+   LDA #$03
+   STA $59          ; Initialize address $7E0059 to value $03 for this example
+                    ; These would make the 16-bit value $$0300
+
+   DEC $00          ; Decrease the value in $7E0000 by 1
+   LDA $00          ; If it results in $FF, then we wrapped from the value $00 to $FF
+   CMP #$FF         ; Thus, we need to decrease the value in $7E0059 also
+   BNE +
+   DEC $59
++  RTS              ; These would now make the 16-bit value $02FF
+                    ; across two addresses
+As you can see, there's an extra check for the value $FF, because there's no shorthand way to check if the result of a `DEC` is exactly the value $FF. If the result indeed is the value `$FF`, then the other address needs to be decreased also.
+```
+
+## ADC and SBC on X and Y
+Increasing and decreasing A by a certain amount is easy because of `ADC` and `SBC`. However, these kind of instructions do not exist for X and Y. If you want to increase or decrease X and Y by a small amount, you would have to use `INX`, `DEX`, `INY` and `DEY`. This quickly gets impractical if you have to increase or decrease X and Y by great numbers (5 or more) though. In order to do that, you can temporarily transfer X or Y to A, then perform an `ADC` or `SBC`, then transfer it back to X or Y. 
+
+### Addition
+Here's an example using `ADC`:
+```
+TXA                ; Transfer X to A. A = X
+CLC                ; 
+ADC #$42           ; Add $42 to A
+TAX                ; Transfer A to X. X has now increased by $42
+```
+By temporarily transferring X to A and back, the `ADC` practically is used on the X register, instead.
+
+### Subtraction
+Here's an example using `SBC`:
+```
+TXA                ; Transfer X to A. A = X
+SEC                ; 
+SBC #$42           ; Subtract $42 from A
+TAX                ; Transfer A to X. X has now decreased by $42
+```
+By temporarily transferring X to A and back, the `SBC` practically is used on the X register, instead.
