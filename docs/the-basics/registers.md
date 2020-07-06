@@ -24,7 +24,7 @@ When X and Y leave 16-bit mode, their high bytes get cleared to the value $00, u
 The direct page register is a 16-bit register, used for the direct page addressing mode (explained later in this tutorial). When you access a memory address by its direct page notation, the value in the direct page is added to that address. You can generally ignore this register if you're just beginning with assembly.
 
 ## Stack Pointer
-The stack pointer register is a 16-bit that holds the pointer to the stack in the RAM (explained later in this tutoorial), relative to memory address $000000. The register dynamically changes, as you push and pull values to the stack (explained later in the tutorial).
+The stack pointer register is a 16-bit that holds the pointer to the stack in the RAM (explained later in this tutorial), relative to memory address $000000. The register dynamically changes, as you push and pull values to the stack (explained later in the tutorial).
 
 ## Processor Status
 The processor status register holds the current processor flags in 8-bit format. There are 8 processor flags, and they all occupy one bit. Changing this register would alter the SNES behaviour greatly. Processor flags are explained later in this tutorial.
