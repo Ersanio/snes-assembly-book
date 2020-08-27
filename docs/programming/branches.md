@@ -8,7 +8,7 @@ Branches are opcodes which control the flow of the code depending on the outcome
 The branching opcodes have a range of -128 to 127 bytes. This means they can either jump 128 bytes backwards, or they can jump 127 bytes forward, relative to the program counter. One exception is BRL (Branch Long). BRL has a range of 32768 bytes (8000 in hex), which is a whole bank. If the branch goes out of range, the assembler gives an error. You’ll have to find a way to put the destination label into the branch’s reach. The "tips and tricks" chapter covers this.
 
 ## Labels
-Labels are basically text placed in code to locate an entry point of a jump or a “table”. Labels are no opcodes or anything. It’s basically an easier way to specify an offset/address, because the labels get turned into numbers by the assembler. It is good practice to give labels meaningful names, for your own sake. Examples codes in this chapter will make use of labels.
+Labels are basically text placed in code to locate an entry point of a jump or a "table". Labels are no opcodes or anything. It’s basically an easier way to specify an offset/address, because the labels get turned into numbers by the assembler. It is good practice to give labels meaningful names, for your own sake. Examples codes in this chapter will make use of labels.
 
 ## CMP
 To make comparisons, you usually compare the contents of A with something else. The primary way for that is the opcode `CMP`.
@@ -17,7 +17,7 @@ To make comparisons, you usually compare the contents of A with something else. 
 |-|-|-|
 |**CMP**|Compare A|Compares A with something else|
 
-CMP takes whatever is in A, and compares it with a specified parameter. After using a CMP instruction, you need to use an opcode that will perform the type of “branch” that you wish to occur.
+CMP takes whatever is in A, and compares it with a specified parameter. After using a CMP instruction, you need to use an opcode that will perform the type of "branch" that you wish to occur.
 
 It’s also possible to compare 16-bit values. Just change `CMP #$xx` to `CMP #$xxxx`.
 
@@ -42,7 +42,7 @@ Label1:
 STZ $19            ; Store zero in $7E0019
 RTS                ; End.
 ```
-This code will store zero ($00) in $7E0019 when $7E0000 contains the value $02. If it doesn't have $02 as its value, the code will then store value $01 in $7E1245. As you can see, BEQ will "jump" to a portion of the code when compared values are equal, skipping certain code. In this case, the code jumps to the code located at the label “Label1”.
+This code will store zero ($00) in $7E0019 when $7E0000 contains the value $02. If it doesn't have $02 as its value, the code will then store value $01 in $7E1245. As you can see, BEQ will "jump" to a portion of the code when compared values are equal, skipping certain code. In this case, the code jumps to the code located at the label "Label1".
 
 BNE branches if the comparison doesn't equal with the compared value. Here's an example:
 ```
@@ -114,7 +114,7 @@ These are branch opcodes which branch depending on if a value results in a mathe
 |**BVS**|Branch if overflow set|Branches if the comparison causes a mathematical overflow|
 |**BVC**|Branch if overflow clear|Branches if the comparison doesn't cause a mathematical overflow|
 
-The “overflow” flag is a processor flag, explained later in the tutorial.
+The "overflow" flag is a processor flag, explained later in the tutorial.
 
 ## BRA and BRL
 These are unconditional branches which are always taken.

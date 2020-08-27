@@ -16,7 +16,7 @@ These opcodes call a piece of code, then continue executing code below said opco
 ```
 LDA #$01
 STA $01
-JSR Label1         ; Execute the “subroutine” located at Label1 (current bank)
+JSR Label1         ; Execute the "subroutine" located at Label1 (current bank)
 LDA #$03           ; The RTS in Label1 will return to this line
 STA $00
 RTS

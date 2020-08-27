@@ -263,9 +263,10 @@ The same concept can be applied for data (i.e. tables). Imagine you want to read
   CMP #$FF
   BEQ Return
 
+  ; Do something with the loaded level data here
+
   INY
   BRA -
-  ; Do something with level data here
   
 Return:
   SEP #$10
@@ -374,8 +375,8 @@ Here's an example of a pseudo 16-bit `DEC`:
    DEC $59
 +  RTS              ; These would now make the 16-bit value $02FF
                     ; across two addresses
-As you can see, there's an extra check for the value $FF, because there's no shorthand way to check if the result of a `DEC` is exactly the value $FF. If the result indeed is the value `$FF`, then the other address needs to be decreased also.
 ```
+As you can see, there's an extra check for the value $FF, because there's no shorthand way to check if the result of a `DEC` is exactly the value $FF. If the result indeed is the value `$FF`, then the other address needs to be decreased also.
 
 ## ADC and SBC on X and Y
 Increasing and decreasing A by a certain amount is easy because of `ADC` and `SBC`. However, these kind of instructions do not exist for X and Y. If you want to increase or decrease X and Y by a small amount, you would have to use `INX`, `DEX`, `INY` and `DEY`. This quickly gets impractical if you have to increase or decrease X and Y by great numbers (5 or more) though. In order to do that, you can temporarily transfer X or Y to A, then perform an `ADC` or `SBC`, then transfer it back to X or Y. 
@@ -399,3 +400,6 @@ SBC #$42           ; Subtract $42 from A
 TAX                ; Transfer A to X. X has now decreased by $42
 ```
 By temporarily transferring X to A and back, the `SBC` practically is used on the X register, instead.
+
+## Checking flags
+TODO BIT or AND

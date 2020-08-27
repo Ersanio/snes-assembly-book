@@ -7,7 +7,7 @@ This chapter explains opcodes which don't really fit in any other chapter.
 |-|-|-|
 |**NOP**|No operation|Does absolutely nothing|
 
-It is often used to disable existing opcodes in a ROM without shifting around the bytecode. It can also be used to give time for the [math hardware registers](../math/math.md) to do their work.
+It is often used to disable existing opcodes in a ROM without shifting around the machine code. It can also be used to give time for the [math hardware registers](../math/math.md) to do their work.
 
 ## XBA
 |Opcode|Full name|Explanation|

@@ -8,4 +8,4 @@ You can write everything in normal ASM without worrying about little-endian, bec
 
 For example: if you ever store the value $1234 at address $7E0000, it is stored as $34 $12. Then, if you ever want to access the low byte of $1234 (which is $34), you would need to read $7E0000, NOT $7E0001.
 
-The concept of little-endian is especially important when dealing with “pointers”, which is explained later in this tutorial.
+The concept of little-endian is especially important when dealing with "pointers", which is explained later in this tutorial.

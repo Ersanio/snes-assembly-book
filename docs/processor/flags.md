@@ -49,7 +49,7 @@ These opcodes adjust the accumulator on-the-fly. This means that, if you for exa
 
 Although decimal-mode math properly affects the carry flag and negative flag, it doesn't do this with the overflow flag.
 
-# Binary-coded decimal
+### Binary-coded decimal
 Because these numbers are stored in decimal, they're stored in 'binary-coded decimal' (BCD). BCD is basically the same as hexadecimal, with the values $0A-0F, $1A-1F, et cetera 'cut out'. Here's a table showing how counting in BCD goes like:
 
 |Binary|Hexadecimal|Decimal|BCD|
@@ -94,9 +94,7 @@ Most opcodes modify the zero depending on the results of that opcode. These opco
 The zero flag doesn't affect the behaviour of the SNES. Rather, there are some branches which make use of the zero flag.
 
 ## Carry flag (c)
-The SNES supports math in the form of adding and subtracting numbers. It also supports bitwise operations such as bitshifting. Finally, the SNES supports logical operations such as a logical AND or XOR.
-
-The “carry flag” is a processor flag used for most of these arithmetic and bitshifting operations. Additionally, the carry flag is also used for branching. The carry flag is the same concept as the "carry" you learn in elementary school. In a typical pencil-and-paper addition, you'd write it out like this:
+The SNES supports math in the form of adding and subtracting numbers. It also supports bitwise operations such as bitshifting. The "carry flag" is a processor flag used for most of these arithmetic and bitshifting operations. Additionally, the carry flag is also used for branching. The carry flag is the same concept as the "carry" you learn in elementary school. In a typical pencil-and-paper addition, you'd write it out like this:
 ```
   ¹
   27
@@ -106,7 +104,7 @@ The “carry flag” is a processor flag used for most of these arithmetic and b
  ```
 7+9 equals 16, thus *carry* the 1 to the left.
 
-Considering the carry is a "flag", when the carry flag is clear, the carry (C) will be 0. When it's set, the carry will be 1. You can safely assume that the carry flag is the “9th bit” of the A register when A is in 8-bit mode, and the “17th bit” when A is in 16-bit mode. Assuming A is in 8-bit mode, the carry flag will look like this:
+Considering the carry is a "flag", when the carry flag is clear, the carry (C) will be 0. When it's set, the carry will be 1. You can safely assume that the carry flag is the "9th bit" of the A register when A is in 8-bit mode, and the "17th bit" when A is in 16-bit mode. Assuming A is in 8-bit mode, the carry flag will look like this:
 ```
 BBBBBBBB C
 ```

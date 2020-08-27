@@ -1,10 +1,10 @@
 # Binary
 
-Another important counting system is “binary”. Binary has only two possible digits for each place value: 0 and 1. A binary digit is also called a "bit". In assembly syntax, bits are prefixed by "%".
+Another important counting system is "binary". Binary has only two possible digits for each place value: 0 and 1. A binary digit is also called a "bit". In assembly syntax, bits are prefixed by "%".
 
-A byte is made of eight “bits”. Because a binary digit has two possible values, and a byte has 8 bits, this means there are 2⁸ possible values in a byte.
+A byte is made of eight "bits". Because a binary digit has two possible values, and a byte has 8 bits, this means there are 2⁸ possible values in a byte.
 
-For example, a byte can consist of the following bits: `1001 0110` or `1001 0101`. The first bit from the left is called “bit 7” and the final bit is called “bit 0”. They are NOT called bits 0-7, nor bits 8-1. Here's an overview:
+For example, a byte can consist of the following bits: `1001 0110` or `1001 0101`. The first bit from the left is called "bit 7" and the final bit is called "bit 0". They are NOT called bits 0-7, nor bits 8-1. Here's an overview:
 
 ```
 Bit 7654 3210
@@ -29,7 +29,7 @@ The table below shows a relatively easy way to memorize binary.
 
 Note that there is a space inbetween 4 bits for easier readability, although assemblers generally don't accept this syntax. Groups of 4 bits are called "nibbles" and for the purposes of this chapter, they are there to make binary easier to read, because one nibble corresponds to one digit in hexadecimal.
 
-The SNES is capable of working with both 8-bit and 16-bit numbers. While 8-bit numbers are called a byte, 16-bit numbers are called a "word". They would look like they have 16 bits in binary \(e.g. `10000101 11010101`, which is `$85D5` in hexadecimal\). In the case of 16-bit numbers, the leftmost bit is called “bit 15” while the rightmost bit is called “bit 0”:
+The SNES is capable of working with both 8-bit and 16-bit numbers. While 8-bit numbers are called a byte, 16-bit numbers are called a "word". They would look like they have 16 bits in binary \(e.g. `10000101 11010101`, which is `$85D5` in hexadecimal\). In the case of 16-bit numbers, the leftmost bit is called "bit 15" while the rightmost bit is called "bit 0":
 
 ```
     1111 11             (read from top to bottom)            

@@ -19,10 +19,10 @@ Here is an example of how the stack works from the RAM’s point of view, when y
 LDA #$42                            └─Stack pointer points to this value
 PHA
          ;Stack: .. 55 55 55 55 55 42 ..
-LDA #$AA                         └─Stack pointer points to this value
+LDA #$AA                         └─Stack pointer now points to this value
 PHA
          ;Stack: .. 55 55 55 55 AA 42 ..
-                              └─Stack pointer points to this value
+                              └─Stack pointer now points to this value
 ```
 
 Here is an example of a 16-bit push:
@@ -32,10 +32,10 @@ REP #$20 ;16-bit A mode
 LDA #$4210                          └─Stack pointer points to this value
 PHA
          ;Stack: .. 55 55 55 55 10 42 ..
-LDA #$AA99                    └─Stack pointer points to this value
+LDA #$AA99                    └─Stack pointer now points to this value
 PHA
          ;Stack: .. 55 55 99 AA 10 42 ..
-                        └─Stack pointer points to this value
+                        └─Stack pointer now points to this value
 ```
 
 ## Pull
@@ -47,11 +47,11 @@ Here's an example of pulling an 8-bit value:
                           └─Stack pointer points to this value
 PLA     ; A is now $34
         ;Stack: .. 55 55 12 34 56 78 ..
-                             └─Stack pointer points to this value
+                             └─Stack pointer now points to this value
 PLA
         ; A is now $56
         ;Stack: .. 55 55 12 34 56 78 ..
-                                └─Stack pointer points to this value
+                                └─Stack pointer now points to this value
 ```
 
 Here's an example of pulling a 16-bit value:
@@ -61,9 +61,9 @@ REP #$20 ;16-bit A mode
                         └─Stack pointer points to this value
 PLA      ; A is now $3412
          ;Stack: .. 55 55 12 34 56 78 ..
-                             └─Stack pointer points to this value
+                             └─Stack pointer now points to this value
 PLA
          ; A is now $7856
          ;Stack: .. 55 55 12 34 56 78 ..
-                                    └─Stack pointer points to this value
+                                    └─Stack pointer now points to this value
 ```
