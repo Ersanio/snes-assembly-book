@@ -1,4 +1,4 @@
-# Começando
+# Iniciando
 
 ## IDE
 
