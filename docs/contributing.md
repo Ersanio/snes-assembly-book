@@ -21,22 +21,22 @@ Essas diretrizes se referem ao estilo do documento.
 | Ao referir-se a valores, sempre acrescente um `valor` | A contém o `valor` $00 |
 
 ## Códigos de exemplo
-- O código deve usar indentação quando houver rótulos, sub-rótulos ou rótulos de mais / menos na mesma linha que uma instrução. A quantidade de indentação é igual ao comprimento do tipo de rótulo mais longo mencionado anteriormente no bloco de código, incluindo dois pontos ("`: `"), mais dois espaços adicionais.
-  - O código deve usar espaços em branco para indentação, não guias.
-- Os opcodes são escritos inteiramente em maiúsculas (por exemplo: `LDA`).
-- Os rótulos são escritos em PascalCase (por exemplo: `Label1:`).
-- Os sub-rótulos são escritos inteiramente em minúsculas, sublinhados e o nome deve se adequar semanticamente ao rótulo pai, sem redundância (por exemplo: `.return`).
-- As definições são escritas em PascalCase (por exemplo: `! SomeDefine`).
-- Dados diretos (`db`,` dw`, `dl`,` dd`) e especificadores de comprimento de opcode (`.b`,` .w`, `.l`) são escritos inteiramente em minúsculas.
-- Os indicadores de comentários (ou seja, `;`) devem começar na coluna 20 e preenchidos à esquerda por espaços em branco, não por tabulações.
+- O código deve usar indentação quando houver labels, sub-labels ou labels de mais/menos na mesma linha que uma instrução. A quantidade de indentação é igual ao comprimento do tipo de rótulo mais longo mencionado anteriormente no bloco de código, incluindo dois pontos ("`:`"), mais dois espaços adicionais.
+- O código deve usar espaços em branco para indentação, sem tabulação.
+- Os opcodes são escritos inteiramente em maiúsculas (ex: `LDA`).
+- As labels são escritas em PascalCase (ex: `Label1:`).
+- As sub-labels são escritos inteiramente em minúsculas, sublinhados e o nome deve se adequar semanticamente ao rótulo pai, sem redundância (ex: `.return`).
+- Os defines são escritos em PascalCase (ex: `!SomeDefine`).
+- Dados diretos (`db`, `dw`, `dl`, `dd`) e especificadores de comprimento de opcode (`.b`,`.w`, `.l`) são escritos inteiramente em minúsculas.
+- Os indicadores de comentários (`;`) devem começar na coluna 20 e preenchidos à esquerda por espaços em branco, não por tabulações.
     - Se não houver espaço para um comentário na coluna 20, ele começará na mesma linha.
 - Os indicadores de comentários devem ser seguidos por um espaço em branco, antes do próprio comentário.
-- Haverá uma nova linha extra após os opcodes `RTS`,` RTL`, `RTI`,` JMP`, `JML`,` BRA`, `BRL`.
+- Haverá uma nova linha extra após os opcodes `RTS`, `RTL`, `RTI`, `JMP`,  `JML`, `BRA`, `BRL`.
 - Estas são orientações que devem ser seguidas o mais estritamente possível, mas pode haver casos excepcionais.
 
 Exemplo:
 `` `
-SomeLabel:; Este rótulo está em sua própria linha
+SomeLabel:; Este label está em sua própria linha
 LDA.b # $ 42
 STA $ 00; Isto é um comentário
 RTS
