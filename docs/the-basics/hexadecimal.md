@@ -31,9 +31,9 @@ Há várias maneiras de escrever números hexadecimais para que os leitores não
 * Prefixo "$"  \($42\)
 * Sufixo  "H"  \(42H\)
 
-In this tutorial, the convention is to prefix hexadecimal numbers with "$".
+Por convenção, usaremos o "$" para prefixar números hexadecimais neste tutorial.
 
-In assembly, a hexadecimal number with two digits is called a “byte”. This means that values between $00-$FF are considered a byte.
+Em assembly, um número hexadecimal com dois dígitos é chamado de “byte”. Isso significa que os valores entre $00 a $FF são considerados como um byte.
 
 ## Signed and unsigned values
 
