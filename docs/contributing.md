@@ -22,11 +22,11 @@ Essas diretrizes se referem ao estilo do documento.
 
 ## Códigos de exemplo
 - O código deve ser indentado quando houver labels, sub-labels ou labels de mais/menos na mesma linha que uma instrução. O recuo do texto
-indentado deve ser igual ao comprimento do rótulo mais longo mencionado anteriormente no bloco de código, incluindo os dois pontos ("`:`"), mais dois espaços adicionais.
+indentado deve ser igual ao comprimento do label mais longo mencionado anteriormente no bloco de código, incluindo os dois pontos ("`:`"), mais dois espaços adicionais.
 - O código deve usar espaços em branco para indentação, sem tabulação.
 - Os opcodes são escritos inteiramente em maiúsculas (ex: `LDA`).
 - As labels são escritas em PascalCase (ex: `Label1:`).
-- As sub-labels são escritos inteiramente em minúsculas, sublinhados e o nome deve se adequar semanticamente ao rótulo pai, sem redundância (ex: `.return`).
+- As sub-labels são escritos inteiramente em minúsculas, sublinhados e o nome deve se adequar semanticamente ao label pai, sem redundância (ex: `.return`).
 - Os defines são escritos em PascalCase (ex: `!SomeDefine`).
 - Dados diretos (`db`, `dw`, `dl`, `dd`) e especificadores de comprimento de opcode (`.b`,`.w`, `.l`) são escritos inteiramente em minúsculas.
 - Os indicadores de comentários (`;`) devem começar na coluna 20 e preenchidos à esquerda por espaços em branco, não por tabulações.
