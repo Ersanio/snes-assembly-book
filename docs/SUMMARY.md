@@ -1,47 +1,47 @@
-# Table of contents
+# Índice
 
-* [Introduction](README.md)
-* [Getting started](getting-started.md)
-* [Contributing](contributing.md)
+* [Introdução] (README.md)
+* [Introdução] (getting-started.md)
+* [Contribuindo] (contribuindo.md)
 
-## The basics
-* [Hexadecimal](the-basics/hexadecimal.md)
-* [Binary](the-basics/binary.md)
-* [The SNES memory](the-basics/memory.md)
-* [The SNES registers](the-basics/registers.md)
-* [Addressing modes](the-basics/addressing.md)
-* [Little-endian](the-basics/endian.md)
-* [Glossary](the-basics/glossary.md)
+## O básico
+* [Hexadecimal] (the-basics/hexadecimal.md)
+* [Binário] (the-basics/binary.md)
+* [Memória] (the-basics/memory.md)
+* [Registradores] (the-basics/registers.md)
+* [Modos de endereçamento] (the-basics/endereçamento.md)
+* [Little-endian] (the-basics/endian.md)
+* [Glossário] (the-basics/glossary.md)
 
-## The basics (again)
-* [Loading and storing](programming/loading-and-storing.md)
-* [Shorter addresses](programming/shorter-addresses.md)
-* [8-bit and 16-bit mode](programming/816.md)
-* [Comparing, branching, labels](programming/branches.md)
-* [Jumping to subroutines](programming/subroutine.md)
+## O básico (novamente)
+* [Carregando e armazenando] (programming/loading-and-storing.md)
+* [Endereços mais curtos] (programação/endereços mais curtos.md)
+* [Modo de 8 e 16 bits] (programação/816.md)
+* [Comparando, ramificação, rótulos] (programação/branches.md)
+* [Salto para sub-rotinas] (programação/subroutine.md)
 
-## Collection of values
-* [Tables and indexing](collections/indexing.md)
-* [The stack](collections/stack.md)
-* [Copying data](collections/moves.md)
+## Coleção de valores
+* [Tabelas e indexação] (coleções/indexação.md)
+* [A pilha] (coleções/pilha.md)
+* [Copiando dados] (coleções/movimentos.md)
 
-## Processor flags and registers
-* [The processor flags](processor/flags.md)
-* [Changing the processor flags](processor/repsep.md)
-* [Transfers](processor/transfer.md)
-* [Stack pointer register](processor/stackpointer.md)
+## Sinalizadores e registros do processador
+* [Os sinalizadores do processador] (processador/sinalizadores.md)
+* [Alterando os sinalizadores do processador] (processor/repsep.md)
+* [Transferências] (processador/transferência.md)
+* [Stack pointer register] (processor/stackpointer.md)
 
-## Mathemathics and logic
-* [Arithmetic operations](math/arithmetic.md)
-* [Bit shifting operations](math/shift.md)
-* [Bitwise operations](math/logic.md)
-* [Hardware math](math/math.md)
+## Matemática e lógica
+* [Operações aritméticas] (matemática/aritmética.md)
+* [Operações de deslocamento de bits] (math/shift.md)
+* [Operações bit a bit] (math/lógica.md)
+* [Hardware math] (math/math.md)
 
-## Deep dives
-* [Addressing modes revisted](indepth/addressing.md)
-* [Miscellaneous opcodes](indepth/misc.md)
-* [Machine cycles](indepth/cycles.md)
-* [Hardware vectors](indepth/vector.md)
-* [Techniques](indepth/techniques.md)
-* [Common assembler syntax](indepth/syntax.md)
-* [Programming cautions](indepth/cautions.md)
+## Aprofundando-se
+* [Modos de endereçamento revistados] (profundidade/endereçamento.md)
+* [Opcodes diversos] (indepth/misc.md)
+* [Ciclos da máquina] (indepth/ciclos.md)
+* [Vetores de hardware] (indepth/vector.md)
+* [Técnicas] (indepth/técnicas.md)
+* [Sintaxe do assembler comum] (indepth/syntax.md)
+* [Precauções de programação] (indepth/cautions.md)
