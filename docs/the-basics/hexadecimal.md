@@ -48,9 +48,9 @@ No mundo real, os números podem ser positivos ou negativos. Em assembly, depend
 | ... | ... |
 | -1 | $FF |
 
-A presença de números negativos depende da programação do jogo. Por exemplo, um jogador pode ter velocidade positiva e negativa \(resultando em ir para frente ou para trá\), mas um jogador não pode ter vidas ou pontos extras negativos \(até porque isso não faz sentido\). Não há necessidade em dizer que o valor -0 não existe.
+A presença de números negativos depende da programação do jogo. Por exemplo, um jogador pode ter velocidade positiva e negativa \(resultando em ir para frente ou para tráz\), mas um jogador não pode ter vidas ou pontos extras negativos \(até porque isso não faz sentido\). Não há necessidade em dizer que o valor -0 não existe.
 
-## Four-digit hexadecimal values
+## Valores hexadecimais de quatro dígitos
 Os números hexadecimais podem passar além dos dois dígitos, como pode ser visto abaixo.
 
 | Decimal | Hexadecimal |
