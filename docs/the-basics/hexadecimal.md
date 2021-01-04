@@ -31,13 +31,13 @@ Há várias maneiras de escrever números hexadecimais para que os leitores não
 * Prefixo "$"  \($42\)
 * Sufixo  "H"  \(42H\)
 
-Por convenção, usaremos o "$" para prefixar números hexadecimais neste tutorial.
+Por convenção, neste tutorial usaremos o "$" para prefixar os números hexadecimais.
 
 Em assembly, um número hexadecimal com dois dígitos é chamado de “byte”. Isso significa que os valores entre $00 a $FF são considerados como um byte.
 
-## Signed and unsigned values
+## Valores com e sem sinal
 
-In the real world, numbers can be positive or negative. In assembly, depending on the code, values can be treated as "signed" or "unsigned". Signed values mean that they can also be negative: The value $80 and higher are considered to be negative numbers in decimal, starting from -128, and counting down as the hex number is counting up, as you can see in the table below.
+No mundo real, os números podem ser positivos ou negativos. Em assembly, dependendo do código, os valores podem ser tratados como "com sinal" ou "sem sinal". Isso significa que os valores com sinal também podem ser negativos: Os valores de $80 para cima são considerados números negativos em decimal, começando em -128 e diminuindo conforme o número hexadecimal vai aumentando, como você pode ver na tabela abaixo.
 
 | Decimal | Hexadecimal |
 | :--- | :--- |
@@ -48,7 +48,7 @@ In the real world, numbers can be positive or negative. In assembly, depending o
 | ... | ... |
 | -1 | $FF |
 
-The presence of negative numbers depends on the game’s programming. For example, a player can have positive and negative speed \(resulting in going forward or backward\), but a player cannot have negative extra lives or points \(because normally that doesn’t make sense\). Needless to say, the value -0 does not exist.
+A presença de números negativos depende da programação do jogo. Por exemplo, um jogador pode ter velocidade positiva e negativa \(resultando em ir para frente ou para trá\), mas um jogador não pode ter vidas ou pontos extras negativos \(porque normalmente isso não faz sentido\). Não há necessidade em dizer que o valor -0 não existe.
 
 ## Four-digit hexadecimal values
 Hexadecimal numbers can count well past two digits, as you can see below.
