@@ -26,7 +26,7 @@ indentado deve ser igual ao comprimento do label mais longo mencionado anteriorm
 - O código deve usar espaços em branco para indentação, sem tabulação.
 - Os opcodes são escritos inteiramente em maiúsculas (ex: `LDA`).
 - As labels são escritas em PascalCase (ex: `Label1:`).
-- As sub-labels são escritos inteiramente em minúsculas, sublinhados e o nome deve se adequar semanticamente ao label pai, sem redundância (ex: `.return`).
+- As sub-labels são escritos em minúsculas, sublinhados e o nome deve se adequar semanticamente ao label pai, sem redundância (ex: `.return`).
 - Os defines são escritos em PascalCase (ex: `!SomeDefine`).
 - Dados diretos (`db`, `dw`, `dl`, `dd`) e especificadores de comprimento de opcode (`.b`,`.w`, `.l`) são escritos inteiramente em minúsculas.
 - Os indicadores de comentários (`;`) devem começar na coluna 20 e preenchidos à esquerda por espaços em branco, não por tabulações.
