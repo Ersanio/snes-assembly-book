@@ -1,6 +1,6 @@
 # Hexadecimal
 
-To program in 65c816 ASM, you will need to grasp the basics of hexadecimal. Hexadecimal, also known as "hex", is a counting system much like decimal, which is the everyday counting system people use. In hexadecimal, there are additional 6 digits per place value, which are denoted through the values A-F, as seen in the table below.
+Para programar em ASM 65c816 , você precisará entender o básico de hexadecimal. Hexadecimal, também conhecido como "hex", é um sistema numérico muito parecido com o decimal, que é o sistema de contagem que as pessoas usam diariamente. No hexadecimal, existem 6 dígitos adicionais em casa numérica, que são representandos pelas letras de A a F, conforme a tabela abaixo.
 
 | Decimal | Hexadecimal |
 | :--- | :--- |
