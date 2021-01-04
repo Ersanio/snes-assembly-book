@@ -2,7 +2,7 @@
 
 * [Introdução](README.md)
 * [Iniciando](getting-started.md)
-* [Contribuindo](contribuindo.md)
+* [Contribuindo](contributing.md)
 
 ## O básico
 * [Hexadecimal](the-basics/hexadecimal.md)
