@@ -16,31 +16,6 @@ Bit 7654 3210
 
 A tabela abaixo mostra um modo relativamente fácil de memorizar binários.
 
-
-| Decimal | Hexadecimal |
-| :--- | :--- |
-| 0 | 0 |
-| 1 | 1 |
-| 2 | 2 |
-| 3 | 3 |
-| 4 | 4 |
-| 5 | 5 |
-| 6 | 6 |
-| 7 | 7 |
-| 8 | 8 |
-| 9 | 9 |
-| 10 | A |
-| 11 | B |
-| 12 | C |
-| 13 | D |
-| 14 | E |
-| 15 | F |
-| 16 | 10 |
-| 17 | 11 |
-| ... | ... |
-| 255 | FF |
-
-
 | Binário | Hexadecimal |
 | :--- | :--- |
 | `% 0000 0001` | `$ 01` |
@@ -70,17 +45,17 @@ O binário é imensamente útil quando você está atribuindo a um valor hexadec
 
 Por exemplo, você pode dividir um byte em 8 bits, com cada bit tendo um significado diferente. O bit 7 pode indicar que um nível tem chuva ou não. O bit 6 pode indicar que um layout de nível é horizontal ou vertical. O bit 5 pode indicar que a configuração do nível é durante o dia ou noite, etc. Dessa forma, você pode compactar as informações em um único byte. Ficaria assim em binário:
 
-`` `texto
+```texto
 10100000
 ││└───── Sinalizador "É diurno"
 │└───── Sinalizador "Está no nível horizontal"
 └───── Bandeira "Está chovendo"
-`` `
+```
 
 Finalmente, aqui está uma visão geral de como contar em decimal, hexadecimal e binário:
 
 | Decimal | Hexadecimal | Binário |
-| : --- | : --- | : --- |
+| :--- | :--- | :--- |
 | `00` | `$ 00` | `% 0000 0000` |
 | `01` | `$ 01` | `% 0000 0001` |
 | `02` | `$ 02` | `% 0000 0010` |
