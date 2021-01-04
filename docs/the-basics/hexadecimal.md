@@ -1,6 +1,6 @@
 # Hexadecimal
 
-Para programar em ASM 65c816 , você precisará entender o básico de hexadecimal. Hexadecimal, também conhecido como "hex", é um sistema numérico muito parecido com o decimal, que é o sistema de contagem que as pessoas usam diariamente. No hexadecimal, existem 6 dígitos adicionais em casa numérica, que são representandos pelas letras de A a F, conforme a tabela abaixo.
+Para programar em ASM 65c816 , você precisará entender o básico de hexadecimal. Hexadecimal, também conhecido como "hex", é um sistema numérico muito parecido com o decimal, que é o sistema de contagem que as pessoas usam diariamente. No hexadecimal, existem 6 dígitos adicionais para cada casa numérica, que são representandos pelas letras A, B, C, D, E e F, conforme a tabela abaixo.
 
 | Decimal | Hexadecimal |
 | :--- | :--- |
@@ -25,11 +25,11 @@ Para programar em ASM 65c816 , você precisará entender o básico de hexadecima
 | ... | ... |
 | 255 | FF |
 
-There are various ways to write hex numbers so readers cannot confuse them with actual decimal numbers. They are as follows:
+Há várias maneiras de escrever números hexadecimais para que os leitores não possam confundi-los com números decimais. São os seguintes:
 
-* Prefix hexadecimal numbers with "0x" \(e.g. 0x42\)
-* Prefix hexadecimal numbers with "$" \(e.g. $42\)
-* Sufffix hexadecimal numbers with "H" \(e.g. 42H\)
+* Prefixo "0x" \(0x42\)
+* Prefixo "$"  \($42\)
+* Sufixo  "H"  \(42H\)
 
 In this tutorial, the convention is to prefix hexadecimal numbers with "$".
 
