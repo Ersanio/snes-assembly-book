@@ -35,20 +35,20 @@ Essas diretrizes se referem ao estilo do documento.
 - Estas são orientações que devem ser seguidas o mais estritamente possível, mas pode haver casos excepcionais.
 
 Exemplo:
-`` `
-SomeLabel:; Este label está em sua própria linha
-LDA.b # $ 42
-STA $ 00; Isto é um comentário
+```
+SomeLabel:         ; Este label está em sua própria linha
+LDA.b #$42
+STA $00            ; Isto é um comentário
 RTS
 
-.mesa:
-db $ 01, $ 02, $ 03, $ 04; Outro comentário
+.table:
+db $01,$02,$03,$04 ; Outro comentário
 
 .second_table:
-db $ 01, $ 02, $ 03, $ 04, $ 01, $ 02, $ 03, $ 04; Um comentário excepcional
+db $ 01,$02,$03,$04,$01,$02,$03,$04 ; Um comentário excepcional
 
-TestLabel: LDA # $ 02; Este rótulo está na mesma linha que uma instrução
-            STA $ 01
-            BNE +
-            NOP
-+ RTS; O código é indentado de acordo com "TestLabel"
+TestLabel: LDA #$02 ; Este rótulo está na mesma linha que uma instrução
+           STA $01
+           BNE +
+           NOP
++          RTS      ; O código está indentado de acordo com "TestLabel"
