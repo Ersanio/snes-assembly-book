@@ -18,7 +18,7 @@ Essas diretrizes se referem ao estilo do documento.
 | Ao referir-se ao processador `Ricoh 5A22`, use` o SNES` em vez disso | `O SNES` é capaz de entrar no modo de 8 ou 16 bits |
 | Ao referir-se a uma área específica na memória SNES, sempre prefixe `endereço` a ela, de preferência com a área de memória (ou seja,`RAM`) | \(O\) `endereço da RAM` $7E0000 contém [...] |
 | Ao referir-se aos registradores A, X e Y, basta usar `A`,`X` ou `Y` | Agora `A` está no modo de 8 bits. `X` é usado para indexar endereços |
-| Ao referir-se a valores, sempre acrescente um `valor` | A contém o `valor` $00 |
+| Ao referir-se a valores, sempre acrescente um `valor` antes | A contém o `valor` $00 |
 
 ## Códigos de exemplo
 - O código deve ser indentado quando houver labels, sub-labels ou labels de mais/menos na mesma linha que uma instrução. O recuo do texto
