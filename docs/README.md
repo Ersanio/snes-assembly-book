@@ -14,4 +14,4 @@ Com ASM 65c816 você pode codificar coisas para os jogos de SNES \(como recursos
 
 Meus agradecimentos especiais são para essas pessoas que revisaram o tutorial original no SMW Central: **[spigmike](https://www.smwcentral.net/?p=profile&id=132), [Roy](https://www.smwcentral.net/?p=profile&id=845), [smkdan](https://www.smwcentral.net/?p=profile&id=411), [S.N.N](https://www.smwcentral.net/?p=profile&id=23), [andy\_k\_250](https://www.smwcentral.net/?p=profile&id=67), [Domiok](https://www.smwcentral.net/?p=profile&id=7211), [reghrhre](https://www.smwcentral.net/?p=profile&id=4176), [ChaoticFox](https://www.smwcentral.net/?p=profile&id=3462), [Tails\_155](https://www.smwcentral.net/?p=profile&id=6151), [GreenHammerBro](https://www.smwcentral.net/?p=profile&id=18802), [Vitor Vilela](https://www.smwcentral.net/?p=profile&id=8251)**
 
-E também agradeço aos [contribuintes](https://github.com/Ersanio/snes-assembly-book/graphs/contributors) deste repositório!
+E também agradeço profundamente aos [contribuintes](https://github.com/Ersanio/snes-assembly-book/graphs/contributors) deste repositório!
