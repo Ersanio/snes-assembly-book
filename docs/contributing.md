@@ -6,7 +6,7 @@ Essas diretrizes se referem ao estilo do documento.
 
 ### Tabelas
 - Sentenças e frases dentro das células da tabela geralmente não devem terminar com um ponto final.
-- As tabelas que apresentam os opcodes devem ter os opcodes em ** negrito ** e ter pelo menos as três colunas, conforme mostrado no exemplo a seguir:
+- As tabelas que apresentam os opcodes devem ter os opcodes em **negrito** e ter pelo menos as três colunas, conforme mostrado no exemplo a seguir:
 
 | Opcode | Nome completo | Explicação |
 | - | - | - |
