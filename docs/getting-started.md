@@ -12,4 +12,4 @@ Os arquivos escritos em código assembly geralmente são salvos com a extensão 
 
 ## Assemblers
 
-Este tutorial usa a sintaxe que é usada pelo assembler "Asar", originalmente escrito por Alcaro, agora mantido por vários membros da comunidade SMW Central. Este assembler está hospedado no SMW Central e pode ser baixado [aqui](https://www.smwcentral.net/?p=section&a=details&id=19043). O repositório GitHub do Asar pode ser encontrado [aqui](https://github.com/RPGHacker/asar).
+Este tutorial usa a sintaxe que é usada por um assembler chamado "Asar", originalmente escrito por Alcaro, agora mantido por vários membros da comunidade SMW Central. Este assembler está hospedado no SMW Central e pode ser baixado [aqui](https://www.smwcentral.net/?p=section&a=details&id=19043). O repositório GitHub do Asar pode ser encontrado [aqui](https://github.com/RPGHacker/asar).
