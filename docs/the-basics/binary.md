@@ -16,7 +16,16 @@ Bit 7654 3210
 
 A tabela abaixo mostra um modo relativamente fácil de memorizar binários.
 
-| a | b |
+| Binário | Hexadecimal |
+| : --- | : --- |
+| `% 0000 0001` | `$ 01` |
+| `% 0000 0010` | `$ 02` |
+| `% 0000 0100` | `$ 04` |
+| `% 0000 1000` | `$ 08` |
+| `% 0001 0000` | `$ 10` |
+| `% 0010 0000` | `$ 20` |
+| `% 0100 0000` | `$ 40` |
+| `% 1000 0000` | `$ 80` |
 
 Observe que há um espaço entre 4 bits para facilitar a leitura, embora os assemblers geralmente não aceitem ess formato. Os grupos de 4 bits são chamados de "nibbles" e, para os propósitos deste capítulo, eles existem para tornar o binário mais fáceis de serem lidos. Um nibble corresponde a um dígito em hexadecimal.
 
