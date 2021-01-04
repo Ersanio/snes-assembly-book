@@ -48,10 +48,10 @@ No mundo real, os números podem ser positivos ou negativos. Em assembly, depend
 | ... | ... |
 | -1 | $FF |
 
-A presença de números negativos depende da programação do jogo. Por exemplo, um jogador pode ter velocidade positiva e negativa \(resultando em ir para frente ou para trá\), mas um jogador não pode ter vidas ou pontos extras negativos \(porque normalmente isso não faz sentido\). Não há necessidade em dizer que o valor -0 não existe.
+A presença de números negativos depende da programação do jogo. Por exemplo, um jogador pode ter velocidade positiva e negativa \(resultando em ir para frente ou para trá\), mas um jogador não pode ter vidas ou pontos extras negativos \(até porque isso não faz sentido\). Não há necessidade em dizer que o valor -0 não existe.
 
 ## Four-digit hexadecimal values
-Hexadecimal numbers can count well past two digits, as you can see below.
+Os números hexadecimais podem passar além dos dois dígitos, como pode ser visto abaixo.
 
 | Decimal | Hexadecimal |
 | :--- | :--- |
@@ -62,7 +62,7 @@ Hexadecimal numbers can count well past two digits, as you can see below.
 | ... | ... |
 | 65535 | $FFFF |
 
-The format of such a hexadecimal number is as follows: $HHLL.
+O formato deste número hexadecimal é: $HHLL.
 
-* HH is the "high byte" of the number
-* LL is the "low byte" of the number
+* HH é o "high byte"
+* LL é o "low byte" 
