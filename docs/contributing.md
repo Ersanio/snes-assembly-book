@@ -21,7 +21,8 @@ Essas diretrizes se referem ao estilo do documento.
 | Ao referir-se a valores, sempre acrescente um `valor` | A contém o `valor` $00 |
 
 ## Códigos de exemplo
-- O código deve usar indentação quando houver labels, sub-labels ou labels de mais/menos na mesma linha que uma instrução. A quantidade de indentação é igual ao comprimento do tipo de rótulo mais longo mencionado anteriormente no bloco de código, incluindo dois pontos ("`:`"), mais dois espaços adicionais.
+- O código deve ser indentado quando houver labels, sub-labels ou labels de mais/menos na mesma linha que uma instrução. A 
+indentação deve ser igual ao comprimento do rótulo mais longo mencionado anteriormente no bloco de código, incluindo os dois pontos ("`:`"), mais dois espaços adicionais.
 - O código deve usar espaços em branco para indentação, sem tabulação.
 - Os opcodes são escritos inteiramente em maiúsculas (ex: `LDA`).
 - As labels são escritas em PascalCase (ex: `Label1:`).
