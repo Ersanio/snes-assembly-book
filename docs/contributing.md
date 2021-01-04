@@ -1,57 +1,54 @@
-# Contributing
-This chapter concerns the writers of this tutorial. When writing, there are a few standards to follow in order to maximize consistency throughout the tutorial.
+# Contribuindo
+Este capítulo é destinado aos que contribuem com este tutorial. Ao escrever,  há alguns padrões que devem ser seguidos para maximizar a sua consistência ao longo do tutorial.
 
-## Styling
-These guidelines concern the styling of the document.
+## Estilo
+Essas diretrizes se referem ao estilo do documento.
 
-### Tables
-- Sentences and phrases within table cells generally shouldn't end with a period.
-- Tables introducing opcodes should have the opcodes in **bold** and have at least the three columns as seen in the example below.
+### Tabelas
+- Sentenças e frases dentro das células da tabela geralmente não devem terminar com um ponto final.
+- As tabelas que apresentam os opcodes devem ter os opcodes em ** negrito ** e ter pelo menos as três colunas, conforme mostrado no exemplo a seguir:
 
-|Opcode|Full name|Explanation|
-|-|-|-|
-|**LDA**|Load into accumulator|Load a value into A|
+| Opcode | Nome completo | Explicação |
+| - | - | - |
+| **LDA** | Carrega no acumulador | Carrega um valor em A |
 
-## Terminology
-|Rule|Example|
-|-|-|
-|When referring to the `Ricoh 5A22` processor, use `the SNES` instead|`The SNES` is capable of entering 8-bit or 16-bit mode|
-|When referring to a specific area in the SNES memory, always prepend `address` to it, preferably with the memory area (i.e. `RAM`)|(The) `RAM address` $7E0000 contains [...]|
-|When referring to the A, X and Y registers, just use `A`, `X` or `Y`|`A` is now in 8-bit mode. `X` is used to index addresses|
-|When referring to values, always prepend `value` to it|A contains the `value` $00|
+## Terminologia
+| Regra | Exemplo |
+| - | - |
+| Ao referir-se ao processador `Ricoh 5A22`, use` o SNES` em vez disso | `O SNES` é capaz de entrar no modo de 8 ou 16 bits |
+| Ao referir-se a uma área específica na memória SNES, sempre prefixe `endereço` a ela, de preferência com a área de memória (ou seja,`RAM`) | \(O\) `endereço da RAM` $7E0000 contém [...] |
+| Ao referir-se aos registradores A, X e Y, basta usar `A`,`X` ou `Y` | Agora `A` está no modo de 8 bits. `X` é usado para indexar endereços |
+| Ao referir-se a valores, sempre acrescente um `valor` | A contém o `valor` $00 |
 
-## Example codes
-- Code shall use indentation when there are labels, sublabels or plus/minus labels on the same line as an instruction. The amount of indentation equals the length of the longest aforementioned type of label in the code block, including colon ("`:`"), plus two additional spaces.
-  - Code shall use whitespace for indentation, not tabs.
-- Opcodes are written entirely in uppercase (e.g.: `LDA`).
-- Labels are written in PascalCase (e.g.: `Label1:`).
-- Sublabels are written entirely in lower, underscore-case and the name should semantically suit the parent label, without redundancy (e.g.: `.return`).
-- Defines are written in PascalCase (e.g.: `!SomeDefine`).
-- Direct data (`db`, `dw`, `dl`, `dd`) and opcode length specifiers (`.b`, `.w`, `.l`) are written entirely in lowercase.
-- Comment indicators (i.e. `;`) shall start on column 20, and left-padded by whitespace, not tabs.
-    - If there's no space for a comment on column 20, it will start on the same line.
-- Comment indicators shall be followed by a whitespace, before the comment itself.
-- There will be an extra new line after the opcodes `RTS`, `RTL`, `RTI`, `JMP`, `JML`, `BRA`, `BRL`.
-- These are guidelines which are to be followed as strictly as possible, but there may be exceptional cases.
+## Códigos de exemplo
+- O código deve usar indentação quando houver rótulos, sub-rótulos ou rótulos de mais / menos na mesma linha que uma instrução. A quantidade de indentação é igual ao comprimento do tipo de rótulo mais longo mencionado anteriormente no bloco de código, incluindo dois pontos ("`: `"), mais dois espaços adicionais.
+  - O código deve usar espaços em branco para indentação, não guias.
+- Os opcodes são escritos inteiramente em maiúsculas (por exemplo: `LDA`).
+- Os rótulos são escritos em PascalCase (por exemplo: `Label1:`).
+- Os sub-rótulos são escritos inteiramente em minúsculas, sublinhados e o nome deve se adequar semanticamente ao rótulo pai, sem redundância (por exemplo: `.return`).
+- As definições são escritas em PascalCase (por exemplo: `! SomeDefine`).
+- Dados diretos (`db`,` dw`, `dl`,` dd`) e especificadores de comprimento de opcode (`.b`,` .w`, `.l`) são escritos inteiramente em minúsculas.
+- Os indicadores de comentários (ou seja, `;`) devem começar na coluna 20 e preenchidos à esquerda por espaços em branco, não por tabulações.
+    - Se não houver espaço para um comentário na coluna 20, ele começará na mesma linha.
+- Os indicadores de comentários devem ser seguidos por um espaço em branco, antes do próprio comentário.
+- Haverá uma nova linha extra após os opcodes `RTS`,` RTL`, `RTI`,` JMP`, `JML`,` BRA`, `BRL`.
+- Estas são orientações que devem ser seguidas o mais estritamente possível, mas pode haver casos excepcionais.
 
-Example:
-```
-SomeLabel:         ; This label is on its own line
-LDA.b #$42
-STA $00            ; This is a comment
+Exemplo:
+`` `
+SomeLabel:; Este rótulo está em sua própria linha
+LDA.b # $ 42
+STA $ 00; Isto é um comentário
 RTS
 
-.table:
-db $01,$02,$03,$04 ; Another comment
+.mesa:
+db $ 01, $ 02, $ 03, $ 04; Outro comentário
 
 .second_table:
-db $01,$02,$03,$04,$01,$02,$03,$04 ; An exceptional comment
+db $ 01, $ 02, $ 03, $ 04, $ 01, $ 02, $ 03, $ 04; Um comentário excepcional
 
-TestLabel:  LDA #$02 ; This label is on the same line as an instruction
-            STA $01
+TestLabel: LDA # $ 02; Este rótulo está na mesma linha que uma instrução
+            STA $ 01
             BNE +
             NOP
-+           RTS      ; The code is indented according to "TestLabel"
-
-
-```
++ RTS; O código é indentado de acordo com "TestLabel"
