@@ -34,9 +34,9 @@ ROM significa "Read-Only Memory" e é exatamente isso: uma memória que só pode
 
 ## RAM
 
-RAM significa "Random-Access Memory". Esta é a memória dinâmica que permite que qualquer coisa seja escrita nela a qualquer momento. Você poderia dizer que este é o lugar onde você tem as variáveis ​​que são importantes e têm significado. A RAM pode ser gravada para obter um certo efeito. Por exemplo, se você escrever $04 nas vidas extras do jogador, e ele terá exatamente 4 vidas extras.
+RAM significa "Random-Access Memory". Esta é a memória dinâmica que permite que qualquer coisa seja escrita nela a qualquer momento. Você poderia dizer que este é o lugar onde você tem as variáveis que são importantes e têm significado. A RAM pode ser gravada para obter um certo efeito. Por exemplo, se você escrever $04 nas vidas extras do jogador, e ele terá exatamente 4 vidas extras.
 
-O RAM do SNES tem 128kB de tamanho e está localizado nos endereços de $7E0000 a $7FFFFF. O RAM é totalmente genérica. Não existe uma regra como “o endereço $7E0120 é usado para vidas em todos os jogos SNES.” Você mesmo define a finalidade da RAM, escrevendo seu próprio código ASM.
+O RAM do SNES tem o tamanho 128kB e está localizado nos endereços de $7E0000 a $7FFFFF. O RAM é totalmente genérica. Não existe uma regra como “o endereço $7E0120 é usado para as vidas do jogador em todos os jogos SNES.” Você mesmo define a finalidade da RAM, escrevendo seu próprio código ASM.
 
 O mapa de memória mostra que os bancos $00-3F contêm um "espelho" da RAM. Os endereços de RAM espelhados são endereços que contêm o mesmo valor em todos os bancos. Isso significa que o endereço de RAM $001234 contém exatamente o mesmo valor de $0F1234 em todos os momentos. Ter a RAM espelhada significa que o código em execução na ROM nesses bancos pode acessar a RAM de $7E0000 a $7E1FFF mais "facilidade". Por outro lado, o código executado nos bancos $40-6F tem mais problemas para acessar a RAM porque a RAM não é espelhada nesse local.
 
@@ -44,7 +44,7 @@ Por razões de simplicidade, você **sempre** pode assumir que o banco $00 é ig
 
 ## SRAM
 
-SRAM significa "Static Random-Access Memory". Também tem 128kB de tamanho e está localizado em blocos de 32kB entre $700000 a $707FFF, $710000 a $717FFF, $720000 a $727FFF e $730000 a $737FFF, embora o tamanho final da SRAM dependa das próprias especificações de ROM, graças a algo chamado "cabeçalho interno da ROM. A SRAM não é espelhada em outros bancos.
+SRAM significa "Static Random-Access Memory". Também tem o tamango de 128kB e está localizado em blocos de 32kB entre $700000 a $707FFF, $710000 a $717FFF, $720000 a $727FFF e $730000 a $737FFF, embora o tamanho final da SRAM dependa das próprias especificações de ROM, graças a algo chamado "cabeçalho interno da ROM. A SRAM não é espelhada em outros bancos.
 
 SRAM se comporta exatamente como RAM; você pode armazenar e carregar qualquer coisa nela, mas os valores não são apagados quando o SNES é reiniciado. A memória SRAM é mantida viva por uma bateria que está presente em um cartucho de SNES. Quando a bateria se esgota ou é removida, a SRAM não funcionará corretamente e possivelmente perderá os dados após cada reinicialização. Nos emuladores, a SRAM é armazenada nos arquivos ".srm".
 
