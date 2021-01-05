@@ -4,7 +4,7 @@ Outro sistema de numérico importante é o “binário”. O binário tem apenas
 
 Um byte é composto por oito “bits”. Como um dígito binário tem dois valores possíveis e um byte tem 8 bits, isso significa que ha 2⁸ possibilidades em apenas um byte.
 
-Por exemplo,em um byte pode conter os seguintes bits: `1001 0110` ou` 1001 0101`. O primeiro bit da esquerda é chamado de “bit 7” e o bit final é chamado de “bit 0”. Eles NÃO são chamados de bits 0-7, nem bits 8-1. A seguir temos uma visão geral dos bits:
+Por exemplo,em um byte pode conter os seguintes bits: `1001 0110` ou `1001 0101`. O primeiro bit da esquerda é chamado de “bit 7” e o bit final é chamado de “bit 0”. Eles NÃO são chamados de bits 0-7, nem bits 8-1. A seguir temos uma visão geral dos bits:
 
 ```
 Bit 7654 3210
