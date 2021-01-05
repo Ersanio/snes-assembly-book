@@ -47,9 +47,9 @@ Por exemplo, você pode dividir um byte em 8 bits, com cada bit tendo um signifi
 
 ```text
 10100000
-││└───── Sinaliza que "Está de dia"
-│└───── Sinaliza que "Está no nível horizontal"
-└───── Sinaliza que "Está chovendo"
+││└───── Indica que "Está de dia"
+│└────── Indica que "Está no nível horizontal"
+└─────── Indica que "Está chovendo"
 ```
 
 Finalmente, aqui está uma visão geral de como contar em decimal, hexadecimal e binário:
