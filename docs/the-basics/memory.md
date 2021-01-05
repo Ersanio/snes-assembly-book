@@ -24,7 +24,7 @@ Conforme estabelecido anteriormente, um endereço pode conter apenas um byte. Se
 
 A figura a seguir temos uma visão geral da memória básica do SNES \(também conhecido como mapa de memória\):
 
-! [O &#x201C;LoROM&#x201D; Mapa de memória](../.gitbook/assets/memory.png)
+![The &#x201C;LoROM&#x201D; Memory Map](../.gitbook/assets/memory.png)
 
 Este mapa de memória está no formato "LoROM". Se você é um hacker de SMW, não precisa se preocupar com o que isso significa; apenas considere este mapa de memória por garantia.
 
