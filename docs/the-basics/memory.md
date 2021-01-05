@@ -46,6 +46,6 @@ Por razões de simplicidade, você **sempre** pode assumir que o banco $00 é ig
 
 SRAM significa "Static Random-Access Memory". Também tem 128kB de tamanho e está localizado em blocos de 32kB entre $700000 a $707FFF, $710000 a $717FFF, $720000 a $727FFF e $730000 a $737FFF, embora o tamanho final da SRAM dependa das próprias especificações de ROM, graças a algo chamado "cabeçalho interno da ROM. A SRAM não é espelhada em outros bancos.
 
-SRAM se comporta exatamente como RAM; você pode armazenar e carregar qualquer coisa nela, mas os valores não são apagados quando o SNES é reiniciado. A memória SRAM é mantida viva por uma bateria que está presente em um cartucho de SNES. Quando a bateria acaba ou é removida, a SRAM não funcionará corretamente e possivelmente perderá os dados após cada reinicialização. Nos emuladores, a SRAM é armazenada nos arquivos ".srm".
+SRAM se comporta exatamente como RAM; você pode armazenar e carregar qualquer coisa nela, mas os valores não são apagados quando o SNES é reiniciado. A memória SRAM é mantida viva por uma bateria que está presente em um cartucho de SNES. Quando a bateria se esgota ou é removida, a SRAM não funcionará corretamente e possivelmente perderá os dados após cada reinicialização. Nos emuladores, a SRAM é armazenada nos arquivos ".srm".
 
 SRAM é geralmente usado para salvar arquivos, embora também possa ser usada como uma memória RAM extra.
