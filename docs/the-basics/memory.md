@@ -4,7 +4,7 @@ Escrever em assembly envolve escrever um monte de instruções em que você carr
 
 A memória do SNES é basicamente uma região de bytes, e cada byte está localizado em um "endereço". Pense nisso como um tabuleiro de xadrez:
 
-! [] (../. gitbook / assets / chessboard.png)
+![](../.gitbook/assets/chessboard.png)
 
 Você pode ver que para se referir a uma determinada casa, a imagem faz uso de nomes de colunas e casas. Na imagem acima o "endereço" da rainha \(o "valor" \) seria o endereço D8, por exemplo. Além disso, uma única casa não pode conter duas unidades. Este mesmo conceito se aplica à memória do SNES.
 
