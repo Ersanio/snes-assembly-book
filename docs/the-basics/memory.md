@@ -1,52 +1,51 @@
-# The SNES memory
+# A memória do SNES
 
-Writing assembly involves writing a bunch of instructions where you load a "value" and store it at an "address" in order to get a desired effect, such as changing the player's powerup. When writing assembly, you will work with the SNES memory most of the time.
+Escrever em assembly envolve escrever um monte de instruções em que você carrega um "valor" e o armazena em um "endereço" para obter o efeito desejado, como alterar o powerup do jogador por exemplo. Ao gravar dados em assembly, você trabalhará com a memória do SNES na maior parte do tempo.
 
-The SNES memory basically is a region of bytes, and each byte is located at an "address". Think of it like a chessboard:
+A memória do SNES é basicamente uma região de bytes, e cada byte está localizado em um "endereço". Pense nisso como um tabuleiro de xadrez:
 
-![](../.gitbook/assets/chessboard.png)
+! [] (../. gitbook / assets / chessboard.png)
 
-You can see that in order to refer to a certain cell, the image makes use of column and cell names. The "address" of the shown queen \(the "value"\) would be address D8, for example. Also, a single cell can't hold two units. This same concept applies to the SNES memory.
+Você pode ver que para se referir a uma determinada casa, a imagem faz uso de nomes de colunas e casas. Na imagem acima o "endereço" da rainha \(o "valor" \) seria o endereço D8, por exemplo. Além disso, uma única casa não pode conter duas unidades. Este mesmo conceito se aplica à memória do SNES.
 
-The SNES memory is mapped from address $000000 to $FFFFFF, although only $000000-$7FFFFF is used in most cases. The format of an address is as follows: $BBHHDD.
+A memória do SNES é mapeada do endereço $000000 a $FFFFFF, embora apenas os endereços de $00000 a $7FFFFF seja usado na maioria dos casos. O formato de um endereço é o seguinte: $BBHHDD.
 
-* BB is the "bank byte" of the address
-* HH is the "high byte" of the address
-* DD is the "low byte" of the address
+* BB é o "byte do banco"
+* HH é o "High byte"
+* DD é o "Low byte"
 
-Addresses can be written in 3 ways: $BBHHDD, $HHDD and $DD, such as $7E0003, $0003 and $03.
+Os endereços podem ser escritos de 3 maneiras: $BBHHDD, $HHDD e $DD, como $7E0003, $0003 e $03.
 
-* Addresses in the $DD-notation are called “direct page"
-* Addresses in the $HHDD-notation are called “absolute addresses”
-* Addresses in the $BBHHDD-notation are called “long addresses”
+* $DD são os “endereços de páginação direta”
+* $HHDD são os “endereços absolutos”
+* $BBHHDD são os “endereços longos”
 
-As established earlier, an address may contain only one byte. If you access a certain address in 16-bit mode, it means you actually access both "address" and "address+1", because a 16-bit number consists of two bytes.
+Conforme estabelecido anteriormente, um endereço pode conter apenas um byte. Se você acessar um determinado endereço no modo 16 bits, significa que você realmente está acessando o "endereço" e "endereço+1", porque um número de 16 bits consiste em dois bytes.
 
-Here’s a drawing to get a general overview of the basic SNES memory \(also known as a memory map\):
+A figura a seguir temos uma visão geral da memória básica do SNES \(também conhecido como mapa de memória\):
 
-![The &#x201C;LoROM&#x201D; Memory Map](../.gitbook/assets/memory.png)
+! [O &#x201C;LoROM&#x201D; Mapa de memória](../.gitbook/assets/memory.png)
 
-This memory map is in the "LoROM" format. If you're a SMW hacker, you don't have to worry about what this means; just take this memory map for granted.
+Este mapa de memória está no formato "LoROM". Se você é um hacker de SMW, não precisa se preocupar com o que isso significa; apenas considere este mapa de memória por garantia.
 
 ## ROM
 
-ROM stands for "Read-Only Memory" and it's exactly that: memory that can be only read. This means that you cannot change the ROM by storing values to it with ASM. You can say it is the game or program itself, which contains all the ASM code and data tables, as well as assets like graphics, music, and so on. Alternatively: It’s the .smc/.sfc/.fig/etc. file which you load in emulators.
+ROM significa "Read-Only Memory" e é exatamente isso: uma memória que só pode ser lida. Isso significa que você não pode alterar a ROM armazenando valores nela com o ASM. Você pode dizer que é o próprio jogo ou programa, que contém todo o código ASM e tabelas de dados, bem como recursos como gráficos, música e assim por diante. Alternativamente: é o arquivo .smc/.sfc/.fig/etc. que você carrega em emuladores.
 
 ## RAM
 
-RAM stands for "Random-Access Memory". This is the dynamic memory which allows anything to be written to it at any time. You could say that this is the place where you have variables which are important and have meaning. RAM can be written to in order to achieve a certain effect. For example, if you write $04 to the player’s extra lives, then the player will have exactly 4 extra lives.
+RAM significa "Random-Access Memory". Esta é a memória dinâmica que permite que qualquer coisa seja escrita nela a qualquer momento. Você poderia dizer que este é o lugar onde você tem as variáveis ​​que são importantes e têm significado. A RAM pode ser gravada para obter um certo efeito. Por exemplo, se você escrever $04 nas vidas extras do jogador, e ele terá exatamente 4 vidas extras.
 
-The SNES RAM is 128kB big, and it is located at addresses $7E0000-$7FFFFF. The SNES RAM is completely generic. There is no such rule as “address $7E0120 is used for lives in every SNES game ever". You define the purpose of RAM yourself, by writing ASM code.
+O RAM do SNES tem 128kB de tamanho e está localizado nos endereços de $7E0000 a $7FFFFF. O RAM é totalmente genérica. Não existe uma regra como “o endereço $7E0120 é usado para vidas em todos os jogos SNES.” Você mesmo define a finalidade da RAM, escrevendo seu próprio código ASM.
 
-The memory map shows that banks $00-3F contain a RAM "mirror". Mirrored RAM addresses are addresses which contain the same value across every bank. This means that RAM address $001234 contains the exact same value as $0F1234 at all times. Having the RAM mirrored means that code executing in the ROM at those banks can access RAM $7E0000-$7E1FFF more "easily". Conversely, code executing at banks $40-6F have more trouble accessing the RAM because the RAM isn't mirrored there.
+O mapa de memória mostra que os bancos $00-3F contêm um "espelho" da RAM. Os endereços de RAM espelhados são endereços que contêm o mesmo valor em todos os bancos. Isso significa que o endereço de RAM $001234 contém exatamente o mesmo valor de $0F1234 em todos os momentos. Ter a RAM espelhada significa que o código em execução na ROM nesses bancos pode acessar a RAM de $7E0000 a $7E1FFF mais "facilidade". Por outro lado, o código executado nos bancos $40-6F tem mais problemas para acessar a RAM porque a RAM não é espelhada nesse local.
 
-For the sake of simplicity, you can **always** assume that bank $00 equals bank $7E.
+Por razões de simplicidade, você **sempre** pode assumir que o banco $00 é igual ao banco $7E.
 
 ## SRAM
 
-SRAM stands for "Static Random-Access Memory". It is also 128kB big, and it is located in blocks of 32kB at $700000-$707FFF, $710000-$717FFF, $720000-$727FFF and $730000-$737FFF, although the final size of SRAM depends on the ROM specifications itself, thanks to something called the "internal ROM header. The SRAM isn’t mirrored in other banks.
+SRAM significa "Static Random-Access Memory". Também tem 128kB de tamanho e está localizado em blocos de 32kB entre $700000 a $707FFF, $710000 a $717FFF, $720000 a $727FFF e $730000 a $737FFF, embora o tamanho final da SRAM dependa das próprias especificações de ROM, graças a algo chamado "cabeçalho interno da ROM. A SRAM não é espelhada em outros bancos.
 
-SRAM behaves exactly like RAM; you can store anything and load anything from it, but the values do not get cleared when the SNES resets. The SRAM is kept alive with an actual button-cell battery on a real SNES cartridge. When the battery dies, or is removed, SRAM won't function properly and will possibly lose data after every reset. On emulators, SRAM is stored in the well-known ".srm"-files.
+SRAM se comporta exatamente como RAM; você pode armazenar e carregar qualquer coisa nela, mas os valores não são apagados quando o SNES é reiniciado. A memória SRAM é mantida viva por uma bateria que está presente em um cartucho de SNES. Quando a bateria acaba ou é removida, a SRAM não funcionará corretamente e possivelmente perderá os dados após cada reinicialização. Nos emuladores, a SRAM é armazenada nos arquivos ".srm".
 
-SRAM is usually used for save files, although it can also be used as extra RAM.
-
+SRAM é geralmente usado para salvar arquivos, embora também possa ser usada como uma memória RAM extra.
