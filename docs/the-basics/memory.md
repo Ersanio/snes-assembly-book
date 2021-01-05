@@ -8,7 +8,7 @@ A memória do SNES é basicamente uma região de bytes, e cada byte está locali
 
 Você pode ver que para se referir a uma determinada casa, a imagem faz uso de nomes de colunas e casas. Na imagem acima o "endereço" da rainha \(o "valor" \) seria o endereço D8, por exemplo. Além disso, uma única casa não pode conter duas unidades. Este mesmo conceito se aplica à memória do SNES.
 
-A memória do SNES é mapeada do endereço $000000 a $FFFFFF, embora apenas os endereços de $00000 a $7FFFFF seja usado na maioria dos casos. O formato de um endereço é o seguinte: $BBHHDD.
+A memória do SNES é mapeada do endereço $000000 a $FFFFFF, embora apenas os endereços de $00000 a $7FFFFF sejam usados na maioria dos casos. O formato de um endereço é o seguinte: $BBHHDD.
 
 * BB é o "byte do banco"
 * HH é o "High byte"
@@ -36,9 +36,9 @@ ROM significa "Read-Only Memory" e é exatamente isso: uma memória que só pode
 
 RAM significa "Random-Access Memory". Esta é a memória dinâmica que permite que qualquer coisa seja escrita nela a qualquer momento. Você poderia dizer que este é o lugar onde você tem as variáveis que são importantes e têm significado. A RAM pode ser gravada para obter um certo efeito. Por exemplo, se você escrever $04 nas vidas extras do jogador, e ele terá exatamente 4 vidas extras.
 
-O RAM do SNES tem o tamanho 128kB e está localizado nos endereços de $7E0000 a $7FFFFF. O RAM é totalmente genérica. Não existe uma regra como “o endereço $7E0120 é usado para as vidas do jogador em todos os jogos SNES.” Você mesmo define a finalidade da RAM, escrevendo seu próprio código ASM.
+A RAM do SNES tem o tamanho 128kB e está localizado nos endereços de $7E0000 a $7FFFFF. A RAM é totalmente genérica. Não existe uma regra como “o endereço $7E0120 é usado para as vidas do jogador em todos os jogos SNES.” Você mesmo define a finalidade da RAM, escrevendo seu próprio código ASM.
 
-O mapa de memória mostra que os bancos $00-3F contêm um "espelho" da RAM. Os endereços de RAM espelhados são endereços que contêm o mesmo valor em todos os bancos. Isso significa que o endereço de RAM $001234 contém exatamente o mesmo valor de $0F1234 em todos os momentos. Ter a RAM espelhada significa que o código em execução na ROM nesses bancos pode acessar a RAM de $7E0000 a $7E1FFF mais "facilidade". Por outro lado, o código executado nos bancos $40-6F tem mais problemas para acessar a RAM porque a RAM não é espelhada nesse local.
+O mapa de memória mostra que os bancos $00-3F contêm um "espelho" da RAM. Os endereços de RAM espelhados são endereços que contêm o mesmo valor em todos os bancos. Isso significa que o endereço de RAM $001234 contém exatamente o mesmo valor de $0F1234 em todos os momentos. Ter a RAM espelhada significa que o código em execução na ROM nesses bancos pode acessar a RAM de $7E0000 a $7E1FFF com mais "facilidade". Por outro lado, o código executado nos bancos $40-6F tem mais problemas para acessar a RAM porque a RAM não é espelhada nesse local.
 
 Por razões de simplicidade, você **sempre** pode assumir que o banco $00 é igual ao banco $7E.
 

@@ -1,8 +1,8 @@
 # Binário
 
-Outro sistema de numérico importante é o “binário”. O binário tem apenas valores de dois dígitos para cada casa numérica: 0 e 1. Um dígito binário também é chamado de "bit". Na sintaxe do assembly, os bits são prefixados por "%".
+Outro sistema numérico importante é o “binário”. O binário tem apenas valores de dois dígitos para cada casa numérica: 0 e 1. Um dígito binário também é chamado de "bit". Na sintaxe do assembly, os bits são prefixados por "%".
 
-Um byte é composto por oito “bits”. Como um dígito binário tem dois valores possíveis e um byte tem 8 bits, isso significa que ha 2⁸ possibilidades em apenas um byte.
+Um byte é composto por oito “bits”. Como um dígito binário tem dois valores possíveis e um byte tem 8 bits, isso significa que há 2⁸(256) possibilidades em apenas um byte.
 
 Por exemplo,em um byte pode conter os seguintes bits: `1001 0110` ou `1001 0101`. O primeiro bit da esquerda é chamado de “bit 7” e o bit final é chamado de “bit 0”. Eles NÃO são chamados de bits 0-7, nem bits 8-1. A seguir temos uma visão geral dos bits:
 
@@ -27,9 +27,9 @@ A tabela abaixo mostra um modo relativamente fácil de memorizar binários.
 | `% 0100 0000` | `$ 40` |
 | `% 1000 0000` | `$ 80` |
 
-Observe que há um espaço entre 4 bits para facilitar a leitura, embora os assemblers geralmente não aceitem ess formato. Os grupos de 4 bits são chamados de "nibbles" e, para os propósitos deste capítulo, eles existem para tornar o binário mais fáceis de serem lidos. Um nibble corresponde a um dígito em hexadecimal.
+Observe que há um espaço entre 4 bits para facilitar a leitura, embora os assemblers geralmente não aceitem esse formato. Os grupos de 4 bits são chamados de "nibbles" e, para os propósitos deste capítulo, eles existem para tornar o binário mais fáceis de serem lidos. Um nibble corresponde a um dígito em hexadecimal.
 
-O SNES é capaz de trabalhar com números de 8 e 16 bits. Enquanto os números de 8 bits são chamados de byte, os números de 16 bits são chamados de "word". Eles tem a seguinte aparência quando convertidos para binarios de 16 bits: `10000101 11010101` (que é iqual a `$85D5` em hexadecimal\). No caso de números de 16 bits, o bit mais à esquerda é chamado de "bit 15" ou , enquanto o bit mais à direita é chamado de "bit 0":
+O SNES é capaz de trabalhar com números de 8-bit e 16-bit. Enquanto os números de 8-bit são chamados de byte, os números de 16-bit são chamados de "word". Eles tem a seguinte aparência quando convertidos para binários de 16-bit: `10000101 11010101` (que é iqual a `$85D5` em hexadecimal\). No caso de números de 16 bits, o bit mais à esquerda é chamado de "bit 15", enquanto o bit mais à direita é chamado de "bit 0":
 
 ```text
     1111 11             (leia de cima para baixo)
@@ -92,4 +92,4 @@ Em 16 bits:
 * `11` torna-se `00000000 00000011`
 * `1100000` torna-se `00000000 01100000`
 
-Você pode converter entre decimal, hexadecimal e binário, usando o modo de "programação" da calculadora do Windows. Existem também muitas calculadoras online que podem fazer isso. A sintaxe do assembly também aceita números decimais, portanto, geralmente não é necessário converter entre decimal e hexadecimal.
+Você pode converter entre decimal, hexadecimal e binário, usando o modo de "programação" da calculadora do seu sistema operacional. Existem também muitas calculadoras online que podem fazer isso. A sintaxe do assembly também aceita números decimais, portanto, geralmente não é necessário converter entre decimal e hexadecimal.
