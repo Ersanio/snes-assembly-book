@@ -1,4 +1,4 @@
-# Os registradores SNES
+# Os registradores do SNES
 
 O SNES possui vários “registradores” que são usados para diferentes finalidades. Não podemos nos esquecer deles; são uma das razões pelas quais possibilitam o SNES funcionar corretamente.. Basicamente, registradores são “variáveis globais” que podem ser usados para armazenar valores, ou podem ser usados em operações matemáticas, lógica e todas aquelas coisas sofisticadas! Esses registradores podem ser acessados a qualquer momento.
 
