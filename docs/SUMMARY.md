@@ -15,10 +15,10 @@
 
 ## O básico(novamente)
 * [Carregando e armazenando](programming/loading-and-storing.md)
-* [Endereços mais curtos](programação/endereços mais curtos.md)
-* [Modo de 8 e 16 bits](programação/816.md)
-* [Comparando, ramificação, rótulos](programação/branches.md)
-* [Salto para sub-rotinas](programação/subroutine.md)
+* [Endereços mais curtos](programming/shorter-addresses.md)
+* [Modo de 8 e 16 bits](programming/816.md)
+* [Comparando, ramificação, rótulos](programming/branches.md)
+* [Salto para sub-rotinas](programming/subroutine.md)
 
 ## Coleção de valores
 * [Tabelas e indexação](coleções/indexação.md)
