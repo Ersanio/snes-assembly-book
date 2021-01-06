@@ -1,39 +1,39 @@
-# The SNES registers
+# Os registradores SNES
 
-In SNES, there are several “registers” used for different purposes. They cannot be missed; they’re one of the reasons why the SNES can function properly. Basically, registers are “global variables” which can be used to hold values, or can be used for math and logic and all those fancy stuffs! These registers can be accessed anytime.
+O SNES possui vários “registradores” que são usados para diferentes finalidades. Não podemos nos esquecer deles; são uma das razões pelas quais possibilitam o SNES funcionar corretamente.. Basicamente, registradores são “variáveis globais” que podem ser usados para armazenar valores, ou podem ser usados em operações matemáticas, lógica e todas aquelas coisas sofisticadas! Esses registradores podem ser acessados a qualquer momento.
 
-## Accumulator
-The accumulator, also known as **A**, is used for general math, bit shifts, bitwise operations and loading indirect values. A can also hold general-purpose variables to store things to the memory and other registers. This register can hold either an 8-bit or 16-bit value 
+## Acumulador
+O acumulador, também conhecido como **A**, é usado para operações matemáticas em geral, deslocamento de bits, operações bit a bit e carregamento de valores indiretos. A também pode conter variáveis ​​de uso geral para armazenar valores na memória e em outros registradores. Este registrador pode conter um valor de 8 ou 16-bit
 
-The accumulator sometimes is referred to as `B` or `C` in some opcodes. B means the high byte of the accumulator, while C means the full 16-bit accumulator.
+O acumulador às vezes é referido como `B` ou `C` em alguns opcodes. B significa o high byte do acumulador, enquanto C significa o acumulador completo de 16-bit.
 
-{% hint style="warning" %}
-In reality, this register can be considered to be always 16-bit. When A is in 8-bit mode, you access the low byte of this register. When A is in 16-bit mode, you access both the high and low bytes of this register. The high byte doesn't get cleared when A enters 8-bit mode, even when new values are written to A, which is why the high byte can be considered to be 'hidden'. Also, certain instructions use both high and low bytes of the A register, regardless of whether A is in 8-bit or 16-bit mode.
-{% endhint %}
+{% hint style = "aviso"%}
+Na verdade, esse registrador pode ser sempre considerado como de 16-bit. Quando A está no modo de 8-bit, você acessa o low byte desse registrador. Quando A está no modo de 16-bit, você acessa o ambos high e low byte desse registrador ao mesmo tempo. O high byte não é apagado quando A entra no modo de 8-bit, mesmo quando novos valores são gravados em A, razão pela qual o high byte pode ser considerado "oculto". Além disso, certas instruções usam high e low bytes do registrador A, independentemente de A estar no modo de 8 ou 16-bit.
+{% endhint%}
 
-## Indexers
-The indexers are two registers, known as **X** and **Y**. Even though they are separate registers, they have exactly the same purposes and behave exactly the same. These registers are made for indexing, explained later in this tutorial. These registers can also be 8-bit or 16-bit. X and Y can also hold general-purpose variables to store things to the memory and other registers. 
+## Indexadores
+Os indexadores são dois registradores, conhecidos como **X** e **Y**. Embora sejam registradores separados, eles têm exatamente as mesmas finalidades e se comportam exatamente da mesma forma. Esses registradores são feitos para indexação, explicada posteriormente neste tutorial. Esses registradores também podem ser de 8 ou 16-bit. X e Y também podem conter variáveis ​​de uso geral para armazenar valores na memória e em outros registradores.
 
-X and Y are “paired” – they can be 8-bit or 16-bit mode only at the same time. One of them can’t be 8-bit while the other one is 16-bit.
+X e Y são “interligados” - e só podem estar no modo de 8 ou 16-bit ao mesmo tempo. Um deles não pode ser de 8-bit e o outro de 16-bit.
 
-{% hint style="warning" %}
-When X and Y leave 16-bit mode, their high bytes get cleared to the value $00, unlike the A register where the high byte remains intact. 
-{% endhint %}
+{% hint style = "aviso"%}
+Quando X e Y saem do modo de 16-bit, seus high bytes são zerados para o valor $00, ao contrário do registrador A, onde o high byte permanece intacto.
+{% endhint%}
 
-## Direct Page 
-The direct page register is a 16-bit register, used for the direct page addressing mode (explained later in this tutorial). When you access a memory address by its direct page notation, the value in the direct page is added to that address. You can generally ignore this register if you're just beginning with assembly.
+## Direct page
+O registrador de Direct page é um registrador de 16-bit, usado no  modo de endereçamento de Direct page (explicado posteriormente neste tutorial). Quando você acessa um endereço da memória pela notação de Direct Page valor da Direct Page atual é adicionado a esse endereço. Geralmente, você pode ignorar esse registrador se estiver apenas iniciando em assembly.
 
 ## Stack Pointer
-The stack pointer register is a 16-bit that holds the pointer to the stack in the RAM (explained later in this tutorial), relative to memory address $000000. The register dynamically changes, as you push and pull values to the stack (explained later in the tutorial).
+O stack pointer é um registrador de 16-bit que mantém o ponteiro do stack na RAM (explicado mais tarde neste tutorial), relativo ao endereço de memória $000000. O registrador muda dinamicamente, conforme você adiciona e requisita valores na stack (explicado posteriormente no tutorial).
 
 ## Processor Status
-The processor status register holds the current processor flags in 8-bit format. There are 8 processor flags, and they all occupy one bit. Changing this register would alter the SNES behaviour greatly. Processor flags are explained later in this tutorial.
+O registrador de status do processador contém os sinalizadores do processador atual no formato de 8-bit. Existem 8 sinalizadores de processador e todos ocupam um bit. Alterar esse registrador alteraria muito o comportamento do SNES. Os sinalizadores do processador são explicados posteriormente neste tutorial.
 
 ## Data bank
-The data bank register holds the current data bank address as a single byte. When you access an address using the "absolute address" notation, the SNES will use this register to determine the bank of the address.
+O registrador de data bank  contém um único byte do endereço do data bank atual. Quando você acessa um endereço usando a notação de "endereço absoluto", o SNES usará esse registrador para determinar o banco do endereço.
 
 ## Program bank
-The program bank register keeps track of the current bank of the currently executed instruction. So, if there is a code executed at address $018009, this register will hold the value $01.
+Este registrador contém o primeiro byte do endereço instrução do bank atual que será executada no momento. Assim, se houver um código executado no endereço $018009, este registrador terá valor $01.
 
 ## Program counter
-This register keeps track of the high and low bytes of the address of the currently executed instruction. So, if there is an instruction executed at $018009, this register will hold the value $8009.
+Este registrador contém os high e low bytes do endereço da instrução que será executada no momento. Portanto, se houver uma instrução executada em $018009, este registrador terá o valor $8009.
