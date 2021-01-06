@@ -1,11 +1,11 @@
 # Little-endian
 
-Inside the SNES memory, 16-bit and 24-bit values are always stored in "little-endian". Take for example the value $1234 which we store in the RAM; $1234 does not appear as $12 $34. It appears as $34 $12, instead. This is how the SNES works. When this number is read in 16-bit mode, it reads $1234, NOT $3412. The SNES reverses this automatically again.
+Dentro da memória do SNES, os valores de 16-bit e 24-bit são sempre armazenados em "little-endian". Tome por exemplo o valor $1234 que armazenamos na RAM; $1234 não aparece como $12 $34. Ao invés disso, aparece como $34 $12. É assim que funciona o SNES. Quando esse número é lido no modo de 16 bits, ele mostra $1234, NÃO $3412. O SNES reverte isso automaticamente.
 
-24-bit values are no exception. Values, such as $123456, are stored in the memory as $56 $34 $12.
+Os valores de 24-bit não são exceção. Valores, como $123456, são armazenados na memória como $56 $34 $12.
 
-You can write everything in normal ASM without worrying about little-endian, because everything is dealt with automatically by the SNES and the assembler! You can worry about little-endian when you deal with 16-bit values in 8-bit mode. 
+Você pode escrever tudo em ASM normal sem se preocupar com o endianness, pois tudo é tratado automaticamente pelo SNES e pelo assembler! Você deve se preocupar com endianness ao lidar com valores de 16-bit no modo de 8-bit.
 
-For example: if you ever store the value $1234 at address $7E0000, it is stored as $34 $12. Then, if you ever want to access the low byte of $1234 (which is $34), you would need to read $7E0000, NOT $7E0001.
+Por exemplo: se você armazenar o valor $1234 no endereço $7E0000, ele será armazenado como $34 $12. Então, se quiser acessar o byte inferior de $1234 (que é $34), você precisará ler $7E0000, NÃO $7E0001.
 
-The concept of little-endian is especially important when dealing with “pointers”, which is explained later in this tutorial.
+O conceito de little-endian é especialmente importante ao lidar com "ponteiros", que é explicado mais tarde neste tutorial.
