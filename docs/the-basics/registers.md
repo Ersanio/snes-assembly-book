@@ -21,7 +21,7 @@ Quando X e Y saem do modo de 16-bit, seus high bytes são zerados para o valor $
 {% endhint%}
 
 ## Direct page
-O registrador de Direct page é um registrador de 16-bit, usado no  modo de endereçamento de Direct page (explicado posteriormente neste tutorial). Quando você acessa um endereço da memória pela notação de Direct Page valor da Direct Page atual é adicionado a esse endereço. Geralmente, você pode ignorar esse registrador se estiver apenas iniciando em assembly.
+O registrador de Direct page é um registrador de 16-bit, usado no  modo de endereçamento de Direct page (explicado posteriormente neste tutorial). Quando você acessa um endereço da memória pela notação de Direct Page, o valor da Direct Page atual é adicionado nesse endereço. Geralmente, você pode ignorar esse registrador se estiver apenas iniciando em assembly.
 
 ## Stack Pointer
 O stack pointer é um registrador de 16-bit que mantém o ponteiro do stack na RAM (explicado mais tarde neste tutorial), relativo ao endereço de memória $000000. O registrador muda dinamicamente, conforme você adiciona e requisita valores na stack (explicado posteriormente no tutorial).
