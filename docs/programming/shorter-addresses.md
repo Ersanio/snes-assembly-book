@@ -1,10 +1,11 @@
-# Shorter addresses
-It’s possible to shorten addresses, but there are prerequisites. 
+# Encurtando endereços
+É possível encurtar endereços, mas há pré-requisitos.
 
-In order to shorten a long RAM address into an absolute (4-digit) address, the address has to be between $7E0000-$7E1FFF. $7E1234 can be shortened to $1234 for example. If you shorten address $7E2000 or higher into a 4-digit address, you’ll write to areas other than the RAM. It has to do with the data bank register and the SNES memory map.
+Para encurtar um endereço longo da RAM em um endereço absoluto (4 dígitos), o endereço deve estar entre $ 7E0000 - $7E1FFF. $7E1234 pode ser reduzido para $1234, por exemplo. Se você encurtar o endereço $7E2000 ou superior em um endereço de 4 dígitos, você escreverá em outras áreas além da RAM. Isso tem a ver com o registrador data bank e com o mapa de memória do SNES.
 
-If you want to shorten long RAM addresses to a direct page (2-digit) address, the high and low bytes of the long address must never exceed the value $00FF. The address you want to store to must be in bank $00 or $7E. So you can shorten `LDA $7E0001` to `LDA $01` and `STA $000001` to `STA $01`. 
+Se você quiser encurtar os endereços longos de RAM para um endereço direct page (2 dígitos), os highe low bytes do endereço longo nunca devem exceder o valor $ 00FF. O endereço que você deseja armazenar deve ser no banco $00 ou $7E. Portanto, você pode encurtar `LDA $7E0001` para` LDA $01` e `STA $000001` para` STA $01`.
 
-It's often necessary to write shorter addresses as parameters, as certain opcodes don't support certain addressing modes. For example, the STZ opcode does not support long addresses, so you can't write `STZ $7E1234`. You'll have to write `STZ $1234` instead.
+Freqüentemente, é necessário escrever endereços mais curtos como parâmetros, pois certos opcodes não suportam certos modos de endereçamento. Por exemplo, o opcode STZ não suporta endereços longos, então você não pode escrever `STZ $7E1234`. Você terá que escrever `STZ $1234` em vez disso.
 
-Keep in mind that when you use 2 digits for loading and storing, the bank is always $00 by default, regardless of the data bank! You can use 2-digit addresses for RAM addresses $7E0000-$7E00FF, because RAM $7E0000-$7E1FFF is mirrored in banks $00-$3F by default.
+Lembre-se de que quando você usa 2 dígitos para carregar e armazenar, o banco é sempre $00 por padrão, independentemente do registrador data bank! Você pode usar endereços de 2 dígitos para endereços de RAM $7E0000 - $7E00FF, porque a RAM $7E0000 - $7E1FFF é espelhado nos bancos $00 - $3F.
+
