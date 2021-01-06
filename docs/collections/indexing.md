@@ -46,7 +46,7 @@ RTS
 
 ValuesTableExample: db $03,$86,$91,$38,$22
 ```
-O código carregará um valor da tabela em A. Basicamente, isso faz `LDA ValuesTableExample`, e o valor em Y, que é $03, serem adicionados ao endereço. Em outras palavras, em linguagens de programação de alto nível seria algo como `ValuesTableExample[3]`. Você começa a contar o índice do **zero**. O índice 0 dessa tabela tem o valor $03, o índice 1 tem o valor $86, e assim por diante. O terceiro valor do índice é $38 neste caso, então este código de exemplo realmente carrega $38 em A e o armazena em $7E0000 na RAM.
+O código carregará um valor da tabela em A. Basicamente, isso faz `LDA ValuesTableExample`, e o valor em Y, que é $03, serem adicionados ao endereço. Em outras palavras, em linguagens de programação de alto nível seria algo como `ValuesTableExample[3]`. Você começa a contar o índice do **zero**. O índice 0 dessa tabela tem o valor $03, o índice 1 tem o valor $86, e assim por diante. O valor do índice 3 é $38 neste caso, então este código de exemplo realmente carrega $38 em A e o armazena em $7E0000 na RAM.
 
 A indexação é bastante útil quando você deseja escrever instruções muito repetitivas o tempo todo. A indexação também pode ser realizada com o registro X. Afinal, X e Y se comportam exatamente da mesma forma.
 
