@@ -1,33 +1,33 @@
-# Tables and indexing
-Indexing is the act of accessing a *table of data* from a certain offset, that offset being determined by an indexer. The registers X and Y are unmissable when it comes to indexing. They're called the 'indexer' registers, after all.
+# Tabelas e indexação
+Indexar é a ação de acessar uma *tabela de dados* a partir de um certo offset, sendo tal offset definido por um indexador. Os registradores X e Y são indispensáveis quando se trata de indexação. Não obstante, são chamados registradores 'indexadores'.
 
-## Tables
-'Tables' are simply a sequence of values. They are used in at least two cases:
-* Conditional cases (e.g. a collection of speed values, depending on the entity's direction)
-* Values that represent an 'asset' (e.g. graphics data, music data, level data)
+## Tabelas
+'Tabelas' são simplesmente uma sequência de valores. Elas são usadas em pelo menos dois cenários:
+* Casos condicionais (ex.: uma coleção de valores de aceleração, dependendo da direção do móvel)
+* Valores que representam um 'recurso' (ex.: dados gráficos, dados de música, dados da fase)
 
-Tables have very practical applications in SNES games. You can, for example, store text data in tables. Or level data. Or palette data. Tables can contain anything and can have any size, as long as they fit within the ROM.
+Tabelas têm aplicações muito práticas em jogos de SNES. Você consegue, por exemplo, armazenar dados de texto em tabelas. Ou dados de fases. Ou ainda dados da paleta. Tabelas podem conter qualquer coisa e ter qualquer tamanho, desde que caibam na ROM.
 
-There are four types of values which you can use to write tables:
-|Instruction|Full name|Explanation|
-|-|-|-|
-|**db**|direct byte|A value denoting a byte (8-bit value, e.g. $XX)|
-|**dw**|direct word|A value denoting a word (16-bit value, e.g. $XXXX)|
-|**dl**|direct long|A value denoting a long (24-bit value, e.g. $XXXXXX)|
-|**dd**|direct double|A value denoting a double (32-bit value, e.g. $XXXXXXXX)|
+Existem quatro tipos de valores que você pode usar para escrever tabelas:
+| Instrução | Nome completo | Explicação                                                   |
+| - | - | - |
+|**db**|direct byte| Um valor que indica um byte (8-bit value, e.g. $XX) |
+|**dw**|direct word| Um valor que indica um word (16-bit value, e.g. $XXXX) |
+|**dl**|direct long| Um valor que indica um long (24-bit value, e.g. $XXXXXX) |
+|**dd**|direct double| Um valor que indica um double (32-bit value, e.g. $XXXXXXXX) |
 
-In this case, the bytes are a “byte”, not “word” or “long”, hence “db”: direct byte. The table in this example serves no other purpose than demonstrating indexing. In this case, the table is located somewhere inside the ROM. Tables are preceded by a label so that you can refer to it easily within your code.
+Neste caso, os bytes são um “byte”, não “word” ou “long”, então “db”: direct byte. A tabela neste exemplo serve apenas para demonstrar a indexação. Neste caso, a tabela está localizada em algum lugar dentro da ROM. Tabelas são precedidas por um rótulo para que você possa consultá-las facilmente em seu código.
 
-Here's an example of a table definition:
+Aqui está um exemplo de definição de tabela:
 ```
 ValuesTableExample: db $03,$86,$91,$38,$22
 ```
-As you can see, we first define the value type as 'byte' by writing 'db'. Then, we follow with byte-values, seperated by a comma (,).
+Como você pode ver, primeiro definimos o tipo de valor como 'byte' escrevendo 'db'. E então, seguimos com os valores de byte separados por uma vírgula (,).
 
-In order to access a table, we always use a label. In this case, we used the label 'ValuesTableExample'.
+Para acessar uma tabela, sempre usamos um rótulo. Nesse caso usamos o rótulo 'ValuesTableExample'.
 
-## Indexing
-Tables can be accessed using a label. Labels are translated into ROM memory addresses, after all. Expanding on above table example, the following code would read out a value from the table:
+## Indexação
+Tabelas podem ser acessadas usando um rótulo. Rótulos são traduzidos em endereços de memória ROM. Expandindo o exemplo acima, o código a seguir leria um valor da tabel:
 
 ```
 LDA ValuesTableExample
@@ -36,28 +36,28 @@ RTS
 
 ValuesTableExample: db $03,$86,$91,$38,$22
 ```
-However, what this code does is always reading the first value in that table, the value $03, and storing it into RAM $7E0000. This is because we haven't used any indexer.
+Entretanto, o que esse código faz é ler sempre o primeiro valor da tabela, o valor $03, e armazená-lo em  $7E0000 da RAM. Isso acontece porque não usamos nenhum indexador.
 
 ```
-LDY #$03           ; Y is now loaded with the number $03
-LDA ValuesTableExample,y ;Load a number from the table into A, using Y as index
+LDY #$03           ; Y agora está carregado com o número $03
+LDA ValuesTableExample,y ;Carrega um número da tabela em A, usando Y como índice
 STA $00
 RTS
 
 ValuesTableExample: db $03,$86,$91,$38,$22
 ```
-The code will load a value from the table into A. Basically, this does `LDA ValuesTableExample`, and the value in Y, which is $03, is added to the address. In other words, in higher-level programming languages it'd be something like `ValuesTableExample[3]`. You start counting index from **zero**. Index 0 of that table has the value $03, index 1 has the value $86, and so on. The 3rd index value is $38 in this case, so this code example actually loads $38 in A, and stores it in RAM $7E0000.
+O código carregará um valor da tabela em A. Basicamente, isso faz `LDA ValuesTableExample`, e o valor em Y, que é $03, serem adicionados ao endereço. Em outras palavras, em linguagens de programação de alto nível seria algo como `ValuesTableExample[3]`. Você começa a contar o índice do **zero**. O índice 0 dessa tabela tem o valor $03, o índice 1 tem o valor $86, e assim por diante. O terceiro valor do índice é $38 neste caso, então este código de exemplo realmente carrega $38 em A e o armazena em $7E0000 na RAM.
 
-Indexing is quite useful when you don’t want to write very repetitive instructions all the time. Indexing can be performed with the X register too. X and Y behave exactly the same, after all.
+A indexação é bastante útil quando você deseja escrever instruções muito repetitivas o tempo todo. A indexação também pode ser realizada com o registro X. Afinal, X e Y se comportam exatamente da mesma forma.
 
-Indexing is actually one of the many addressing modes. The basic addressing modes are covered [here](../the-basics/addressing.md) and the more advanced addressing modes [here](../indepth/addressing.md).
+A indexação é, na verdade, um dos muitos modos de endereçamento. Os modos básicos de endereçamento estão cobertos [aqui](https://github.com/Ersanio/snes-assembly-book/blob/master/docs/the-basics/addressing.md) e os modos mais avançados [aqui](https://github.com/Ersanio/snes-assembly-book/blob/master/docs/indepth/addressing.md).
 
-## Indexing with RAM
-So far, the above examples were about ROM. You can also index values in RAM. You can treat the RAM as one giant table you could index. You simply replace loaded label with an address. For example:
+## Indexando com RAM
+Até agora os exemplos acima eram sobre ROM. Também é possível indexar valores na RAM. Você consegue tratar a RAM como uma mesa gigante que permite indexação. Simplesmente substituindo a etiqueta carregada por um endereço. Por exemplo:
 
 ```
 LDX #$03
 LDA $7E1000,x
 STA $00
 ```
-In this case, the LDA would resolve into address `$7E1003`. The code loads $7E1003's value into A, and stores it into $7E0000.
+Neste caso, o LDA resolveria no endereço `$7E1003`. O código carrega o valor de `$7E1003` em A e o armazena em `$7E1000`.
