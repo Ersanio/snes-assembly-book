@@ -1,29 +1,29 @@
-# Glossary
-Here are some definitions of the most commonly used terms throughout the tutorial. For the sake of context and continuity, it's best read from top to bottom.
+# Glossário
+Aqui estão algumas definições dos termos mais comuns usados neste tutorial. Por uma questão de contexto e continuidade, é melhor ler de cima para baixo.
 
-| Terminology | Definition |
+| Terminologia | Definição |
 |-|-|
-|SNES|Super Nintendo Entertainment System|
-|Memory|The working space in the SNES in which the ROM, RAM and SRAM are present|
-|ROM|Read-only memory; the .smc/.sfc/.fig/*.etc files|
-|(W)RAM|(Work) Random-access memory|
-|SRAM|Static random-access memory; the .srm files|
-|Register|A variable in the SNES not part of the standard SNES memory.|
-|Opcode|A three-letter instruction; a command|
-|Addressing mode|An optional parameter for an opcode denoting a value or an address|
-|Instruction/Operation|The combination of an opcode and optionally an addressing mode|
-|Bytecode|An instruction assembled into bytes understandable by processors; machine code|
-|Value|A magnitude, quantity, or number; a number representing information|
-|Signed|A value that semantically allows itself to be negative as well|
-|Unsigned|A value that semantically allows itself to be positive-only, allowing for greater positive numbers|
-|Address|A location in the memory of the SNES. Ranges from $000000 to $FFFFFF|
-|Long address|An address represented by a 6-digit hexadecimal notation (e.g. $001200)|
-|Absolute address|An address represented by a 4-digit hexadecimal notation of the final 4 digits (e.g. $1200)|
-|Direct page|An address represented by a 2-digit hexadecimal notation of the final 2 digits (e.g. $00)|
-|Byte|An 8-bit value|
-|Word|A 16-bit value|
-|Long|A 24-bit value|
-|Double|A 32-bit value|
-|Bank byte|The first two digits of a long address or a long value (e.g. '$12' in $123456)|
-|High byte|The middle two digits of a long address, absolute address, long value or word value (e.g. '$34' in $123456 or $3456)|
-|Low byte|The final two digits of a long address, absolute address, long value or word value (e.g. '$56' in $123456 or $3456)|
+|SNES|Super Nintendo Entertainment System.|
+|Memória|O espaço de trabalho no SNES em que a ROM, RAM e SRAM estão presentes.|
+|ROM|Read-only memory; Os arquivos .smc/.sfc/.fig/*.etc.|
+|(W)RAM|(Work) Random-access memory.|
+|SRAM|Static random-access memory; O arquivo .srm.|
+|Registrador|Uma variável no SNES que não faz parte da memória padrão do SNES.|
+|Opcode|Uma instrução de três letras; Um comando.|
+|Modo de Endereçamento|Um parâmetro opcional para um opcode denotando um valor ou endereço.|
+|Instrução/Operação|A combinação de um opcode e opcionalmente um modo de endereçamento.|
+|Bytecode|Uma instrução montada em bytes e inteligível para o processador; Código de máquina.|
+|Valor|Uma magnitude, quantidade ou número; Um número representando informação.|
+|Com sinal|Um valor que semânticamente se permite ser negativo.|
+|Sem sinal|Um valor que semânticamente se permite ser apenas positivo, possilitando acesso a números positivos maiores.|
+|Endereço|Um local na memória do SNES. Vai de $000000 a $FFFFFF.|
+|Endereço longo|Um endereço representado, em notação hexadecimal, por 6 dígitos, por exemplo: $001200.|
+|Endereço absoluto|Um endereço representado, em notação hexadecimal, por 4 dígitos, por exemplo: $1200.|
+|Direct page|Um endereço representado, em notação hexadecimal, por 2 dígitos, por exemplo: $00.|
+|Byte|Um valor 8-bit.|
+|Word|Um valor 16-bit.|
+|Long|Um valor 24-bit.|
+|Double|Um valor 32-bit.|
+|Byte do Banco|Os primeiros dois dígitos em um endereço longo ou valor longo, por exemplo: '$12' em $123456).|
+|High byte|Os dígitos do meio em um endereço longo ou valor longo, por exemplo: '$34' em $123456).|
+|Low byte|Os últimos dois dígitos de um endereço longo ou valor longo, por exemplo: '$56' em $123456).|
