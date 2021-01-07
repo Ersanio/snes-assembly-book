@@ -1,115 +1,116 @@
-# Copying data
-65c816 assembly has two opcodes dedicated to moving huge blocks of data from one memory location to another.
+# Copiando dados
+O assembly de 65c816 tem dois opcodes dedicados a mover grandes blocos de dados de um local de memória para outro.
 
-|Opcode|Full name|Explanation|
+|Opcode|Nome completo|Explicação|
 |-|-|-|
-|**MVN**|Move block negative|Moves a block of data byte by byte, starting from the beginning and working towards the end|
-|**MVP**|Move block positive|Moves a block of data byte by byte, starting from the end and working towards the beginning|
+|**MVN**|Move block negative|Move um bloco de dados byte a byte, começando do início e trabalhando em direção ao fim|
+|**MVP**|Move block positive|Move um bloco de dados byte a byte, começando do final e trabalhando em direção ao início|
 
-MVP and MVN practically do a mass amount of LDA and STA to some RAM addresses. You can’t move data to ROM, because ROM is read-only.
+MVP e MVN praticamente faz uma grande quantidade de LDA e STA em massa para alguns endereços na RAM. Você não pode mover dados para a ROM, porque a ROM é somente leitura.
 
-It's highly recommended to have the A, X and Y registers at 16-bit mode. It's also highly recommended to preserve the data bank using the stack, as the MVN opcode implicitly changes this. Here's an example of a proper block move setup:
+É altamente recomendável ter os registradores A, X e Y em modo 16-bit. Também é altamente recomendável preservar o data bank usando a pilha, pois o opcode MVN o altera implicitamente. Aqui está um exemplo de como configurar o movimento do bloco adequadamente:
 ```
-PHB                ; Preserve data bank
+PHB                ; Preserva o data bank
 REP #$30           ; 16-bit AXY
-                   ; ← Move instructions are located here
+                   ; ← Instruções de movimentação estão localizadas aqui
 SEP #$30           ; 8-bit AXY
-PLB                ; Recover data bank
+PLB                ; Recupera o data bank
 ```
 
 ## MVN
-When using MVN, the three main registers all have a special purpose.
+Ao usar o MVN, todos os três registradores principais têm um propósito especial.
 
-|Register|Purpose|
+|Registrador|Objetivo|
 |-|-|
-|A|Specifies the amount of bytes to transfer, *minus 1*|
-|X|Specifies the high and low bytes of the data source memory address|
-|Y|Specifies the high and low bytes of the destination memory address|
-The A register is 'minus 1'. This means that if you want to move 4 bytes of data, you load $0004-1, which is $0003, into A.
+|A|Especifica a quantidade de bytes a transferir, *menos 1*|
+|X|Especifica os bytes high e low do endereço de memória da origem|
+|Y|Especifica os bytes high e low do endereço de memória de destino|
 
-MVN can be written in two ways: 
+O registrador A é 'menos 1'. Isso significa que se você quiser mover 4 bytes de dados, carregue $0004-1, equivalente a $0003, no A.
+
+MVN pode ser escrito de duas maneiras: 
 ```
 MVN $xxyy
 ; or
 MVN $yy, $xx
 ```
-Where `xx` is the source bank, and `yy` is the destination bank.
+Onde `xx` é o source bank, e `yy` é o destination bank.
 
 {% hint style="info" %}
-Note that the comma notation's parameters are reversed.
+Observe que os parâmetros da notação de vírgula são invertidos
 {% endhint %}
 
-When executing the MVN opcode, the SNES loops at that same opcode for each byte transferred. When a byte is transferred, the following happens:
-|Register|Event|
+Ao executar o opcode MVN, o SNES repete aquele mesmo opcode para cada byte transferido. Quando um byte é transferido, acontece o seguinte:
+|Registrador|Evento|
 |-|-|
-|A|Decreases by 1|
-|X|Increases by 1|
-|Y|Increases by 1|
-|Data bank|Is set to the bank of the destination address|
-Seeing that A decreases by 1, eventually it will reach the value $0000, then it'll wrap to $FFFF. Once that wrap happens, the block move finishes and the SNES proceeds to execute the opcodes that follow.
+|A|Decrementa em 1|
+|X|Incrementa em 1|
+|Y|Incrementa em 1|
+|Data bank|É definido como o bank do endereço de destino|
+Vendo que A decrementa em 1, eventualmente ele atingirá o valor $0000, então retornará para $FFFF. Uma vez que o retorno acontece, a movimentação do bloco termina e o SNES continua a executar os opcodes seguintes.
 
-Here's an example of a block move:
+Aqui está um exemplo de movimento de bloco:
 ```
-PHB                ; Preserve data bank
+PHB                ; Preserva o data bank
 REP #$30           ; 16-bit AXY
 LDA #$0004         ; \
 LDX #$8908         ;  |
-LDY #$A000         ;  | Move 5 bytes of data from $1F8908 to $7FA000
+LDY #$A000         ;  | Move 5 bytes de dados de $1F8908 para $7FA000
 MVN $7F, $1F       ; /
 SEP #$30           ; 8-bit AXY
-PLB                ; Recover data bank
+PLB                ; Recupera o data bank
 ```
-This example will move 5 bytes of data from address $1F8098 to $7FA000.
+Este exemplo moverá 5 bytes de dados do endereço $1F8098 para $7FA000.
 
 ## MVP
-When using MVP, the three main registers all have a special purpose.
+Ao usar MVP, os três registradores principais têm uma finalidade especial.
 
-|Register|Purpose|
+|Registrador|Objetivo|
 |-|-|
-|A|Specifies the amount of bytes to transfer, *minus 1*|
-|X|Specifies the high and low bytes of the data source memory address|
-|Y|Specifies the high and low bytes of the destination memory address|
-The A register is 'minus 1'. This means that if you want to move 4 bytes of data, you load $0004-1, which is $0003, into A.
+|A|Especifica a quantidade de bytes a transferir, *menos 1*|
+|X|Especifica os bytes high e low do endereço de memória da origem|
+|Y|Especifica os bytes high e low do endereço de memória de destino|
+O registrador A é 'menos 1'. Isso significa que se você quiser mover 4 bytes de dados, carregue $0004-1, equivalente a $0003, no A.
 
-MVP can be written in two ways: 
+MVP pode ser escrito de duas maneiras: 
 ```
 MVP $xxyy
 ;or
 MVP $yy, $xx
 ```
-Where `xx` is the source bank, and `yy` is the destination bank.
+Onde `xx` é o source bank, e `yy` é o destination bank.
 
-When executing the MVP opcode, the SNES loops at that same opcode for each byte transferred. From this point on, this is where MVP differs from MVN. When a byte is transferred, the following happens:
-|Register|Event|
+Ao executar o opcode MVP, o SNES repete aquele mesmo opcode para cada byte transferido. Deste ponto em diante, é aqui é o MVP difere do MVN. Quando um byte é transferido, acontece o seguinte:
+|Registrador|Evento|
 |-|-|
-|A|Decreases by 1|
-|X|Decreases by 1|
-|Y|Decreases by 1|
-|Data bank|Is set to the bank of the destination address|
-Considering that X and Y decrease, rather than increase, this means that MVP moves blocks of data from the end towards the beginning.
+|A|Decrementa em 1|
+|X|Decrementa em 1|
+|Y|Decrementa em 1|
+|Data bank|É definido como o bank do endereço de destino|
+Considerando que X e Y decrementam, em vez de incrementar, isso significa que MVP move os blocos de dados do final para i início.
 
-Here's an example of a block move:
+Aqui está um exemplo de movimento de bloco:
 ```
-PHB                ; Preserve data bank
+PHB                ; Preserva o data bank
 REP #$30           ; 16-bit AXY
 LDA #$0004         ; \
 LDX #$8908         ;  |
-LDY #$A000         ;  | Move 5 bytes of data from ($1F8908-$0004) to ($7FA000-$0004)
+LDY #$A000         ;  | Move 5 bytes de dados de ($1F8908-$0004) para ($7FA000-$0004)
 MVP $7F, $1F       ; /
 SEP #$30           ; 8-bit AXY
-PLB                ; Recover data bank
+PLB                ; Recupera o data bank
 ```
-This example will move 5 bytes of data from address $1F8904 to $7F9FFC. Although the transfer happens backwards, the transferred data isn't reversed. It still copies over as you'd expect.
+Este exemplo moverá 5 bytes de dados do endereço $1F8904 para $7F9FFC. Embora a transferência aconteça invertida, os dados transferidos não serão invertidos. Ainda copiará como esperado.
 
-## Edge cases
-* When you set the A register to $0000, it means you will move 1 byte.
-* When you set the A register to $FFFF, it means you will move 65536 bytes.
-* When either the source or destination addresses cross a bank boundary, the high and low bytes reset to $0000, while the data bank remains unchanged.
+## Casos extremos
+* Quando você define o registrador A para $0000, significa que você moverá 1 byte.
+* Quando você define o registrador A para $FFFF, significa que você moverá 65536 bytes.
+* Quando os endereços de origem e destino cruzam o limite do bank, os bytes high e low são redefinidos para $0000, enquanto o data bank continua inalterado.
 
-## Easy notation
-Asar supports labels as parameters for LDA, so you can write block moves without having to calculate the source table size or address locations. The following examples allow for tables of all sizes, and assume the destination to be memory address $7FA000.
+## Notação rápida
+Asar suporta rótulos como parâmetros para LDA, então você pode escrever movimentos de bloco sem ter que calcular o tamanho da tabela de origem ou localizações de endereço. Os exemplos a seguir permitem tabelas de todos os tamanhos e assumem que o destino seja o endereço de memória $7FA000.
 
-An example for MVN:
+Um exemplo para MVN:
 ```
 PHB
 REP #$30
@@ -124,7 +125,7 @@ RTS
 SomeTable: db $00,$01,$02,$03,$04
 .end
 ```
-An example for MVP:
+Um exemplo para MVP:
 ```
 PHB
 REP #$30
@@ -139,4 +140,4 @@ RTS
 SomeTable: db $00,$01,$02,$03,$04
 .end
 ```
-As you can see, MVP is considerably more complicated to setup.
+Como você pode perceber, o MVP é consideravelmente mais complicado de ajustar.
