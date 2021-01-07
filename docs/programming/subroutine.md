@@ -1,23 +1,24 @@
-# Jumping to subroutines
+# Saltando para sub-rotinas
 
-What if you want to use the same code twice, but you don’t want to write, for example, the exact same 200 lines of codes again? You can turn code into "subroutines" and use jumping opcodes to run these subroutines. There are four jumping opcodes in total.
+E se você precisar usar o mesmo código duas vezes ou mais, mas não quiser escrever, por exemplo, as mesmas 200 linhas de códigos novamente? Você pode criar "sub-rotinas" e usar opcodes de salto para executar essas sub-rotinas. Existem quatro opcodes de salto.
 
-There's a difference between "subroutine" and "code" in this tutorial, as you'll see in the coming paragraphs.
+Há uma diferença entre "sub-rotina" e "código" neste tutorial, como verá no decorrer da explanação.
 
-## JSR and JSL
-There are two opcodes which pretty much act like a function call in higher-level programming languages.
+## JSR e JSL
+Há dois opcodes que agem de forma similar a uma chamada de função de linguagens de alto nível.
 
-|Opcode|Full name|Explanation|
+|Opcode|Nome completo|Explicação|
 |-|-|-|
-|**JSR**|Jump to subroutine|Jumps to a subroutine using an absolute address|
-|**JSL**|Jump to subroutine long|Jumps to a subroutine using a long address|
+|**JSR**|Jump to subroutine|Salta para uma sub-rotina usando um endereço absoluto.|
+|**JSL**|Jump to subroutine long|Salta para uma sub-rotina usando um endereço longo.|
 
-These opcodes call a piece of code, then continue executing code below said opcode. Here is an example of the usage of JSR:
+Estes opcodes saltam para um trecho de código, após o executarem, continuam o código logo abaixo deles. Eis aqui um exemplo de uso de `JSR`:
+
 ```
 LDA #$01
 STA $01
-JSR Label1         ; Execute the “subroutine” located at Label1 (current bank)
-LDA #$03           ; The RTS in Label1 will return to this line
+JSR Label1         ; Salta para executar a “sub-rotina” localizada em Label1 (neste banco)
+LDA #$03           ; A instrução RTS em Label1 retornará para esta linha
 STA $00
 RTS
 
@@ -26,59 +27,64 @@ LDA #$02
 STA $02
 RTS
 ```
-This code will store $01 into $7E0001, will store $03 into $7E0000 AND execute the codes at Label1 at the current bank, so it also stores $02 into $7E0002.
+O código acima armazenará $01 em $7E0001, armazenará $03 em $7E0000 E executará os códigos em Label1 no banco atual, assim, também armazenará $02 em $7E0002. 
 
-JSL has the same purpose as JSR, except it can jump everywhere. Above example can also be applied to JSL, except that the `RTS` is now an `RTL`.
+`JSL` tem a mesma finalidade do `JSR`, a diferença é que pode saltar para qualquer lugar. Neste exemplo, também podemos aplicar a `JSL`, mas o `RTS` deverá ser substituído por ` RTL`.
 
-The opcode JSR will get assembled as `JSR $XXXX` by the assembler (because labels get turned into addresses), but you shouldn’t worry about that. Furthermore, because JSR uses an absolute address as its parameter, it is limited to its current bank. Changing the data bank register doesn't affect JSR.
+O opcode `JSR` será montado como `JSR $XXXX` pelo assembler (pois rótulos são alterados para endereços), não se preocupe quanto a isso. Além disso, `JSR` usa um endereço absoluto como parâmetro, sendo assim, ele é limitado ao banco atual. Alterar o registrador data bank não afeta `JSR`. 
 
-The opcode JSR will get assembled as `JSL $XXXXXX`, instead.
+O opcode `JSL`, também será montado como `JSL $XXXXXX`, pelos mesmos motivos.
 
-## RTS and RTL
-When you call a subroutine, you also need a way to return back to your original code. For that, there are two return opcodes.
-|Opcode|Full name|Explanation|
+## RTS e RTL
+Quando você chama uma sub-rotina, você precisa de um meio para retornar ao código original. Para isso, há dois opcodes de retorno.
+
+|Opcode| Nome completo               |Explicação|
 |-|-|-|
-|**RTS**|Return from subroutine|Returns from a JSR|
-|**RTL**|Return from subroutine long|Returns from a JSL|
-Code called by JSR and JSL should end with RTS and RTL, respectively.
+|**RTS**|Return from subroutine|Retorna de um JSR.|
+|**RTL**|Return from subroutine long|Retorna de um JSL.|
+Códigos chamados por `JSR` e `JSL`, devem terminar com `RTS` e `RTL`, respectivamente.
 
-## JMP and JML
-If you'd like to control the code flow rather than doing a function call, you will use regular jumps instead.
-|Opcode|Full name|Explanation|
+## JMP e JML
+Se você precisa controlar o fluxo do código em vez de fazer uma chamada de função, você usará saltos comuns.
+
+|Opcode|Nome completo|Explicação|
 |-|-|-|
-|**JMP**|Jump|Jumps to code using an absolute address|
-|**JML**|Jump long|Jumps to code using a long address|
+|**JMP**|Jump|Salta o código usando um endereço absoluto.|
+|**JML**|Jump long|Salta o código usando um endereço longo.|
 
-What JMP and JML do is jumping to another location and executing the code there, ignoring everything after the JMP/JML opcode. The RTS in Label1 does NOT jump back to LDA #$03. Instead, it just finishes the current subroutine it was in.
+`JMP` e `JML` saltam para um outro local e executam o código, ignorando tudo que vier após eles. O `RTS` em `Label1` NÃO salta de volta para `LDA #$03`. Em vez disso, ele apenas termina a sub-rotina atual em que estava.
+
 ```
 JML Label1
 
-LDA #$03           ; Ignored
-STA $00            ; Ignored
-RTS                ; Ignored
+LDA #$03           ; Ignorado
+STA $00            ; Ignorado
+RTS                ; Ignorado
 
 Label1:
 STZ $00
 RTS
 ```
 
-JMP is limited to the current bank, like JSR. JML can jump anywhere like JSL. JMPs and JMLs don’t have a return instruction, but you can still use an RTS or RTL to return from a JMP/JMP depending on the current situation. Example:
+`JMP` é limitado ao banco atual, assim como `JSR`, `JML` pode pular para qualquer trecho sem restrições, como `JSL`. `JMP` e `JML` não tem uma instrução para retorno, mas você ainda pode usar um `RTS` ou `RTL` para  retornar de um `JSR`/`JMP` dependendo da situação. Veja o exemplo:
+
 ```
 LDA #$01
 STA $00
-JSR Label1         ; Jump to subroutine "Label1"
-RTS                ; Label2 returns here. The code ends here.
+JSR Label1         ; Salta para a sub-rotina "Label1".
+RTS                ; Label2 retorna para cá. O código se encerra aqui.
 
 Label1:
-JMP Label2         ; Jump to Label2
+JMP Label2         ; Salta para Label2.
 
 Label2:
-RTS                ; This DOESN’T return to Label1. Instead, it returns to the RTS above.
+RTS                ; Não retorna para "Label1". Retornará para o RTS acima.
 ```
 
-It is good practice to put a blank line after a JMP or JML, so the reader knows that the program flow changes from that point on.
+É uma boa prática colocar uma linha em branco após um `JMP` ou `JML`, assim o leitor sabe que o fluxo do programa muda a partir daquele ponto em diante.
 
-## Additional notes
-The Data Bank does NOT get updated when you use a JSL or JML. You will have to do that yourself.
+## Notas adicionais
 
-Remember how JSL/JML can jump everywhere? They can even jump to RAM, which implies code can be executed in RAM. You can write values to RAM which can be interpreted as code which can be executed.
+O registrador data bank não é atualizado quando você usa `JSL` ou `JML`. Você deverá fazer isso manualmente.
+
+Lembre-se que o `JSL`/`JML` podem saltar sem restrições para qualquer lugar? Isso quer dizer que eles podem saltar até mesmo para a RAM, isso quer dizer que você pode executar código na RAM. Você pode escrever valores na RAM que pode ser interpretados como código e, assim, executados.
