@@ -53,7 +53,7 @@ A indexação é bastante útil quando você deseja escrever instruções muito 
 A indexação é, na verdade, um dos muitos modos de endereçamento. Os modos básicos de endereçamento estão cobertos [aqui](https://github.com/Ersanio/snes-assembly-book/blob/master/docs/the-basics/addressing.md) e os modos mais avançados [aqui](https://github.com/Ersanio/snes-assembly-book/blob/master/docs/indepth/addressing.md).
 
 ## Indexando com RAM
-Até agora os exemplos acima eram sobre ROM. Também é possível indexar valores na RAM. Você consegue tratar a RAM como uma mesa gigante que permite indexação. Simplesmente substituindo a etiqueta carregada por um endereço. Por exemplo:
+Até agora os exemplos acima eram sobre ROM. Também é possível indexar valores na RAM. Você consegue tratar a RAM como uma tabela gigante que permite indexação. Simplesmente substituindo a etiqueta carregada por um endereço. Por exemplo:
 
 ```
 LDX #$03
