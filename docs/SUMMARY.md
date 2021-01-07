@@ -16,8 +16,8 @@
 ## O básico(novamente)
 * [Carregando e armazenando](programming/loading-and-storing.md)
 * [Endereços mais curtos](programming/shorter-addresses.md)
-* [Modo de 8 e 16 bits](programming/816.md)
-* [Comparando, ramificação, rótulos](programming/branches.md)
+* [Modo 8 e 16-bit](programming/816.md)
+* [Comparando, branches, labels](programming/branches.md)
 * [Salto para sub-rotinas](programming/subroutine.md)
 
 ## Coleção de valores
