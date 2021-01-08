@@ -1,127 +1,130 @@
-# Comparing, branching, labels
+# Comparações, desvios e labels
 
-You can run certain pieces of code depending on certain conditions. For this, you'll have to make use of comparison and branching opcodes. Comparison opcodes compare the contents of A, X or Y with another value. A branching opcode then controls the program flow, depending on the comparison.
+Você pode executar certas partes do código dependendo de certas condições. Para isso, você terá que fazer uso de instruções de comparação e desvio. Os instruções de comparação comparam o conteúdo de A, X ou Y com um valor qualquer. Um opcode de desvio controla o fluxo do programa, dependendo (ou não) do resultado de uma comparação.
 
 ## Branches
-Branches are opcodes which control the flow of the code depending on the outcome of comparisons. Branches jump to a **label**.
+Branches são instruções que controlam o fluxo do código que, dependendo do resultado das comparações, os Branches "saltam" para outros partes do código que são predeterminados por **labels**.
 
-The branching opcodes have a range of -128 to 127 bytes. This means they can either jump 128 bytes backwards, or they can jump 127 bytes forward, relative to the program counter. One exception is BRL (Branch Long). BRL has a range of 32768 bytes (8000 in hex), which is a whole bank. If the branch goes out of range, the assembler gives an error. You’ll have to find a way to put the destination label into the branch’s reach. The "tips and tricks" chapter covers this.
+Os instruções de desvio são limitados a um intervalo de -128 a 127 bytes. Isso significa que eles só podem saltar 128 bytes para trás ou 127 bytes para frente, em relação ao program counter. Uma exceção é o BRL (Branch Long). BRL possui um intervalo de 32768 bytes (8000 em hexadecimal), que é igual ao tamanho de  um banco inteiro. Se o branch sair do intervalo, o assembler acusará um erro. Você terá que encontrar uma maneira de colocar o label de destino ao alcance do branch. O capítulo "dicas e truques" explicará mais sobre isso.
 
 ## Labels
-Labels are basically text placed in code to locate an entry point of a jump or a “table”. Labels are no opcodes or anything. It’s basically an easier way to specify an offset/address, because the labels get turned into numbers by the assembler. It is good practice to give labels meaningful names, for your own sake. Examples codes in this chapter will make use of labels.
+Os labels são rótulos de textos colocados no código para demarcar um ponto de entrada de um salto ou uma “tabela”. Os labels não são instruções nem nada parecido. É basicamente uma maneira mais fácil de especificar um offset/endereço, porque os labels são transformados em números pelo assembler. É uma boa prática dar nomes significativos aos labels , para seu próprio bem. Os códigos de exemplo neste capítulo farão uso de labels.
 
 ## CMP
-To make comparisons, you usually compare the contents of A with something else. The primary way for that is the opcode `CMP`.
+Para fazer comparações, você geralmente usa o conteúdo de A com um outra valor qualquer. A principal forma de fazer isso é com o instrução `CMP`.
 
-|Opcode|Full name|Explanation|
+|Opcode|Nome completo|Explicação|
 |-|-|-|
-|**CMP**|Compare A|Compares A with something else|
+|**CMP**|Compare A|Compara A com outro valor|
 
-CMP takes whatever is in A, and compares it with a specified parameter. After using a CMP instruction, you need to use an opcode that will perform the type of “branch” that you wish to occur.
+CMP pega o valor que está carregado em A e compara com um parâmetro especifico. Depois de usar uma instrução CMP, você precisará usar uma instrução que realizará o “tipo de desvio” que você deseja que ocorra.
 
-It’s also possible to compare 16-bit values. Just change `CMP #$xx` to `CMP #$xxxx`.
+Também é possível comparar valores de 16-bit. Basta alterar `CMP #$xx` para `CMP #$xxxx`.
 
-## BEQ and BNE
-There are branch opcodes which branch depending on if a value equals or doesn't equal.
-|Opcode|Full name|Explanation|
+## BEQ e BNE
+Existem instruções de desvio que saltam dependendo se a comparação dos valores forem iguais ou diferentes.
+
+|Opcode|Nome completo|Explicação|
 |-|-|-|
-|**BEQ**|Branch if equals|Branches if the comparison equals with the compared value|
-|**BNE**|Branch if not equals|Branches if the comparison doesn't equal with the compared value|
+|**BEQ**|Branch if equals|Salta se o valores comparados forem iguais.|
+|**BNE**|Branch if not equals|Salta se o valores comparados não forem iguais (diferentes).|
 
-BEQ branches if the comparison is equal with the compared value. Here's an example:
-
+BEQ salta se os valores forem iguais. Veja o exemplo abaixo:
 ```
-LDA $00            ; Loads the current value of RAM address $7E0000 into A
-CMP #$02           ; Compares A with the immediate value $02
-BEQ Label1         ; If A = $02, go to the codes in Label1. NOTE: Case-Sensitive
-LDA #$01           ; \ Else
-STA $1245          ; / Store value $01 into RAM $7E1245.
-RTS                ; This instruction is used to end a routine.
+LDA $00            ; Carrega o valor atual do endereço $7E0000 em A
+CMP #$02           ; Compara A com o valor imediato $02
+BEQ Label1         ; Se A = $02, vá para Label1. NOTA: Case-Sensitive
+LDA #$01           ; \ Senão
+STA $1245          ; / Armazena o valor $01 no endereço $7E1245.
+RTS                ; Esta instrução é usada para encerrar uma rotina.
 
-Label1:           
-STZ $19            ; Store zero in $7E0019
-RTS                ; End.
+Label1:
+STZ $19            ; Armazene zero em $7E0019
+RTS                ; Fim.
 ```
-This code will store zero ($00) in $7E0019 when $7E0000 contains the value $02. If it doesn't have $02 as its value, the code will then store value $01 in $7E1245. As you can see, BEQ will "jump" to a portion of the code when compared values are equal, skipping certain code. In this case, the code jumps to the code located at the label “Label1”.
+Este código armazenará zero ($00) em $7E0019 quando $7E0000 possuir  o valor $02. Se não o código armazenará o valor $01 em $7E1245. Como você pode ver, BEQ irá "saltar" para uma parte do código quando os valores comparados forem iguais, pulando um determinado código. Neste caso, o código salta para o código localizado na label “Label1”.
 
-BNE branches if the comparison doesn't equal with the compared value. Here's an example:
+BEQ salta se os valores "não" forem iguais. Aqui segue mais um exemplo:
 ```
-LDA $00            ; Loads the current value of RAM address $7E0000 into A
-CMP #$02           ; Compares A with $02
-BNE Label1         ; A = NOT $02, finish the code, do nothing.
-LDA #$01           ; \ Else
-STA $1245          ; / Store something in RAM $7E1245
-Label1:            ;
-RTS                ; End.
+LDA $00           ; Carrega o valor atual do endereço $7E0000 em A
+CMP #$02          ; Compara A com $02
+BNE Label1        ; A NÃO= $02, não faça nada e finalize o código.
+LDA #$01          ; \ Senão
+STA $1245         ; / Armazene algo em $7E1245
+Label1:           ;
+RTS               ; Fim.
 ```
-This code will store $01 to $7E1245, if $7E0000 has the value $02. If RAM address $7E0000 doesn’t have the value $02, the code will instead do nothing and simply return.
+O código acima armazenará $01 em $7E1245, se $7E0000 possuir o valor $02. Senão, o código não fará nada e simplesmente finalizará.
 
-## Comparing addresses
-You can also compare RAM addresses with each other. For example:
-```
-LDA $00            ; Load $7E0000's value into A
-CMP $02            ; Compare A with $7E0002
-BEQ Equal          ; Branch if equal
-```
-When RAM addresses $7E0000 and $7E0002 have the same values, the branch will be taken.
+## Comparando endereços
 
-## CPX and CPY
-You can also compare values by using the registers X and Y.
+Você também pode comparar  a partir de endereços da RAM. Por exemplo:
+```
+LDA $00           ; Carregue o valor de $7E0000 em A
+CMP $02           ; Compare A com $7E0002
+BEQ Equal         ; Vá para "Equal" se igual
+```
+Quando os endereços $7E0000 e $7E0002 tiverem os mesmos valores, o salto ocorrerá.
 
-|Opcode|Full name|Explanation|
+## CPX e CPY
+
+Você também pode comparar usando os registradores X e Y.
+
+|Opcode|Nome completo|Explicação|
 |-|-|-|
-|**CPX**|Compare X|Compares X with something else|
-|**CPY**|Compare Y|Compares Y with something else|
-It's not just A which is capable of doing comparisons. For example, you can load a value into X or Y and compare it with something else. Here's an example using X:
+|**CPX**|Compare X|Compara X com outro valor|
+|**CPY**|Compare Y|Compara Y com outro valor|
+Não é somente A que pode ser comparado. Por exemplo, você pode carregar um valor em X ou Y e compará-lo com outro valor. Aqui temos um exemplo de uso do X:
 
 ```
-LDX $00            ; Load $7E0000's value into X
-CPX $02            ; Compare X with $7E0002
-BEQ Equal          ; Branch if equal
+LDX $00           ; Carregue o valor de $7E0000 em X
+CPX $02           ; Compare X com $7E0002
+BEQ Equal         ; Vá para "Equal" se igual
 ```
-It will have the same result as the example with comparing addresses. You can compare Y too by using CPY. However, you cannot mix registers. The the following is wrong:
+Teremos o mesmo resultado do exemplo com a comparação de endereços. Você também pode comparar Y usando CPY. No entanto, você não pode misturar registradores. O código a seguir está errado:
 ```
 LDX $00
 CMP $02
 BEQ Equal
 ```
-CMP $02 would try to compare address $7E0002 with the register A, instead of X. This will cause unexpected results.
+CMP $02 tentaria comparar o endereço $7E0002 com o registrador A em vez de X, causando resultados inesperados.
 
-## BMI and BPL
-These are branch opcodes which branch depending on if a value is signed or unsigned.
-|Opcode|Full name|Explanation|
-|-|-|-|
-|**BMI**|Branch if minus|Branches if the last operation resulted in a negative value|
-|**BPL**|Branch if plus|Branches if the last operation resulted in a positive value|
+## BMI e BPL
+Estas são instruções de desvio que saltam dependendo se um valor é com sinal  ou sem sinal.
 
-BMI branches if the last operation is a minus/negative value. Minus values are the values $80-$FF. BPL branches if the last operation is not a minus value; it branches when the value is $00-$7F.
+| Opcode | Nome completo | Explicação |
+| - | - | - |
+| **BMI** | Branch if minus | Salta se a última operação resultou em um valor negativo |
+| **BPL** | Branch if plus | Salta se a última operação resultou em um valor positivo |
 
-## BCS and BCC
-These are branch opcodes which branch depending on if a value is greater than or less than.
-|Opcode|Full name|Explanation|
-|-|-|-|
-|**BCS**|Branch if carry set|Basically branches if the loaded value is greater than or equal to the compared value|
-|**BCC**|Branch if carry clear|Basically branches if the loaded value is less than the compared value|
+BMI salta se a última operação resultar em um valor negativo. Os valores negativos são os valores de $80 a $FF. BPL salta se a última operação resultar em um valor positivo, ou seja, de $00 a $7F.
 
-BCS branches if the loaded value is equal or greater than the compared value. Alternatively, this also branches when the carry flag is set.
+## BCS e BCC
+Estes são instruções de desvio, dependendo se um valor é maior ou menor que.
+| Opcode | Nome completo | Explicação |
+| - | - | - |
+| **BCS** | Branch if carry set | Salta se o valor carregado for maior ou igual ao valor comparado |
+| **BCC** | Branch if carry clear | Salta se o valor carregado for menor que o valor comparado |
 
-BCC branches if the loaded value is lesser than the compared value. Alternatively, this also branches when the carry flag is clear. Please note that this BCC doesn’t get taken if the compared value is equal, unlike BCS.
+BCS salta se o valor carregado for igual ou maior que o valor comparado. Como alternativa, também salta quando a flag de carry estiver marcada.
 
-## BVS and BVC
-These are branch opcodes which branch depending on if a value results in a mathematical overflow or not.
-|Opcode|Full name|Explanation|
-|-|-|-|
-|**BVS**|Branch if overflow set|Branches if the comparison causes a mathematical overflow|
-|**BVC**|Branch if overflow clear|Branches if the comparison doesn't cause a mathematical overflow|
+BCC salta se o valor carregado for menor que o valor comparado. Como alternativa, também salta quando o a flag de carry estiver desmarcada. Observe que ao contrário do BCS, BCC não salta se os valores comparados forem iguais.
 
-The “overflow” flag is a processor flag, explained later in the tutorial.
+## BVS e BVC
+Esses são instruções de ramificação, dependendo se um valor resulta em um overflow matemático ou não.
+| Opcode | Nome completo | Explicação |
+| - | - | - |
+| **BVS** | Branch if overflow set | Ramificações se a comparação causar um overflow matemático |
+| **BVC** | Branch if overflow clear | Ramificação se a comparação não causar um overflow matemático |
 
-## BRA and BRL
-These are unconditional branches which are always taken.
-|Opcode|Full name|Explanation|
-|-|-|-|
-|**BRA**|Branch always|Always branches|
-|**BRL**|Branch always long|Always branches, but with greater reach|
+As flags de  “overflow” e "carry" são flags do processador, serão abordadas posteriormente no tutorial.
 
-BRA will ALWAYS branch; it doesn’t even check for conditions.
-BRL does the same, but it has a longer reach, enough to cover half a bank for each direction.
+## BRA e BRL
+Estas são instruções de desvios incondicionais que sempre serão executados.
+| Opcode | Nome completo | Explicação |
+| - | - | - |
+| **BRA** | Branch always | Sempre ramificar |
+| **BRL** | Branch always long | Sempre filiais, mas com maior alcance |
+
+BRA **sempre** saltará; ele nem mesmo valida as comparações.
+O BRL faz o mesmo, mas com um maior alcance, o suficiente para cobrir metade de um banco para cada direção.
