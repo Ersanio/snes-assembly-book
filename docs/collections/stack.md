@@ -1,5 +1,5 @@
-# A pilha
-A pilha é um tipo especial de 'tabela' localizada dentro da RAM do SNES. Imagine a pilha como uma pilha de pratos. Você só pode adicionar (push) ou remover (pull/pop) um prato pela parte superior. Você pode visualizar tal pilha como algo assim:
+# The stack
+The stack is a special type of 'table' which is located inside the SNES RAM. Imagine the stack as a stack of plates. You can only add (push) or remove (pull/pop) a plate from the top. You can visualize it as something like this:
 
 ```
 |   |
@@ -9,15 +9,15 @@ A pilha é um tipo especial de 'tabela' localizada dentro da RAM do SNES. Imagin
 |[ ]|
 ‾‾‾‾‾
 ```
-As 'caixas' vazias no exemplo acima são basicamente os valores dentro da pilha e podem conter qualquer valor. A coleção de caixas está fechada por todos os lados, exceto pela parte de cima.
+The empty 'boxes' in above example are basically the values inside the stack, and they can hold any value. The collection of boxes are closed off from all sides, except for the top.
 
 {% hint style="info" %}
-Tecnicamente falando, como a pilha é uma área dentro da RAM, você pode acessar qualquer valor que desejar usando modos especiais de endereçamento relativo à pilha em vez de usar apenas os opcodes 'push' e 'pull'. Para os propósitos deste capítulo, iremos assumir que a pilha na verdade é uma pilha perfeita de pratos. 
+Technically speaking, because the stack is an area inside the RAM, you can access any value you want, using special stack-relative addressing modes rather than using only push and pull opcodes. For the purposes of this chapter, we'll assume the stack indeed is a perfect stack of plates. 
 {% endhint %}
 
 
 ## Push
-'Pushing' é a ação de adicionar (colocar) um valor no topo da pilha. Segue um exemplo:
+'Pushing' is the act of adding a value on top of the stack. Here's an example:
 
 ```
  [$32]
@@ -30,10 +30,10 @@ Tecnicamente falando, como a pilha é uma área dentro da RAM, você pode acessa
 |[$14]|   |[$14]|
 ‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾
 ```
-Como pode ver, o valor $32 é adicionado no topo da pilha. A pilha agora tem cinco valores em vez de quatro.
+As you can see, the value $32 is added on top of the stack. The stack now has five values instead of four.
 
 ## Pull/Pop
-'Pulling' (ou 'popping') é a ação de ler (recuperar) um valor do topo da pilha. Aqui está um exemplo:
+'Pulling' (or 'popping') is the act of reading a value from the top of the stack. Here's an example:
 
 ```
            [$32]
@@ -46,60 +46,60 @@ Como pode ver, o valor $32 é adicionado no topo da pilha. A pilha agora tem cin
 |[$14]|   |[$14]|
 ‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾
 ```
-Como pode ver, o valor $32 é recuperado do topo da pilha.
+As you can see, the value $32 is retrieved from the top of the stack.
 
 {% hint style="info" %}
-*Todas* as instruções de 'pulling' afetam as flags Negativo e Zero do processador.
+*All* pulling instructions affect the Negative and the Zero processor flags.
 {% endhint %}
 
-## Push (colocar/adicionar) A, X, Y
-Existem opcodes para adicionar o valor atual contido nos registradores A, X ou Y na pilha:
-|Opcode|Nome completo|Significado|
+## Push A, X, Y
+There are opcodes to push the current value inside the A, X or Y registers onto the stack:
+|Opcode|Full name|Explanation|
 |-|-|-|
-|**PHA**|Push A onto stack|Adiciona o valor atual de A na pilha|
-|**PHX**|Push X onto stack|Adiciona o valor atual de X na pilha|
-|**PHY**|Push Y onto stack|Adiciona o valor atual de Y na pilha|
+|**PHA**|Push A onto stack|Pushes the current value of A onto the stack|
+|**PHX**|Push X onto stack|Pushes the current value of X onto the stack|
+|**PHY**|Push Y onto stack|Pushes the current value of Y onto the stack|
 
-## Pull (ler/retirar) A, X, Y
-Também existem opcodes para retirar o valor atual da pilha para os registradores A, X ou Y:
-|Opcode|Nome completo|Significado|
+## Pull A, X, Y
+There are also opcodes to pull the current value from the stack into the A, X or Y registers:
+|Opcode|Full name|Explanation|
 |-|-|-|
-|**PLA**|Pull into A|Retira um valor da pilha e coloca no registrador A|
-|**PLX**|Pull into X|Retira um valor da pilha e coloca no registrador X|
-|**PLY**|Pull into Y|Retira um valor da pilha e coloca no registrador Y|
+|**PLA**|Pull into A|Pulls a value from the stack into the A register|
+|**PLX**|Pull into X|Pulls a value from the stack into the X register|
+|**PLY**|Pull into Y|Pulls a value from the stack into the Y register|
 
-## Exemplo
-Imagine o seguinte cenário: O registrador X tem que manter o valor $19, não importa como, mas você precisa usar X para outra coisa. Como alguém faria isso? Você usa PHX para preservar o valor em X na pilha, antes de usar uma instrução que modifica o conteúdo de X:
+## Example
+Imagine the following scenario: The X register has to stay at the value $19, no matter what, but you really have to use X for something else. How would one do that? You use PHX to preserve the value in X in the stack, before you use an instruction which modifies the contents of X:
 ```
-                   ; Imagine que X tem o valor $19 na pilha
-PHX                ; Adiciona X ($19) na pilha. Resultado: 1° valor da pilha = #$19
-LDX $91            ; Carrega o valor de $7E0091 no registrador X
-LDA $1000,x        ; \ X agora está modificado, e usamos isso para indexar RAM
+                   ; Imagine X has the value $19 in the stack
+PHX                ; Push X ($19) onto stack. Result: Stack 1st value = #$19
+LDX $91            ; Load $7E0091's value into X
+LDA $1000,x        ; \ X is now modified, and we use it to index RAM
 STA $0100          ; /
-PLX                ; Restaura X. X agora contém $19 novamente
+PLX                ; Restore X. X is now $19 again
 ```
 
 {% hint style="info" %}
-Os registradores A, X e Y não tem uma pilha separada. Há apenas uma pilha, especificada pelo 'registrador de ponteiro de pilha' (ou 'stack pointer register'). Para explicações mais detalhadas sobre o registrador de ponteiro de pilha (stack pointer register), veja: [Stack pointer register](../processor/stackpointer.md)
+The A, X and Y registers do not have a separate stack. There is only one stack, specified by the 'stack pointer register'. For detailed explanations about the stack pointer register, see: [Stack pointer register](../processor/stackpointer.md)
 {% endhint %}
 
-## Operações de pilha em modo 16-bits
-Todas as explicações e comportamentos anteriores também se aplicam a operações de pilha de 16-bits. Só que você está adicionando e retirando valores de 16-bits e não 8-bits.
+## 16-bit mode stack operations
+All the previous explanations and behaviours apply to 16-bit stack operations as well. It's just that you're pushing and pulling 16-bit values, not 8-bit values.
 
-Isso também significa que se você colocar dois valores de 8-bits na pilha, poderá retirar um único valor de 16-bits futuramente.
+This also means that if you push two 8-bit values onto the stack, that you can pull a single 16-bit value later.
 
-## Outras operações de 'push' e 'pull'
-Outras operações de 'push' (colocar/adicionar) e 'pull' (ler/retirar), que não são afetados pelos modos 8-bits ou 16-bits para A, X e Y:
+## Other push and pull operations
+There are also other push and pull commands, which are not affected by 8-bit or 16-bit mode A, X and Y:
 
-|Opcode|Nome completo|Significado|Tamanho do valor|
+|Opcode|Full name|Explanation|Value size|
 |-|-|-|-|
-|**PHB**|Push data bank register|Coloca o valor atual do registrador do data bank na pilha|8-bit|
-|**PLB**|Pull data bank register|Retira um valor da pilha e coloca no registrador do data bank|8-bit|
-|**PHD**|Push direct page register|Coloca valor atual do registrador de direct page na pilha|16-bit|
-|**PLD**|Pull direct page register|Retira um valor da pilha e adiciona ao registrador de direct page|16-bit|
-|**PHP**|Push processor flags|Adiciona o valor atual do registrador de flags do processador na pilha|8-bit|
-|**PLP**|Pull processor flags|Retira um valor da pilha e adiciona no registrador de flags do processador|8-bit|
-|**PHK**|Push program bank|Adiciona o valor de banco do opcode atualmente executado (o opcode PHK) na pilha. Não há versão 'pull' (ler/retirar) deste|8-bit|
-|**PEA $XXXX**|Push effective address|Adiciona um valor específico de 16-bits  na pilha. Don't let the name of the opcode mislead you. This doesn't read out any address|16-bit|
-|**PEI ($XX)**|Push effective indirect address|Adiciona o valor do endereço fornecido da direct page na pilha. O registrador de direct page pode afetar o endereço fornecido|16-bit|
-|**PER *rótulo***|Push program counter relative|Uma adição bem complicada. Simplificando, ele coloca o endereço absoluto do rótulo (label) indicado, na pilha. O que acontece é que, quando você fornece um rótulo, o assembler calcula a distância relativa entre o opcode PER e o rótulo fornecido. Tal distância relativa é um valor 16-bits com sinal, e portanto o opcode é montado em `PER $XXXX`.|16-bit|
+|**PHB**|Push data bank register|Pushes the data bank register's current value onto the stack|8-bit|
+|**PLB**|Pull data bank register|Pulls a value from the stack into the data bank register|8-bit|
+|**PHD**|Push direct page register|Pushes the direct page register's current value onto the stack|16-bit|
+|**PLD**|Pull direct page register|Pulls a value from the stack into the direct page register|16-bit|
+|**PHP**|Push processor flags|Pushes the processor flags register's current value onto the stack|8-bit|
+|**PLP**|Pull processor flags|Pulls a value from the stack into the processor flag register|8-bit|
+|**PHK**|Push program bank|Pushes the bank value of the currently executed opcode (the PHK opcode) onto the stack. There's no pull version of this|8-bit|
+|**PEA $XXXX**|Push effective address|Pushes the specified 16-bit value onto the stack. Don't let the name of the opcode mislead you. This doesn't read out any address|16-bit|
+|**PEI ($XX)**|Push effective indirect address|Pushes the value at the given direct page address onto the stack. The direct page register can affect the given address|16-bit|
+|**PER *label***|Push program counter relative|A rather complicated push. Simply said, it pushes the absolute address of the given label onto the stack. What happens is, when you supply a label, the assembler calculates the relative distance between the PER opcode and the given label. This relative distance is a signed 16-bit value, thus the opcode finally assembles into `PER $XXXX`.|16-bit|
