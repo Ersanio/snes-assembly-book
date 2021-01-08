@@ -111,11 +111,11 @@ BCS salta se o valor carregado for igual ou maior que o valor comparado. Como al
 BCC salta se o valor carregado for menor que o valor comparado. Como alternativa, também salta quando o a flag de carry estiver desmarcada. Observe que ao contrário do BCS, BCC não salta se os valores comparados forem iguais.
 
 ## BVS e BVC
-Esses são instruções de ramificação, dependendo se um valor resulta em um overflow matemático ou não.
+Esses são instruções de desvio, dependendo se um valor resulta em um overflow matemático ou não.
 | Opcode | Nome completo | Explicação |
 | - | - | - |
-| **BVS** | Branch if overflow set | Ramificações se a comparação causar um overflow matemático |
-| **BVC** | Branch if overflow clear | Ramificação se a comparação não causar um overflow matemático |
+| **BVS** | Branch if overflow set | Salta se a comparação causar um overflow matemático |
+| **BVC** | Branch if overflow clear | Salta se a comparação não causar um overflow matemático |
 
 As flags de  “overflow” e "carry" são flags do processador, serão abordadas posteriormente no tutorial.
 
