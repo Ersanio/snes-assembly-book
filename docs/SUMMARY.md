@@ -25,16 +25,16 @@
 * [A pilha](coleções/pilha.md)
 * [Copiando dados](coleções/movimentos.md)
 
-## Sinalizadores e registros do processador
-* [Os sinalizadores do processador](processador/sinalizadores.md)
+## Flags e registradores do processador
+* [Os sinalizadores do processador](processor/flags.md)
 * [Alterando os sinalizadores do processador](processor/repsep.md)
-* [Transferências](processador/transferência.md)
+* [Transferências](processor/transfer.md.md)
 * [Stack pointer register](processor/stackpointer.md)
 
 ## Matemática e lógica
-* [Operações aritméticas](matemática/aritmética.md)
+* [Operações aritméticas](math/arithmetic.md)
 * [Operações de deslocamento de bits](math/shift.md)
-* [Operações bit a bit](math/lógica.md)
+* [Operações bit a bit](math/logic.md)
 * [Hardware math](math/math.md)
 
 ## Aprofundando-se
