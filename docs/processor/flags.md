@@ -1,153 +1,163 @@
-# Processor flags
-As you saw in the "8-bit and 16-bit mode" chapter earlier, the SNES can switch between 8-bit and 16-bit mode by using the opcodes REP and SEP. These affect the processor flags, which affect the behaviour of the SNES. Two of the prcoessor flags are dedicated to A and X & Y being 8-bit or 16-bit mode. There are in total 9 processor flags stored in the processor flags register as a single byte:
+# Flags do processador
+Como vimos no capítulo "Modos de Operação", o SNES pode alternar entre o modo 8-bit e 16-bit usando as instruções REP e SEP. Elas alteram as flags do processador, que por sua vez alteram o comportamento do SNES. Duas das flags do processador são dedicadas ao modo de 8 ou 16-bit dos registradores A e X e Y. Há no total 9 flags que compõem o registrador de status do processador (Processor status) e são representadas com um único byte:
 
 ```
-Processor flags
+Flags do processador
 Bits: 7   6   5   4   3   2   1   0
 
-                                 |e├─── Emulation: 0 = Native Mode
+                                 |e├──── Emulação: 0 = Modo nativo
      |n| |v| |m| |x| |d| |i| |z| |c|
      └┼───┼───┼───┼───┼───┼───┼───┼┘
-      │   │   │   │   │   │   │   └──────── Carry: 1 = Carry set
-      │   │   │   │   │   │   └───────────── Zero: 1 = Result is zero
-      │   │   │   │   │   └────────── IRQ Disable: 1 = Disabled
+      │   │   │   │   │   │   │   └──────── Carry: 1 = Carry
+      │   │   │   │   │   │   └───────────── Zero: 1 = Resultado zero
+      │   │   │   │   │   └────────── IRQ Disable: 1 = IRQ Desativado
       │   │   │   │   └───────────── Decimal Mode: 1 = Decimal, 0 = Hexadecimal
       │   │   │   └──────── Index Register Select: 1 = 8-bit, 0 = 16-bit
       │   │   └─────────────── Accumulator Select: 1 = 8-bit, 0 = 16-bit
-      │   └───────────────────────────── Overflow: 1 = Overflow set
-      └───────────────────────────────── Negative: 1 = Negative set
+      │   └───────────────────────────── Overflow: 1 = Overflow
+      └───────────────────────────────── Negative: 1 = Negativo
 ```
 
-You can memorize these processor flags by memorizing the 'word' `nvmxdizc`. This chapter will explain all the processor flags in detail.
+Você pode memorizando essas flags do processador memorizando 'palavra' `nvmxdizc` em sua mente. Este capítulo explicará todas as flags do processador em detalhes.
 
 ## Negative flag (n)
-Most opcodes modify the negative flag depending on the results of that opcode. These opcodes generally are opcodes which are handled in the mathematics chapter, but also loads, comparisons and pulls.
+Ele será definido quando o valor da última operação resultar em um numero entre $80-$FF ou $8000-$FFFF (dependendo do modo de 8/16-bit).
 
-The negative flag doesn't affect the behaviour of the SNES. Rather, there are some branches which make use of the negative flag.
+A maioria das instruções modificam e dependem dessa flag.  Essa instruções geralmente são as instruções que fazem loads, comparações e pulls, e também outras instruções que serão abordadas no capítulo [Hardware math](../math /arithmetic.md).
 
 ## Overflow flag (v)
-There are 3 opcodes which affect the overflow flag after a calculation: [`ADC`, `SBC`](../math/arithmetic.md) and [`BIT`](../math/logic.md). For detailed explanations of when the overflow flag is set, see the links.
+Apenas quatro instruções fazem uso dessa flag. Essas instruções são: `CLV`, `ADC`, `SBC` e `BIT`. 
+Este flag é definida quando o valor resultante da operação anterior "cair" fora intervalo de -128 a +127.
+Por exemplo, $90+$C8=$158. Em decimal, seria -112+(-56)=-168. O valor -168 está fora do intervalor de -128 e + 127, portanto, ocorre o overflow.
 
-The overflow flag doesn't affect the behaviour of the SNES. Rather, there are some branches which make use of the overflow flag.
+Para obter explicações mais detalhadas sobre como a overflow flag é modificada, consulte os capítulos [Hardware math](../math /arithmetic.md)  e [Bitwise operations](../math/logic.md).
+
+A overflow flag não afeta o comportamento do SNES. Em contra partida, existem algumas instruções de desvio que fazem uso dessa flag.
 
 ## Memory select (m)
-The memory select processor flag determines whether the accumulator is 8-bit or 16-bit. 
 
-When it's set to 1, the accumulator is 8-bit.
-When it's set to 0, the accumulator is 16-bit.
+Esta flag determina se o registrador acumulador deve estar no modo de operação de 8 ou 16-bit.
+
+Quando está definida como 1, ativa o modo de 8-bit para A.
+Quando está definida como 0, ativa o modo de 8-bit para A.
 
 ## Index select (x)
-The index select processor flag determines whether the X and Y registers are 8-bit or 16-bit. 
+Essa flag determina se os registradores X e Y devem estar no modo de operação de  8 ou 16-bit
 
-When it's set to 1, both X and Y are 8-bit.
-When it's set to 0, both X and Y are 16-bit.
+Quando está definida como 1, ativa o modo de 8-bit para X e Y.
+Quando está definida como 0, ativa o modo de 16-bit para X e Y.
 
-## Decimal mode flag (d)
-Setting this flag to 1 means the SNES enters decimal mode. This *only* affects the `ADC`, `SBC` and `CMP` opcodes.
+## Decimal mode (d)
+Definir esta flag como 1, faz com que o SNES entre no modo decimal. Isso afetará *apenas* as instruções `ADC`, `SBC` e `CMP`.
 
-These opcodes adjust the accumulator on-the-fly. This means that, if you for example add `$03` to `$09`, the result is `$12` instead of `$0C`.
+Essas instruções ajustam o acumulador em tempo real. Isso significa que, se você, por exemplo, adicionar `$03` a`$09`, o resultado será `$12` ao invés de`$0C`.
 
-Although decimal-mode math properly affects the carry flag and negative flag, it doesn't do this with the overflow flag.
+Embora as operações matemáticas do modo decimal afete adequadamente a carry flag e a negative flag, elas não fazem o mesmo com a overflow flag .
 
-# Binary-coded decimal
-Because these numbers are stored in decimal, they're stored in 'binary-coded decimal' (BCD). BCD is basically the same as hexadecimal, with the values $0A-0F, $1A-1F, et cetera 'cut out'. Here's a table showing how counting in BCD goes like:
+# Codificação binária decimal
 
-|Binary|Hexadecimal|Decimal|BCD|
-|-|-|-|-|
-|%0000 0000|$00|#00|%0000 0000|
-|%0000 0001|$01|#01|%0000 0001|
-|%0000 0010|$02|#02|%0000 0010|
-|%0000 0011|$03|#03|%0000 0011|
-|%0000 0100|$04|#04|%0000 0100|
-|%0000 0101|$05|#05|%0000 0101|
-|%0000 0110|$06|#06|%0000 0110|
-|%0000 0111|$07|#07|%0000 0111|
-|%0000 1000|$08|#08|%0000 1000|
-|%0000 1001|$09|#09|%0000 1001|
-|%0000 1010|$0A|Not available|Not available|
-|%0000 1011|$0B|Not available|Not available|
-|%0000 1100|$0C|Not available|Not available|
-|%0000 1101|$0D|Not available|Not available|
-|%0000 1110|$0E|Not available|Not available|
-|%0000 1111|$0F|Not available|Not available|
-|%0001 0000|$10|#10|%0001 0000|
-|%0001 0001|$11|#11|%0001 0001|
-|%0001 0010|$12|#12|%0001 0010|
-|...|...|...|...|
-|%1001 1000|$98|#98|%1001 1000|
-|%1001 1001|$99|#99|%1001 1001|
-|%1001 1010|$9A|Not available|Not available|
-|%1001 1011|$9B|Not available|Not available|
-|...|...|...|...|
+Como esses números são armazenados em decimais, eles são armazenados em 'codificação binária decimal'(BCD). BCD é basicamente o mesmo que hexadecimal, só que com a valores $0A-0F, $1A-1F, etc... 'cortados'. A tabela a seguir mostra como funciona a contagem em BCD:
 
-In this mode, the SNES supports calculation results from `$00` to `$99`. In 16-bit A mode, this would be from `$0000` to `$9999`.
+| Binário | Hexadecimal | Decimal | BCD |
+| - | - | - | - |
+|%0000 0000 | $00 | #00 |%0000 0000 |
+|%0000 0001 | $01 | #01 |%0000 0001 |
+|%0000 0010 | $02 | #02 |%0000 0010 |
+|%0000 0011 | $03 | #03 |%0000 0011 |
+|%0000 0100 | $04 | #04 |%0000 0100 |
+|%0000 0101 | $05 | #05 |%0000 0101 |
+|%0000 0110 | $06 | #06 |%0000 0110 |
+|%0000 0111 | $07 | #07 |%0000 0111 |
+|%0000 1000 | $08 | #08 |%0000 1000 |
+|%0000 1001 | $09 | #09 |%0000 1001 |
+|%0000 1010 | $0A | Não disponível | Não disponível |
+|%0000 1011 | $0B | Não disponível | Não disponível |
+|%0000 1100 | $0C | Não disponível | Não disponível |
+|%0000 1101 | $0D | Não disponível | Não disponível |
+|%0000 1110 | $0E | Não disponível | Não disponível |
+|%0000 1111 | $0F | Não disponível | Não disponível |
+|%0001 0000 | $10 | #10 |%0001 0000 |
+|%0001 0001 | $11 | #11 |%0001 0001 |
+|%0001 0010 | $12 | #12 |%0001 0010 |
+| ... | ... | ... | ... |
+|%1001 1000 | $98 | #98 |%1001 1000 |
+|%1001 1001 | $99 | #99 |%1001 1001 |
+|%1001 1010 | $9A | Não disponível | Não disponível |
+|%1001 1011 | $9B | Não disponível | Não disponível |
+| ... | ... | ... | ... |
 
-## Interrupt disable flag (i)
-This flag determines whether the IRQ of SNES is disabled or not.
+Neste modo, o SNES suporta cálculos matemáticos com valores de `$00` a` $99`. No modo 16-bit do acumulador de, estes valores seriam de `$0000` a` $9999`.
 
-When it's set to 1, IRQ is disabled.
-When it's set to 0, IRQ is enabled.
+## Interrupt disable (i)
+Esta flag determina se o IRQ do SNES está desabilitado ou não.
+
+Quando está definido como 1, o IRQ é desativado.
+Quando está definido como 0, o IRQ é habilitado.
+
 
 ## Zero flag (z)
-Most opcodes modify the zero depending on the results of that opcode. These opcodes generally are opcodes which are handled in the mathematics chapter, but also loads, comparisons and pulls.
+A maioria das instruções modificam e dependem dessa flag.  Essa instruções geralmente são as instruções que fazem loads, comparações e pulls, e também outras instruções que serão abordadas no capítulo [Hardware math](../math /arithmetic.md).
 
-The zero flag doesn't affect the behaviour of the SNES. Rather, there are some branches which make use of the zero flag.
+A overflow flag não afeta o comportamento do SNES. Em contra partida, existem algumas instruções de desvio que fazem uso dessa flag.
 
 ## Carry flag (c)
-The SNES supports math in the form of adding and subtracting numbers. It also supports bitwise operations such as bitshifting. Finally, the SNES supports logical operations such as a logical AND or XOR.
+O SNES oferece suporte à operações matemáticas na forma de adição e subtração de números. Ele também suporta operações bitwise e bit shifting. O SNES também suporta operações lógicas, como AND ou XOR.
 
-The “carry flag” is a processor flag used for most of these arithmetic and bitshifting operations. Additionally, the carry flag is also used for branching. The carry flag is the same concept as the "carry" you learn in elementary school. In a typical pencil-and-paper addition, you'd write it out like this:
+A “carry flag” é uma flag do processador usado para a maioria dessas operações aritméticas. Além disso, também é usada em instruções de desvio. Essa flag tem o mesmo conceito de "vai 1" que você aprende na escola primária. Em uma  típica conta de adição com lápis e papel, você escreveria assim:
 ```
   ¹
   27
 + 59
 ----
   86
- ```
-7+9 equals 16, thus *carry* the 1 to the left.
+```
+7 + 9 é igual a 16, portanto *vai* o 1 para a casa decimal a esquerda.
 
-Considering the carry is a "flag", when the carry flag is clear, the carry (C) will be 0. When it's set, the carry will be 1. You can safely assume that the carry flag is the “9th bit” of the A register when A is in 8-bit mode, and the “17th bit” when A is in 16-bit mode. Assuming A is in 8-bit mode, the carry flag will look like this:
+Considerando que o carry é uma "flag", quando a flag de carry estiver definida com 0, o carry também será 0 e quando estiver definida com 1, o carry também será 1. Você pode assumir com segurança que a carry flag é o “9º bit” do  registrador `A` quando `A` estiver no modo de 8-bit e o “17º bit” quando A estiver no modo de 16-bit. 
+
+Supondo que A esteja no modo de 8-bit, a carry flag ficará assim:
+
 ```
 BBBBBBBB C
 ```
-Where C is the Carry Flag and B are the bits – in other words the A register's contents.
+Onde C é a carry flag e B são os bits - em outras palavras, o conteúdo do registrador A.
 
-Depending on the carry flag, various mathematical and bit shifting instructions will behave differently.
+Dependendo de como a carry flag estiver definida , várias instruções de operações matemáticas e de bitwise se comportarão de maneira diferente no SNES.
 
-## Emulation mode flag (e)
-Setting this flag causes the 65c816 to behave as the 6502. When you enter emulation mode:
+## Flag de modo de emulação (e)
+Definir esta flag, faz com que o 65c816 se comporte como o 6502. Quando você entra no modo de emulação:
 
-* The stack pointer register's high byte remains static as $01
-* The A, X and Y registers are always 8-bit
-* The program bank and data bank registers are set to $00
-* The direct page register is initialized to $0000, and the high byte remains static as $00
+* O high byte registrador stack pointer permanece estático como $01
+* Os registradores A, X e Y serão sempre de 8-bit
+* Os registradores  program bank e data bank são definidos como $00
+* O registrador direct page é inicializado como $0000, e o high byte alto permanece estático como $00
 
-The emulation mode of the 65c816 also fixes some of the bugs that the 6502 had. For example, indirect addressing mode `JMP` now wraps addresses properly. For example: `JMP ($10FF)` will now get the high byte from `$1100`, rather than `$1000`.
+O modo de emulação do 65c816 também corrige alguns dos bugs que o 6502 tinha. Por exemplo, o modo de endereçamento indireto `JMP` agora envolve os endereços corretamente. Por exemplo: `JMP ($10FF)` obterá agora o high byte de `$1100`, ao invés de` $1000`.
 
-### Processor flags
-The emulation mode has a different set of processor flags.
+### Flags do processador
+O modo de emulação possui um conjunto diferente de flags do processador.
 
 ```
-Processor flags
+Flags do processador
 Bits: 7   6   5   4   3   2   1   0
 
-                                 |e├─── Emulation: 0 = Native Mode
+                                 |e├─── Emulation: 1 = Emulation Mode
      |n| |v| |1| |b| |d| |i| |z| |c|
      └┼───┼───┼───┼───┼───┼───┼───┼┘
-      │   │   │   │   │   │   │   └──────── Carry: 1 = Carry set
-      │   │   │   │   │   │   └───────────── Zero: 1 = Result is zero
-      │   │   │   │   │   └────────── IRQ Disable: 1 = Disabled
+      │   │   │   │   │   │   │   └──────── Carry: 1 = Carry
+      │   │   │   │   │   │   └───────────── Zero: 1 = Resultado zero
+      │   │   │   │   │   └────────── IRQ Disable: 1 = Desabilitado
       │   │   │   │   └───────────── Decimal Mode: 1 = Decimal, 0 = Hexadecimal
-      │   │   │   └─────────────────── Break Flag: 1 = Break executed
+      │   │   │   └─────────────────── Break Flag: 1 = Break executado
       │   │   └─────────────────────────── Unused: 1
-      │   └───────────────────────────── Overflow: 1 = Overflow set
-      └───────────────────────────────── Negative: 1 = Negative set
+      │   └───────────────────────────── Overflow: 1 = Overflow
+      └───────────────────────────────── Negative: 1 = Negativo
 ```
 
-As you can see, it's very similar to the processor flags of the SNES, with a few exceptions. The A and X & Y memory select bits are replaced.
+Como você pode ver, é muito semelhante as flags do processador do SNES, com algumas exceções. Os bits de mode select de A e X e Y são substituídos.
 
-### Unused flag
-This processor flag is unused and is always set to 1.
+### Flag Unused
+Esta flag não é usada e é sempre definida como 1.
 
-### Break flag
-This processor flag is set to 1 when the emulation mode comes across a `BRK` opcode, thus it only indicates that there was a break; the processor flag doesn't actually affect the SNES.
+### Flag Break
+Esta flag é definida como 1 quando uma instrução `BRK` é executada no modo de emulação, portanto, ela apenas indica que houve uma interrupção; esta flag não afeta realmente o SNES.
