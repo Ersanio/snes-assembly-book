@@ -46,6 +46,7 @@ Ao executar o opcode `MVN`, o SNES repete aquele mesmo opcode para cada byte tra
 |X|Incrementa em 1|
 |Y|Incrementa em 1|
 |Data bank|É definido como o bank do endereço de destino|
+
 Vendo que `A` decrementa em 1, eventualmente ele atingirá o valor $0000, então retornará para $FFFF. Quando isso ocorre, a movimentação do bloco termina e o SNES continua a executar os opcodes seguintes.
 
 Aqui está um exemplo de movimento de bloco:
@@ -69,6 +70,7 @@ Ao usar MVP, os três registradores principais têm uma finalidade especial.
 |A|Especifica a quantidade de bytes a transferir, *menos 1*|
 |X|Especifica os bytes high e low do endereço de memória da origem|
 |Y|Especifica os bytes high e low do endereço de memória de destino|
+
 O registrador `A` é 'menos 1'. Isso significa que se você quiser mover 4 bytes de dados, carregue $0004-1, equivalente a $0003, no `A`.
 
 MVP pode ser escrito de duas maneiras: 
@@ -88,6 +90,7 @@ Ao executar o opcode `MVP`, o SNES repete aquele mesmo opcode para cada byte tra
 |X|Decrementa em 1|
 |Y|Decrementa em 1|
 |Data bank|É definido como o bank do endereço de destino|
+
 Considerando que `X` e `Y` decrementam, ao invés de incrementar, isso significa que `MVP` move os blocos de dados do final para o início.
 
 Aqui está um exemplo de movimento de bloco:
