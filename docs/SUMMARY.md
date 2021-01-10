@@ -26,10 +26,10 @@
 * [Copiando dados](coleções/movimentos.md)
 
 ## Flags e registradores do processador
-* [Os sinalizadores do processador](processor/flags.md)
-* [Alterando os sinalizadores do processador](processor/repsep.md)
-* [Transferências](processor/transfer.md.md)
-* [Stack pointer register](processor/stackpointer.md)
+* [Flags do processador](processor/flags.md)
+* [Alterando as Flags do processador](processor/repsep.md)
+* [Transferências](processor/transfer.md)
+* [Registrador Stack pointer](processor/stackpointer.md)
 
 ## Matemática e lógica
 * [Operações aritméticas](math/arithmetic.md)
