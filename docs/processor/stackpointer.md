@@ -15,27 +15,27 @@ A pilha não tem tamanho definido. Em contra partida, você como programador, ap
 ## Push
 Aqui temos um exemplo de como a pilha funciona do ponto de vista da RAM, quando você usa push com valor de 8 bits:
 ```
-         ;Pilha: .. 55 55 55 55 55 55 ..
-LDA #$42                            └─ O stack pointer aponta para este valor.
+         ; Pilha: .. 55 55 55 55 55 55 ..
+LDA #$42                             └─ O stack pointer aponta para este valor.
 PHA
-         ;Pilha: .. 55 55 55 55 55 42 ..
-LDA #$AA                         └─ O stack pointer aponta para este valor.
+         ; Pilha: .. 55 55 55 55 55 42 ..
+LDA #$AA                          └─ O stack pointer aponta para este valor.
 PHA
-         ;Pilha: .. 55 55 55 55 AA 42 ..
-                              └─ O stack pointer aponta para este valor.
+         ; Pilha: .. 55 55 55 55 AA 42 ..
+                               └─ O stack pointer aponta para este valor.
 ```
 
 E aqui temos um exemplo de push de 16-bit:
 ```
 REP #$20 ; registrador A no modo 16-bit
-         ;Pilha: .. 55 55 55 55 55 55 ..
-LDA #$4210                          └─ O stack pointer aponta para este valor.
+         ; Pilha: .. 55 55 55 55 55 55 ..
+LDA #$4210                           └─ O stack pointer aponta para este valor.
 PHA
-         ;Pilha: .. 55 55 55 55 10 42 ..
-LDA #$AA99                    └─ O stack pointer aponta para este valor.
+         ; Pilha: .. 55 55 55 55 10 42 ..
+LDA #$AA99                     └─ O stack pointer aponta para este valor.
 PHA
-         ;Pilha: .. 55 55 99 AA 10 42 ..
-                        └─ O stack pointer aponta para este valor.
+         ; Pilha: .. 55 55 99 AA 10 42 ..
+                         └─ O stack pointer aponta para este valor.
 ```
 
 ## Pull
