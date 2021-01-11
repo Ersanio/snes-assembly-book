@@ -38,7 +38,7 @@
 * [Hardware math](math/math.md)
 
 ## Aprofundando-se
-* [Modos de endereçamento revistados](profundidade/addressing.md)
+* [Modos de endereçamento revistados](indepth/addressing.md)
 * [Opcodes diversos](indepth/misc.md)
 * [Ciclos da máquina](indepth/cycles.md)
 * [Vetores de hardware](indepth/vector.md)
