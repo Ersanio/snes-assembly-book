@@ -1,75 +1,74 @@
-# Operações de deslocamento de bits
-O 'deslocamento de bits' é uma operação bit a bit em que você move os bits para a esquerda ou direita. Como resultado, praticamente falando, você divide ou multiplica um número por dois.
+# Bit shifting operations
+'Bit shifting' is a bitwise operation in which you move bits left or right. As a result, practically speaking, you divide or multiply a number by two.
 
-## ASL e LSR
-Existem dois opcodes que deslocam bits para a esquerda ou direita.
+## ASL and LSR
+There are two opcodes which shift bits to the left or right.
 
-|Opcode|Nome completo|Explicação|
+|Opcode|Full name|Explanation|
 |-|-|-|
-|**ASL**|A ou mudança de memória para a esquerda|Move os bits para a esquerda uma vez sem transportar, praticamente multiplicando um valor por 2|
-|**LSR**|A ou mudança de memória para a direita|Move os bits para a direita uma vez sem transportar, praticamente dividindo um valor por 2|
+|**ASL**|A or memory shift left|Moves bits left once without carry, practically multiplying a value by 2|
+|**LSR**|A or memory shift right|Moves bits right once without carry, practically dividing a value by 2|
 
-ASL e LSR podem afetar A ou um endereço, assim como INC e DEC. Aqui está um exemplo de ASL em ação:
-
-```
-LDA #$02           ; Carregue o valor $ 02 em A
-ASL A              ; Multipica A por 2
-                   ; A agora é $04
-```
-
-Isso é o que aparece na superfície. Quando você olha para os números em binário, porém, é assim que se parece:
+ASL and LSR can affect either A or an address, just like INC and DEC. Here's an example of ASL in action:
 
 ```
-LDA #$02           ; Carregue o valor %00000010 em A
-ASL A              ; Mude os bits para a esquerda uma vez
-                   ; A agora é %00000100
-```
-Como você pode ver, o dígito '1' foi movido para a esquerda uma vez. É isso que o ASL faz, movendo os bits para a esquerda.
-
-O ASL também pode mover os bits em um endereço sem afetar A.
-
-```
-LDA #$02           ; Carregue o valor $02 em A
-STA $00            ; Guarde isto no endereço $7E0000
-ASL $00            ; Mude os bits $7E0000 para a esquerda uma vez
-                   ; A ainda é $02, enquanto que $7E0000 agora é $04
+LDA #$02           ; Load the value $02 into A
+ASL A              ; Multiply A by 2
+                   ; A is now $04
 ```
 
-Você também pode deslocar bits para a direita usando LSR.
+This is what appears on the surface. When you look at the numbers in binary though, this is what it looks like:
 
 ```
-LDA #$02           ; Carregue o valor $ 02 em A
-LSR A              ; Divida A por 2
-                   ; A agora é $01
+LDA #$02           ; Load the value %00000010 into A
+ASL A              ; Shift bits left once
+                   ; A is now %00000100
 ```
+As you can see, the digit '1' has moved to the left once. That is what ASL does, moving bits left.
 
-E quando você olha para ele no nível binário, em vez de hexadecimal:
-
-```
-LDA #$02           ; Carregue o valor% 00000010 em A
-LSR A              ; Mude os bits para a direita uma vez
-                   ; A agora é %00000001
-```
-Como você pode ver, o dígito '1' foi movido para a direita uma vez. É isso que o LSR faz, movendo os bits para a direita.
-
-O LSR também pode mover bits em um endereço sem afetar A.
+ASL can also move bits in an address without affecting A.
 
 ```
-LDA #$02           ; Carregue o valor $02 em A
-STA $00            ; Guarde isso no endereço $7E0000
-LSR $00            ; Mude os bits de $7E0000 para a direita uma vez
-                   ; A ainda é $02, enquanto que $7E0000 é agora $01
+LDA #$02           ; Load the value $02 into A
+STA $00            ; Store this into address $7E0000
+ASL $00            ; Shift bits of $7E0000 left once
+                   ; A is still $02, while $7E0000 is now $04
 ```
 
-### Bordas e flags de transporte
-Você deve estar se perguntando o que acontece se você deslocar o bit `% 1000 0001` para a direita uma vez, usando LSR. O bit 7 está definido atualmente, mas não há nada para mudar para o bit 7. Ao mesmo tempo, o bit 0 também está definido, mas não tem para onde mudar. Quando isso acontecer, o bit 0 se moverá para a flag de transporte. Ao mesmo tempo, o bit 7 será definido como 0.
-
-O oposto também é verdadeiro quando você muda '%1000 0001' para a esquerda uma vez, usando ASL. O bit 7 passará para a flag de transporte, enquanto o bit 0 será definido para 0.
-
-Aqui estão alguns exemplos de movimentação de bits para a flag de transporte.
+You can also shift bits to the right by using LSR.
 
 ```
-CLC                ; Garantia de transporte (C) = 0
+LDA #$02           ; Load the value $02 into A
+LSR A              ; Divide A by 2
+                   ; A is now $01
+```
+
+And when you look at it on the level of binary, rather than hexadecimal:
+
+```
+LDA #$02           ; Load the value %00000010 into A
+LSR A              ; Shift bits right once
+                   ; A is now %00000001
+```
+As you can see, the digit '1' has moved to the right once. That is what LSR does, moving bits right.
+
+LSR can also move bits in an address without affecting A.
+
+```
+LDA #$02           ; Load the value $02 into A
+STA $00            ; Store this into address $7E0000
+LSR $00            ; Shift bits of $7E0000 right once
+                   ; A is still $02, while $7E0000 is now $01
+```
+
+### Edge-cases and carry flag
+You might be wondering what happens if you bit shift `%1000 0001` to the right once, by using LSR. Bit 7 is currently set, but there's nothing to shift into bit 7. At the same time, bit 0 is also set, but it has nowhere to shift into. When this happens, bit 0 will move into the carry flag. At the same time, bit 7 will be set to 0.
+
+The opposite is also true when you shift `%1000 0001` to the left once, by using ASL. Bit 7 will move into the carry flag, while bit 0 will be set to 0.
+
+Here are some examples of a bit moving into the carry flag.
+```
+CLC                ; Ensuring carry (C) = 0
 LDA #$80           ; A = %1000 0000 | C = 0
 ASL A              ; A = %0000 0000 | C = 1
 ASL A              ; A = %0000 0000 | C = 0
@@ -82,77 +81,74 @@ LSR A              ; A = %0000 0000 | C = 1
 LSR A              ; A = %0000 0000 | C = 0
 ```
 
-### Encadeando ASL e LSR
-Ao encadear ASL e LSR, você pode multiplicar ou dividir um valor por 2 várias vezes, portanto, multiplicando ou dividindo por 2, 4, 8, 16 e assim por diante. É 2ⁿ, onde n é a quantidade de instruções ASL ou LSR que você está encadeando.
+### Chaining ASL and LSR
+By chaining ASL and LSR, you can multiply or divide a value by 2 several times, therefore multiplying or dividing it by 2, 4, 8, 16, and so on. It's 2ⁿ, where n is the amount of ASL or LSR instructions you're chaining.
 
-Aqui está um exemplo de multiplicação de um valor por 8.
+Here's an example of multiplying a value by 8.
 
 ```
-LDA #$07           ; A agora é $07 = %0000 0111
-ASL A              ; A agora é $0E = %0000 1110
-ASL A              ; A agora é $1C = %0001 1100
-ASL A              ; A agora é $38 = %0011 1000
-                   ; Isso é basicamente $07 * 2³
+LDA #$07           ; A is now $07 = %0000 0111
+ASL A              ; A is now $0E = %0000 1110
+ASL A              ; A is now $1C = %0001 1100
+ASL A              ; A is now $38 = %0011 1000
+                   ; This is basically $07 * 2³
 ```
 
-Aqui está um exemplo de divisão de um valor por 4
+Here's an example of dividing a value by 4
 ```
-LDA #$07           ; A agora é $07 = %0000 0111
-LSR A              ; A agora é $03 = %0000 0011
-LSR A              ; A agora é $01 = %0000 0001
-                   ; Isso é basicamente $07 / 2²
+LDA #$07           ; A is now $07 = %0000 0111
+LSR A              ; A is now $03 = %0000 0011
+LSR A              ; A is now $01 = %0000 0001
+                   ; This is basically $07 / 2²
 ```
 
-## ROL e ROR
-Existem dois opcodes que *rotacionam* bits para a esquerda ou direita, em vez de mudar.
+## ROL and ROR
+There are two opcodes which *rotate* bits to the left or right, rather than shifting.
 
-|Opcode|Nome completo|Explicação|
+|Opcode|Full name|Explanation|
 |-|-|-|
-|**ROL**|Rotacionar A ou a memória para a esquerda|Move os bits uma vez para a esquerda com transporte, envolvendo os bits ao redor|
-|**ROR**|Rotacionar A ou a memória para a direita|Move os bits uma vez para a direita com transporte, envolvendo os bits ao redor|
+|**ROL**|Rotate A or memory left|Moves bits left once with carry, wrapping the bits around|
+|**ROR**|Rotate A or memory right|Moves bits right once with carry, wrapping the bits around|
 
-Eles se comportam da mesma forma que LSR e ASL, exceto que estão usando o sinalizador de transporte como um bit extra para fazer com que os bits 'envolvam'. Isso significa que o valor não pode ficar 'preso' em $00 eventualmente, como acontece em ASL e LSR. É por isso que eles são chamados de rotação, em vez de deslocamento.
+They behave the same as LSR and ASL, except they are using the carry flag as an extra bit in order to make the bits 'wrap' around. This means that the value can't be 'stuck' at $00 eventually, like it happens in ASL and LSR. This is why they're called rotate, rather than shift.
 
-
-Aqui está um exemplo de ROL
+Here's an example of ROL:
 ```
-CLC                ; Garantia de transporte (C) = 0
+CLC                ; Ensuring carry (C) = 0
 LDA #$80           ; A = %1000 0000 | C = 0
 ROL A              ; A = %0000 0000 | C = 1
 ROL A              ; A = %0000 0001 | C = 0
-                   ; A agora é $01
+                   ; A is now $01
 ```
-Como você pode ver, o bit 7 envolveu até o bit 0, basicamente 'rotacionando' os bits sem perder nenhuma informação.
+As you can see, bit 7 wrapped all the way around to bit 0, basically 'rotating' the bits without losing any information.
 
 ```
 CLC                ; C = 0
 LDA #$01           ; A = %0000 0001 | C = 0
 ROR A              ; A = %0000 0000 | C = 1
 ROR A              ; A = %1000 0000 | C = 0
-                   ; A agora é $80
+                   ; A is now $80
 ```
-Como você pode ver, o bit 0 envolveu todo o caminho até o bit 7, basicamente 'rotacionando' os bits sem perder nenhuma informação.
-
+As you can see, bit 0 wrapped all the way around to bit 7, basically 'rotating' the bits without losing any information.
 
 ```
 SEC                ; C = 1
 LDA #$00           ; A = %0000 0000 | C = 1
 ROL A              ; A = %0000 0001 | C = 0
-                   ; A agora é $01
+                   ; A is now $01
 ```
-Como você pode ver, você pode definir a flag de transporte e rotacionar. Isso resultará em A sendo modificado de qualquer jeito, embora A tenha começado como $00.
+As you can see, you can set the carry flag and rotate. This will result in A being modified anyway, even though A started out as $00.
 
-A rotação também pode afetar os endereços, assim como ASL e LSR. Aqui está um exemplo:
+Rotation can also affect addresses, just like ASL and LSR. Here's an example:
 
 ```
-CLC                ; Limpar o transporte
-LDA #$02           ; Carregar o valor $02 em A
-STA $00            ; Guardar isso no endereço $7E0000
-ROR $00            ; Mudar os bits de $7E0000 para a direita uma vez
-                   ; A ainda é $02, enquanto que $7E0000 agora é $01
-                   ; e o transporte ainda está limpo
+CLC                ; Clear carry
+LDA #$02           ; Load the value $02 into A
+STA $00            ; Store this into address $7E0000
+ROR $00            ; Shift bits of $7E0000 right once
+                   ; A is still $02, while $7E0000 is now $01
+                   ; and carry is still cleared
 ```
 
-## Mudança de bit para o modo de 16 bits
-
-Todas as explicações e comportamentos anteriores também se aplicam ao deslocamento de 16 bits. É que você está trabalhando com 16 bits e a flag de transporte, não com 8 bits.
+## 16-bit mode bit shifting
+All the previous explanations and behaviours apply to 16-bit bit shifting as well. It's just that you're working with 16 bits and the carry flag, not 8 bits.
