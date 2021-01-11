@@ -1,69 +1,69 @@
-# Stack pointer register
-The stack pointer register is a 16-bit register which the processor uses to determine the current stack location in the SNES RAM. After each push, the stack pointer *decreases*, so the bytes are pushed backwards. They overwrite the RAM address’ contents. Conversely, after each pull, the stack pointer *increases*, but the pulled value still remains in the stack. Therefore, a pull is actually a read. The stack pointer increases or decreases by 1 when it deals with an 8-bit value, and by 2 when it deals with a 16-bit value. This can be summarized as follows:
+# O stack pointer
+O stack pointer é um registrador de 16 bits que o processador usa para determinar a localização atual da pilha na RAM do SNES. Após cada push, o stack pointer *decrementa*, de modo que os bytes são "empurrados" para trás. Eles substituem o conteúdo do endereço da RAM. Por outro lado, após cada pull, o stack pointer *incrementa*, mas o valor retirado ainda permanece na pilha. Portanto, pull é na verdade uma leitura. O stack pointer aumenta ou diminui em 1 quando se trata de valores 8-bit e em 2 quando  se para valores 16-bit. Isso pode ser resumido da seguinte forma:
 
-|Operation|Where|Stack pointer modification|
+|Operação|Onde|Atualização do stack pointer|
 |-|-|-|
-|Push (8-bit)|Stack pointer location|-1|
-|Pull (8-bit)|Stack pointer location +1|+1|
-|Push (16-bit)|Stack pointer location|-2|
-|Pull (16-bit)|Stack pointer location +1|+2|
+|Push (8-bit)|Local do stack pointer|-1|
+|Pull (8-bit)|Local do stack pointer +1|+1|
+|Push (16-bit)|Local do stack pointer|-2|
+|Pull (16-bit)|Local do stack pointer +1|+2|
 
-The stack pointer register assumes that it works with bank $00, regardless of the current value of the data bank register. This means that from the SNES memory mapping point of view, if the stack pointer ever starts pointing to absolute address $8000 or above, it'll start pointing to the ROM. If it points to absolute address $2000 or above, it'll start pointing to the SNES hardware registers. Therefore, the only useable stack area is $000000-$001FFF.
+O registrador stack pointer assume que vai trabalhar com o banco $00, independentemente do valor atual do registrador bank register. Isso significa que, do ponto de vista do mapeamento de memória do SNES, se o stack pointer apontar para o endereço absoluto $8000 ou acima, ele começará a apontar para a ROM. Se apontar para o endereço absoluto $2000 ou acima, ele começará a apontar para os registradores de hardware do SNES. Portanto, a única área de pilha utilizável é de $000000 a $001FFF.
 
-The stack doesn’t have a defined size. Instead, you, as a programmer, just reserve an area of RAM for the stack you think you need. The reason it doesn’t have a defined size is because as long as you keep pushing, the stack pointer keeps decreasing without any set limits. If you push too many values, you might accidentally overwrite other RAM addresses which have other predetermined purposes.
+A pilha não tem tamanho definido. Em contra partida, você como programador, apenas reserva uma área de RAM para a pilha que acha que é necessário. A razão pela qual não tem um tamanho definido é porque enquanto você continua empurrando, o ponteiro da pilha continua diminuindo sem nenhum limite definido. Se você empurrar muitos valores, poderá sobrescrever acidentalmente outros endereços de RAM que têm outras finalidades predeterminadas.
 
 ## Push
-Here is an example of how the stack works from the RAM’s point of view, when you push an 8-bit value:
+Aqui temos um exemplo de como a pilha funciona do ponto de vista da RAM, quando você usa push com valor de 8 bits:
 ```
-         ;Stack: .. 55 55 55 55 55 55 ..
-LDA #$42                            └─Stack pointer points to this value
+         ; Pilha: .. 55 55 55 55 55 55 ..
+LDA #$42                             └─ O stack pointer aponta para este valor.
 PHA
-         ;Stack: .. 55 55 55 55 55 42 ..
-LDA #$AA                         └─Stack pointer points to this value
+         ; Pilha: .. 55 55 55 55 55 42 ..
+LDA #$AA                          └─ O stack pointer aponta para este valor.
 PHA
-         ;Stack: .. 55 55 55 55 AA 42 ..
-                              └─Stack pointer points to this value
+         ; Pilha: .. 55 55 55 55 AA 42 ..
+                               └─ O stack pointer aponta para este valor.
 ```
 
-Here is an example of a 16-bit push:
+E aqui temos um exemplo de push de 16-bit:
 ```
-REP #$20 ;16-bit A mode
-         ;Stack: .. 55 55 55 55 55 55 ..
-LDA #$4210                          └─Stack pointer points to this value
+REP #$20 ; registrador A no modo 16-bit
+         ; Pilha: .. 55 55 55 55 55 55 ..
+LDA #$4210                           └─ O stack pointer aponta para este valor.
 PHA
-         ;Stack: .. 55 55 55 55 10 42 ..
-LDA #$AA99                    └─Stack pointer points to this value
+         ; Pilha: .. 55 55 55 55 10 42 ..
+LDA #$AA99                     └─ O stack pointer aponta para este valor.
 PHA
-         ;Stack: .. 55 55 99 AA 10 42 ..
-                        └─Stack pointer points to this value
+         ; Pilha: .. 55 55 99 AA 10 42 ..
+                         └─ O stack pointer aponta para este valor.
 ```
 
 ## Pull
-When you pull something from the stack, it gets pulled from the location of the stack pointer, +1. After each pull, the stack pointer increases depending on the size of the pulled value. You do not literally extract the byte out of the RAM. You just copy the byte to the register you pull it into. The byte in the stack does not reset or anything. It remains the same. 
+Quando você "retira" algo da pilha, ele é lido do local do stack pointer +1. Após cada extração, o stack pointer aumenta dependendo do tamanho do valor retirado. Você não extrai literalmente o valor da RAM. Você apenas copia o valor do local da pilha para o registrador de destino. O valor na pilha continua inalterado.
 
-Here's an example of pulling an 8-bit value:
+Aqui temos um exemplo de pull de um valor 8-bit:
 ```
-        ;Stack: .. 55 55 12 34 56 78 ..
-                          └─Stack pointer points to this value
-PLA     ; A is now $34
-        ;Stack: .. 55 55 12 34 56 78 ..
-                             └─Stack pointer points to this value
+        ; Pilha: .. 55 55 12 34 56 78 ..
+                           └─ O stack pointer aponta para este valor.
+PLA     ; Agora A é $34
+        ; Pilha: .. 55 55 12 34 56 78 ..
+                              └─ O stack pointer aponta para este valor.
 PLA
-        ; A is now $56
-        ;Stack: .. 55 55 12 34 56 78 ..
-                                └─Stack pointer points to this value
+        ; Agora A é $56
+        ; Pilha: .. 55 55 12 34 56 78 ..
+                                 └─ O stack pointer aponta para este valor.
 ```
 
-Here's an example of pulling a 16-bit value:
+E temos um exemplo de pull de um valor 16-bit:
 ```
-REP #$20 ;16-bit A mode
-         ;Stack: .. 55 55 12 34 56 78 ..
-                        └─Stack pointer points to this value
-PLA      ; A is now $3412
-         ;Stack: .. 55 55 12 34 56 78 ..
-                             └─Stack pointer points to this value
+REP #$20 ; registrador A no modo 16-bit
+         ; Pilha: .. 55 55 12 34 56 78 ..
+                         └─ O stack pointer aponta para este valor.
+PLA      ; Agora A é $3412
+         ; Pilha: .. 55 55 12 34 56 78 ..
+                               └─ O stack pointer aponta para este valor.
 PLA
-         ; A is now $7856
-         ;Stack: .. 55 55 12 34 56 78 ..
-                                    └─Stack pointer points to this value
+         ; Agora A é $7856
+         ; Pilha: .. 55 55 12 34 56 78 ..
+                                     └─ O stack pointer aponta para este valor.
 ```
