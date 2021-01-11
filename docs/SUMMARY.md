@@ -38,10 +38,10 @@
 * [Hardware math](math/math.md)
 
 ## Aprofundando-se
-* [Modos de endereçamento revistados](profundidade/endereçamento.md)
+* [Modos de endereçamento revistados](profundidade/addressing.md)
 * [Opcodes diversos](indepth/misc.md)
-* [Ciclos da máquina](indepth/ciclos.md)
+* [Ciclos da máquina](indepth/cycles.md)
 * [Vetores de hardware](indepth/vector.md)
-* [Técnicas](indepth/técnicas.md)
+* [Técnicas](indepth/techniques.md)
 * [Sintaxe do assembler comum](indepth/syntax.md)
 * [Precauções de programação](indepth/cautions.md)
