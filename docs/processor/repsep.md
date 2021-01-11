@@ -1,6 +1,4 @@
 # Processor flags
-As seen in the [previous chapter](../processor/flags.md), the SNES supports 9 processor flags. There are ways to affect these processor flags, which are explained in this chapter.
-
 Como visto no [capítulo anterior](../processor/flags.md) o SNES suporta 9 flags do processador. Há formas de afetar essas flags, que serão explicadas nesse capítulo.
 
 ## SEP
