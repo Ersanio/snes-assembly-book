@@ -1,4 +1,4 @@
-# Operações Aritméticas
+# Operações aritméticas
 
 Em algum momento, você provavelmente vai querer *incrementar* o endereço $7E000F da RAM em $01, mas um simples `LDA` e `STA`  não resolverão, isso porque vocês simplesmente está alterando o conteúdo do endereço da RAM para $01, ao invés de incrementá-lo. Talvez você prefira incrementar em 2 ou até mesmo multiplicar por 2.
 
