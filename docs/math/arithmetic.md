@@ -10,8 +10,8 @@ Essas são instruções para somar ou subtrair um valor em 1.
 
 |Opcode|Nome completo|Explicação|
 |-|-|-|
-|**INC**|Incrementa|Incrementa o acumulador ou a memória em 1|
-|**DEC**|Decrementa|Decrementa o acumulador ou a memória em 1|
+|**INC**|Increase|Incrementa 1 ao acumulador ou na memória|
+|**DEC**|Decrease|Decrementa 1 ao acumulador ou na memória|
 
 INC e DEC suportam tanto o acumulador quanto endereços. Segue um exemplo de incremento do acumulador em 1:
 ```
@@ -47,10 +47,10 @@ Também existem instruções para incrementar ou decrementar os valores dos inde
 
 |Opcode|Nome completo|Explicação|
 |-|-|-|
-|**INX**|Incrementa X|Incrementa X em 1|
-|**DEX**|Decrementa X|Decrementa X em 1|
-|**INY**|Incrementa Y|Incrementa Y em 1|
-|**DEY**|Decrementa Y|Decrementa Y em 1|
+|**INX**|Increase X|Incrementa X em 1|
+|**DEX**|Decrease X|Decrementa X em 1|
+|**INY**|Increase Y|Incrementa Y em 1|
+|**DEY**|Decrease Y|Decrementa Y em 1|
 
 Você não pode usar as quatro intruções acima para manipular um endereço. Elas são usados exclusivamente para os registradores X e Y.
 
@@ -59,8 +59,8 @@ E se você quisesse aumentar ou diminuir um valor em, digamos, 95, você não ia
 
 |Opcode|Nome completo|Explicação|
 |-|-|-|
-|**ADC**|Adicionar com carry|Adiciona um determinado valor a A|
-|**SBC**|Subtrai com carry|Subtrai um determinado valor de A|
+|**ADC**|Add with carry|Adiciona um determinado valor a A|
+|**SBC**|Subtract with carry|Subtrai um determinado valor de A|
 
 {% hint style = "aviso"%}
 Apenas para enfatizar: ADC adiciona um valor ao acumulador, não um endereço de RAM. SBC subtrai um valor do acumulador.
