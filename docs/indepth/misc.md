@@ -1,26 +1,27 @@
-# Miscellaneous opcodes
+# Opcodes diversos
 
-This chapter explains opcodes which don't really fit in any other chapter.
+Este capítulo explica opcodes que não se enquadram em outros capítulos.
 
 ## NOP
-|Opcode|Full name|Explanation|
+|Opcode|Nome completo|Explanation|
 |-|-|-|
-|**NOP**|No operation|Does absolutely nothing|
+|**NOP**|No operation| Não faz absolutamente nada. |
 
-It is often used to disable existing opcodes in a ROM without shifting around the bytecode. It can also be used to give time for the [math hardware registers](../math/math.md) to do their work.
+É usado, com frequêcia, para desabilitar opcodes existentes em uma ROM sem mudar o bytecode. Também pode ser usado para dar tempo aos [registradores matemáticos do hardware](../math / math.md) fazerem seu trabalho.
 
 ## XBA
-|Opcode|Full name|Explanation|
+|Opcode|Nome completo|Explicação|
 |-|-|-|
-|**XBA**|Exchange B and A|Swaps the high and the low bytes of the A register, regardless of the register size.|
+|**XBA**|Exchange B and A|Troca os bytes high e low do registrador A, indiferente ao tamanho do registrador.|
 
-Here's an example:
+Um exemplo:
 ```
 LDA #$0231         ; A = $0231
-XBA                ; A is now $3102
+XBA                ; A torna-se $3102
 ```
 
-This even works with 8-bit A, as the high byte of A is 'hidden' rather than set to $00:
+Isso funciona até mesmo com A de 8 bits, o high byte de `A` fica 'oculto' em vez de definido como $00:
+
 ```
 LDA #$12           ; A = $xx12
 XBA                ; A = $12xx
@@ -28,62 +29,65 @@ LDA #$05           ; A = $1205
 ```
 
 ## WAI
-|Opcode|Full name|Explanation|
+|Opcode|Nome completo|Explicação|
 |-|-|-|
-|**WAI**|Wait for interrupt|Halts the SNES CPU until either an NMI or IRQ occurs.|
-Exactly what it says, it halts the SNES CPU until either an NMI or IRQ (both are interrupts) occurs. Practically speaking, the opcode loops itself infinitely until an interrupt occurs.
+|**WAI**|Wait for interrupt|Suspende a CPU do SNES até que ocorra um NMI ou IRQ.|
+
+Faz exatamente o descrito, suspende a CPU do SNES até que ocorra um NMI ou IRQ (ambos são interrupções). Na prática o opcode entra em um loop infinito até que aconteça uma interrupção.
 
 ## STP
-|Opcode|Full name|Explanation|
+|Opcode|Nome completo|Explicação|
 |-|-|-|
-|**STP**|Stop the clock|The 'clock' being the SNES CPU in this case, it halts the CPU completely until either a soft or hard reset occurs.|
-Exactly what it says, it stops the SNES CPU until you hit reset or power cycle the SNES. It does lower the power consumption of the SNES, if the couple of cents it'll shave off your power bill means that much to you.
+|**STP**|Stop the clock|Neste caso o 'clock' é a CPU do SNES, que é interrompida completamente até que ocorra um soft ou hard reset.|
+
+Faz exatamente o descrito, suspende a CPU do SNES até que você pressione reset ou desligue e ligue o SNES. Ele reduz o consumo de energia do SNES, caso a pouca economia obtida faça diferença para você.
 
 ## BRK
-|Opcode|Full name|Explanation|
+|Opcode|Nome completo|Explicação|
 |-|-|-|
-|**BRK**|Software break|Causes a break to occur|
-This opcode causes the SNES to jump to the [break vector](../indepth/vector.md). It also takes a byte parameter. Example usage:
+|**BRK**|Software break|Faz uma pausa acontecer.|
+
+Este opcode faz com que o SNES salte para o [break vector](../indepth/vector.md). Também toma um byte como parâmentro. Eis um exemplo:
 ```
 BRK #$02
 ```
-The parameter is not used for anything in particular, but if you write a meaningful 'catch' to the BRK, you could probably read what the value of the BRK was supposed to be, and do certain things depending on the value.
+O parâmentro não tem nenhuma finalidade em particular, mas você pode escrever uma captura para `BRK`, em que poderia ler qual o valor de `BRK` e tomar determinadas atitudes dependendo desse valor.
 
-When the BRK opcode is executed, the following events happen:
-* First, the (24-bit) address of the instruction after `BRK #$xx` is pushed onto the stack
-* Then, the (8-bit) processor flag register is pushed onto the stack.
-* The interrupt disable flag is set (akin to `SEI`)
-* The decimal mode flag is cleared (akin to `CLD`)
-* The program bank register is cleared to $00
-* The program counter is loaded from the break vector. In other words, the code jumps to the address at the break vector.
+Quando o opcode `BRK` é executado, acontece o que se segue:
 
-If the emulators are made properly, the opcode BRK makes debuggers snap. You could also program the break vector to do meaningful things. In fact, on SMWCentral, [p4plus2 released a patch which does exactly this](https://www.smwcentral.net/?p=section&a=details&id=20796); it shows debug information about the crash.
+* Primeiro, o endereço da instrução (24-bit) após `BRK #$xx` é enviado para a pilha;
+* Então, o registrador de flags do processador (8-bit) é enviado para a pilha;
+* O flag interrupt disable é habilitado (similar a `SEI`);
+* O flag decimal mode é desabilitado (similar a `CLD`);
+* O registrador program bank recebe o valor $00;
+* O program counter é carregado com o endereço do break vector. Em outras palavras, o código salta para o endereço do break vector.
 
 ## COP
 |Opcode|Full name|Explanation|
 |-|-|-|
-|**COP**|Coprocessor empowerment|Similar effects as BRK, as the SNES has no coprocessor to empower.|
+|**COP**|Coprocessor empowerment|Efeitos similares aos de BRK, o SNES não tem um coprocessador para empoderar.|
 
-This opcode causes the SNES to jump to the [COP hardware vector](../indepth/vector.md). It also takes a byte parameter. Example usage:
+Este opcode faz com que o SNES salte para o [hardware vector COP](../indepth/vector.md). Também toma um byte como parâmentro. Eis um exemplo:
+
 ```
 COP #$04
 ```
-The parameter is not used for anything in particular, but if you write a meaningful 'catch' to the COP, you could probably read what the value of the COP was supposed to be, and do certain things depending on the value.
+O parâmentro não tem nenhuma finalidade em particular, mas você pode escrever uma captura para `COP`, em que poderia ler qual o valor de `COP` e tomar determinadas atitudes dependendo desse valor.
 
-When the COP opcode is executed, the following events happen:
-* First, the (24-bit) address of the instruction after `COP #$xx` is pushed onto the stack
-* Then, the (8-bit) processor flag register is pushed onto the stack.
-* The interrupt disable flag is set (akin to `SEI`)
-* The decimal mode flag is cleared (akin to `CLD`)
-* The program bank register is cleared to $00
-* The program counter is loaded from the COP hardware vector. In other words, the code jumps to the address at the COP hardware vector.
+Quando o opcode `COP` é executado, acontece o que se segue:
+* Primeiro, o endereço da instrução (24-bit) após `COP #$xx` é enviado para a pilha;
+* Então, o registrador de flags do processador (8-bit) é enviado para a pilha;
+* O flag interrupt disable é habilitado (similar a `SEI`);
+* O flag decimal mode é desabilitado (similar a `CLD`);
+* O registrador program bank recebe o valor $00;
+* O program counter é carregado com o endereço do hardware vector COP. Em outras palavras, o código salta para o endereço do cop vector.
 
 ## WDM
-|Opcode|Full name|Explanation|
+|Opcode|Nome completo|Explicação|
 |-|-|-|
-|**WDM**|Reserved for future expansion|Does absolutely nothing|
-WDM stands for '[William (Bill) David Mensch, Jr.](https://en.wikipedia.org/wiki/Bill_Mensch)', who designed the 65c816. This opcode was reserved for the possibility of multi-byte opcodes. Therefore, this opcode actually takes a parameter. Example:
+|**WDM**|Reservado para uma expansão futura|Não faz absolutamente nada.|
+WDM significa '[William (Bill) David Mensch, Jr.](https://en.wikipedia.org/wiki/Bill_Mensch)', o designer do 65c816. Este opcode foi reservado para uma possibilidade de opcodes com múltiplos bytes. Além disso, recebe um parâmetro, por exemplo:
 ```
 WDM #$01
 ```
-This opcode has the same effect as NOP however. Therefore, it does nothing.
+Esse opcode tem o mesmo efeito de um NOP, não faz nada.
