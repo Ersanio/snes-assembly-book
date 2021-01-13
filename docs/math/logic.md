@@ -1,116 +1,132 @@
-# Bitwise operations
-Bitwise operations are fundamental when it comes to assembly. The 65c816 supports several bitwise opcodes, which are explained in this chapter. Bitwise operators mainly work on bits rather than bytes, so in this chapter, vague terms such as `x` and `y` refer to bits rather than bytes.
+# Operações bitwise
 
-In this chapter, we will sometimes refer to binary value 1 as `true` and binary value 0 as `false`.
+As operações bitwise são fundamentais quando se trata de programação assembly. O 65c816 suporta várias instruções bitwise, que serão abordadas neste capítulo. Os Operadores bitwise trabalham principalmente com bits dos bytes, portanto, neste capítulo, usaremos os termos `x` e `y` quando nos referirmos ao bits.
 
-## AND
-AND is an opcode which affects the accumulator by applying a logical AND on all bits.
+Ás vezes nos referiremos ao valor `1` em como `verdadeiro` e ao valor `0` como `falso`.
 
-|Opcode|Full name|Explanation|
-|-|-|-|
-|**AND**|Logical AND|Logical AND, also known as a "`&`" in some other programming languages|
+## AND (E)
 
-The result of `x AND y` is `true` if both `x` and `y` evaluate to `true`. Otherwise, the result is `false`.
+AND é um operador que afeta o acumulador, aplicando um "E" lógico em todos os bits do registrador.
 
-Here's an example of a logical AND.
+| Opcode  | Nome completo | Explicação                                                   |
+| ------- | ------------- | ------------------------------------------------------------ |
+| **AND** | Logical AND   | E lógico, também conhecido como "` & `" em algumas linguagens de programação |
+
+O resultado de `x AND y` será `verdadeiro` se `x` for `verdadeiro` e ` y` também for `verdadeiro`. Caso contrário, o resultado será `falso`.
+
+Veja este exemplo de um AND lógico.
+
 ```
 LDA #$F0           ; A = 1111 0000
 AND #$98           ; AND 1001 1000
                    ; A = 1001 0000 = $90
 ```
-To understand this code, you'll have to read the comments from top to bottom. As you can see, the first line contains the accumulator's binary value, while the second line contains the AND operator's parameter binary value. When two 1 come together, the result is a 1 as well. This is what it means when both x and y evaluate to true. If x = 1 and y = 1, then the result is 1 also.
 
-This rule can be written in a "truth table".
-|Compared bit|AND operation|Result|
-|-|-|-|
-|1|1|1|
-|0|1|0|
-|1|0|0|
-|0|0|0|
+Para entender este código, você terá que ler os comentários de cima para baixo. Como você pode ver, a primeira linha contém o valor binário do acumulador (`1111 0000`), enquanto a segunda linha contém o valor binário do parâmetro do operador AND (`1001 1000`). Quando dois `1` são avaliados, o resultado também será 1. O quer dizer que tanto x quanto y forem`verdadeiros`. Se x = 1 e y = 1, o resultado também será 1.
 
-In short, whenever there's a 0 in A or in the AND value's bit, the resulting bit is also 0.
+Esta regra pode ser escrita em uma "tabela verdade".
+
+| Bit comparado | Operação AND | Resultado |
+| ------------- | ------------ | --------- |
+| 1             | 1            | 1         |
+| 0             | 1            | 0         |
+| 1             | 0            | 0         |
+| 0             | 0            | 0         |
+
+Em suma, sempre que houver um 0 em A ou no bit do valor do AND, o bit resultante também será 0.
 
 ## ORA
-ORA is an opcode which affects the accumulator by applying a logical ORA on all bits.
 
-|Opcode|Full name|Explanation|
-|-|-|-|
-|**ORA**|Logical OR|Logical OR, also known as a pipe character in some other programming languages|
+ORA é uma instrução que afeta o acumulador, aplicando um "OU" lógico em todos os bits.
 
-The result of `x OR y` is true if either `x` or `y` evaluates to `true`. Otherwise, the result is `false`.
+| Opcode  | Nome completo | Explicação                                                   |
+| ------- | ------------- | ------------------------------------------------------------ |
+| **ORA** | Logical OR    | OU lógico, também conhecido como "`|`" em algumas linguagens de programação |
 
-Here's an example of an ORA:
+O resultado de `x OR y` será `verdadeiro` se  ` x` for ` verdadeiro` ou `y` for ` verdadeiro`. Caso contrário, o resultado será `falso`.
+
+A seguir temos um exemplo de um ORA:
+
 ```
 LDA #$F0           ; A = 1111 0000
 ORA #$87           ; ORA 1000 0111
-                   ; A = 1111 0111 = $F7
+                   ; A = 1111 0111 = $ F7
 ```
-If one of the bits has 1, the resulting bit will be 1. After ORA, the result will be stored in A. Here's the truth table for ORA:
-|Compared bit|OR operation|Result|
-|-|-|-|
-|1|1|1|
-|0|1|1|
-|1|0|1|
-|0|0|0|
-So basically, whenever A or the ORA value’s bit is 1, the resulting bit is also 1.
+
+Se um dos bits for 1, o bit resultante será 1. Após a avaliação de ORA, o resultado será armazenado em A. Aqui está a tabela verdade para ORA:
+
+| Bit comparado | Operação ORA | Resultado |
+| ------------- | ------------ | --------- |
+| 1             | 1            | 1         |
+| 0             | 1            | 1         |
+| 1             | 0            | 1         |
+| 0             | 0            | 0         |
+
+Então, basicamente, sempre que A ou o bit do valor de ORA for 1, o bit resultante também será 1.
 
 ## EOR
-EOR is an opcode which affects the accumulator by applying a logical exclusive OR (XOR) on all bits.
 
-|Opcode|Full name|Explanation|
-|-|-|-|
-|**EOR**|Logical XOR|Logical XOR, also known as a "`^`" in some other programming languages|
+EOR é um operador que afeta o acumulador, aplicando um OR exclusivo lógico (XOR) em todos os bits.
 
-The result of `x XOR y` is `true` if `x` evaluates to `true` and `y` evaluates to `false`, or `x` evaluates to `false` and `y` evaluates to `true`. Otherwise, the result is `false`.
+| Opcode  | Nome completo | Explicação                                                   |
+| ------- | ------------- | ------------------------------------------------------------ |
+| **EOR** | Logical XOR   | OU-EXCLUSIVO lógico, também conhecido como "` ^ `" em algumas linguagens de programação |
 
-Here's an example of an XOR:
+O resultado de `x XOR y` será `verdadeiro` se `x` for  `verdadeiro` e `y` for `falso`, ou `x`  for `falso` e `y` for `verdadeiro`. Caso contrário, o resultado será `falso`.
+
+Segue um exemplo de um XOR:
+
 ```
 LDA #$99           ; A = 1001 1001
 EOR #$F0           ; EOR 1111 0000
-                   ; A = 0110 1001 = $69
+                   ; A = 0110 1001 = $ 69
 ```
-Basically, when the accumulator and the given value's bits are both 1, the result is 0. When they're both 0, the result is 0. When they're not equal, then the result is 1 also. Here's the truth table for EOR:
-|Compared bit|XOR operation|Result|
-|-|-|-|
-|1|1|0|
-|0|1|1|
-|1|0|1|
-|0|0|0|
+
+Basicamente, se os bits do acumulador e os bits do valor fornecido são 1, o resultado será 0. E se são 0, o resultado também será 0. Se eles não são iguais, o resultado será 1. Aqui está a tabela verdade para EOR:
+
+| Bit comparado | Operação XOR | Resultado |
+| ------------- | ------------ | --------- |
+| 1             | 1            | 0         |
+| 0             | 1            | 1         |
+| 1             | 0            | 1         |
+| 0             | 0            | 0         |
 
 ## BIT
-BIT is an opcode which essentially does a logical AND, but the result is NOT stored in the accumulator. Instead, it only affects the processor flags.
 
-|Opcode|Full name|Explanation|
-|-|-|-|
-|**BIT**|Bit test|Tests certain bits of the accumulator or memory|
+BIT é uma instrução que praticamente faz a mesma coisa que o AND lógico, mas o resultado NÃO é armazenado no acumulador. Em vez disso, afeta apenas as flags do processador.
 
-Here's an example of BIT in usage:
+| Opcode  | Nome completo | Explicação                                |
+| ------- | ------------- | ----------------------------------------- |
+| **BIT** | Bit test      | Testa os bits do acumulador ou da memória |
+
+Aqui está um exemplo de BIT em uso:
+
 ```
 LDA #$04           ; A = 0000 0100 = $04
-BIT #$00           ; AND 0000 0000. None of the bits are set
-                   ; so normally, A should be $00, but it's still $04
-                   ; However, the zero flag has been set because
-                   ; the outcome *should* be $00.
+BIT #$00           ; AND 0000 0000. Nenhum dos bits estão habilitatos
+                   ; então, normalmente, A deveria ser $00, mas ainda é $04
+                   ; No entanto, o zero flag foi habilitado porque
+                   ; o resultado *deveria* ser $00.
 ```
 
-BIT has a feature which distinguishes it from a regular AND, involving processor flags other than the zero flag. When you use BIT on an address, rather than the accumulator, it can also affect the 'negative' and 'overflow' processor flags. If bit 7 of the address' value is set, the negative flag would be set as a result. If bit 6 of the address' value is set, the overflow flag would be set as a result. Here's an example of using BIT on an address:
+O BIT tem um recurso que o distingue de um AND, envolvendo flags do processador diferentes do zero flag. Quando você usa o BIT em um endereço, ao invés do acumulador, ele também pode afetar o 'negative flag' e o 'overflow flag'. Se o bit 7 do valor do endereço for 1, o negative flag será habilitado. Se o bit 6 do valor do endereço for 1, o overflow flag será habilitado. Aqui está um exemplo de uso de BIT em um endereço:
 
 ```
-BIT $04            ; Bit test $7E0004's value
+BIT $04            ; Testa os bits do valor do endereço $7E0004
 ```
 
-If $7E0004’s value was $80 (1000 0000), the negative flag would be set and the overflow flag would be clear. It’s useful to check really fast if the value of an address is negative.
+Se o valor de $7E0004 fosse $80 (1000 0000), o negative flag seria habilitado e o overflow flag seria limpo. É útil para checar de forma mais rápida se o valor de um endereço é negativo.
 
-If $7E0004’s value was $40 (0100 0000), the negative flag would be clear and the overflow flag would be set. Useful to check if specifically bit 6 is set.
+Se o valor de $7E0004 fosse $40 (0100 0000), o negative flag  negativo seria limpo e o overflow flag seria habilitado. Útil para checar se o bit 6 está habilitado.
 
-If $7E0004’s value was $C0 (1100 0000), both the negative and overflow flags would be set.
+Se o valor de $7E0004 fosse $C0 (1100 0000), tanto o negative flag quanto o overflow flag seriam habilitados.
 
-Coincidentally enough, the bits for negative (bit 7) and overflow (bit 6) correspond to the bits in the processor flag register: `nvmxdizc`.
+Coincidentemente, os bits para negativo (bit 7)  e overflow (bit 6)  correspondem aos mesmos bits no status register de processador: `nvmxdizc`.
 
-|Set bits|BIT result
-|-|-|-|
-|Bit 7|Negative flag set
-|Bit 6|Overflow flag set
-|Bits 7, 6|Negative & overflow flags set
+| bits       | Resultado BIT                                    |
+| ---------- | ------------------------------------------------ |
+| Bit 7      | Negative flag habilitado                         |
+| Bit 6      | Overflow flag habilitado                         |
+| Bits 7 e 6 | Ambos negative flag e overflow flag habilitados. |
 
-When you are performing a BIT operation on a RAM address, the N and V flags will be set or cleared, regardless of the value in the accumulator. The zero flag depends on the accumulator’s value and the RAM address’ value. So, BIT with a RAM address does both AND, and an inevitable check of bits 7 and 6 of the RAM address.
+Quando você está realizando uma operação BIT em um endereço de RAM, as flags N e V serão habilitados ou limpos, independentemente do valor no acumulador. O zero flag depende do valor do acumulador e do valor do endereço da RAM. Portanto, o BIT com um endereço da RAM executa o AND e uma inevitável checagem dos bits 7 e 6 do endereço de RAM.
