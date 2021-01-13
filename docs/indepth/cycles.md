@@ -2,7 +2,7 @@
 
 O SNES processa instruções, mas cada instrução leva uma quantidade predeterminada de tempo para ser executada. O tempo que uma instrução leva para ser executada é chamado de “ciclo de máquina” (ou "ciclo" resumido).
 
-Cada instrução tem seu próprio ciclo. [Esta página](https://wiki.superfamicom.org/65816-reference) possui uma referência completa de quantos ciclos cada instrução leva para ser executada. Dê uma olhada nas notas de rodapé, pois a quantidade de ciclos usados pode variar dependendo do contexto do código. Por exemplo, um desvio (branch) realizado leva 1 ciclo a mais em comparação com um desvio que não foi realizado.
+Cada instrução tem seu próprio ciclo. [Esta página](https://wiki.superfamicom.org/65816-reference) possui uma referência completa de quantos ciclos cada instrução leva para ser executada. Dê uma olhada nas notas de rodapé, pois a quantidade de ciclos usados pode variar dependendo do contexto do código. Por exemplo, um desvio tomado (taken branch) leva 1 ciclo a mais em comparação com um desvio que não foi tomado (untaken branch).
 
 Quanto menos ciclos, menos lentidão o código sofrerá. A lentidão é frequentemente perceptível em jogos com muitos sprites na tela. Para evitar tal lentidão, você precisa escrever um código eficiente. Aqui segue um exemplo de código ineficiente VS. eficiente:
 
