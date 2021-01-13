@@ -1,93 +1,103 @@
-# Hardware math
-The SNES processor is capable of [basic multiplication and division by 2ⁿ](../math/shift.md), but if you'd like to multiply or divide by other numbers, you'll have to make use of certain SNES hardware registers.
+# Matemática usando hardware
 
-## Hardware Unsigned Multiplication
-The SNES has a set of hardware registers used for unsigned multiplication:
-|Register|Access|Description|
+O processador do SNES é capaz de realizar [multiplicação básica por 2ⁿ](../math/shift.md), mas se você precisar multiplicar ou dividir por outros números, você precisa usar certos registradores de hardware do SNES.
+
+## Multiplicação usando hardware sem sinal
+O SNES tem um conjunto de registradores de hardware para multiplicação sem sinal:
+
+|Registrador|Acesso|Descrição|
 |-|-|-|
-|$4202|Write|Multiplicand, 8-bit, unsigned.|
-|$4203|Write|Multiplier, 8-bit, unsigned. Writing to this also starts the multiplication process.|
-|$4216|Read|Unsigned multiply 16-bit product, low byte|
-|$4217|Read|Unsigned multiply 16-bit product, high byte|
-After you write to `$4203` to start the multiplication process, you will need to wait 8 [machine cycles](../indepth/cycles.md), which is typically done by adding four `NOP` instructions to the code. If you don't wait 8 machine cycles, the results are unpredictable.
+|$4202|Escrita|Multiplicando, 8-bit, sem sinal.|
+|$4203|Escrita|Multiplicador, 8-bit, sem sinal. Escrever neste registrador também inicia o processo de multiplicação.|
+|$4216|Leitura|Produto 16-bit da multiplicação sem sinal, low byte.|
+|$4217|Leitura|Produto 16-bit da multiplicação sem sinal, high byte.|
 
-Here's an example of `42 * 129 = 5418` (in hexadecimal: `$2A * $81 = $152A`):
+Após escrever em `$4203` para iniciar o processo de multiplicação, você deverá esperar 8 [ciclos de máquina](../indepth/cycles.md), o que é feito tradicionalmente adicionando 4 instruções `NOP` ao código. Se você não aguardar 8 ciclos de máquina, os resultados serão imprevisíveis.
+
+Eis um exemplo `42 * 129 = 5418` (em hexadecimal: `$2A * $81 = $152A`):
+
 ```
 LDA #$2A           ; 42
 STA $4202
 LDA #$81           ; 129
 STA $4203
-NOP                ; Wait 8 machine cycles
+NOP                ; Esperar 8 ciclos de máquina
 NOP
 NOP
 NOP
-LDA $4216          ; A = $2A (result low byte)
-LDA $4217          ; A = $15 (result high byte)
+LDA $4216          ; A = $2A (low byte do resultado)
+LDA $4217          ; A = $15 (high byte do resultado)
 ```
 
-## Hardware Signed Multiplication
-There's a set of hardware registers which can be used for fast, signed multiplication:
-|Register|Access|Description|
-|-|-|-|
-|$211B|Write twice|Multiplicand, 16-bit, signed. First write: Low byte of multiplicand. Second write: High byte of multiplicand|
-|$211C|Write|Multiplier, 8-bit.|
-|$2134|Read|Signed multiply 24-bit product, low byte|
-|$2134|Read|Signed multiply 24-bit product, middle byte|
-|$2134|Read|Signed multiply 24-bit product, high byte|
-There's a catch to using these hardware registers, however, as they double as certain Mode 7 registers as well:
+## Multiplicação usando hardware com sinal
+Há um conjunto de registradores de hardware que podem ser usados para multiplicação com sinal rápida:
 
-- You can only use them for **signed** multiplication
-  - The result is signed 24-bit, meaning the results range from `-8,388,608` to `8,388,607`.
-- The results are instant. That means you don't have to use `NOP` to wait for the results.
-- You cannot use them when Mode 7 graphics are being rendered on the screen.
-  - This means that when Mode 7 is enabled, you can only use them inside NMI (v-blank).
-  - This also means that you can use them without any restrictions, outside of Mode 7.
+|Registrador|Acesso|Descrição|
+|-|-|-|
+|$211B|Escrita, duas vezes|Multiplicando, 16-bit, com sinal. Primeira escrita: Low byte do multiplicando. Segunda escrita: High byte do multiplicando.|
+|$211C|Escrita|Multiplicador, 8-bit.|
+|$2134|Leitura|Produto 24-bit da multiplicação com sinal, low byte.|
+|$2134|Leitura|Produto 24-bit da multiplicação com sina, middle byte.|
+|$2134|Leitura|Produto 24-bit da multiplicação com sina, high byte.|
+
+Há um problema em usar estes registradores de hardware, pois eles dobram como certos registradores do Mode 7:
+
+- Você só pode utilizá-los para multiplicação **com sinal**
+  - O resultado é um 24-but com sinal, o que significa que os resultados estão entre `-8,388,608` a `8,388,607`.
+- Os resultados são instantâneos. Você não precisa usar `NOP` para esperar os resultados.
+- Você não pode usar quando gŕaficos em Mode 7 estão sendo renderizados na tela.
+  - Quando o Mode 7 está habilitado, você só pode usar dentro de um NMI (v-blank).
+  - Isso significa também que você pode usar sem restrições, fora do Mode 7.
 
 Note that register `$211B` is "write twice". This means that you have to write an 8-bit value twice to this same register which in total makes up a 16-bit value. First, you write the low byte, then the high byte of the 16-bit value.
 
 Here's an example of `-30000 * 9 = -270000` (in hexadecimal: `$8AD0 * $09 = $FBE150`):
 
+Aqui está um exemplo `-30000 * 9 = -270000` (em hexadecimal: `$8AD0 * $09 = $FBE150`):
+
 ```
-LDA #$D0           ; Low byte of $8AD0
+LDA #$D0           ; Low byte de $8AD0
 STA $211B
-LDA #$8A           ; High byte of $8AD0
-STA $211B          ; This sets up the multiplicand
+LDA #$8A           ; High byte de $8AD0
+STA $211B          ; Isso configura o multiplicando
 
 LDA #$09           ; $09
-STA $211C          ; This sets up multiplier
+STA $211C          ; Isso configura o multiplicador
 
 LDA $2134          ; A = $50 (result low byte)
 LDA $2135          ; A = $E1 (result middle byte)
 LDA $2136          ; A = $FB (result high byte)
                    ; (= $FBE150)
 ```
-## Hardware Unsigned Division
-The SNES has a set of hardware registers used for unsigned division. They are laid out as follows:
-|Register|Access|Description|
+## Divisão usando hardware sem sinal
+O SNES tem um conjunto de registradores de hardware para divisão sem sinal. Abaixo você encontra uma lista deles:
+
+|Registrador|Acesso|Descrição|
 |-|-|-|
-|$4204|Write|Dividend, 16-bit, unsigned, low byte.|
-|$4205|Write|Dividend, 16-bit, unsigned, high byte.|
-|$4206|Write|Divisor, 8-bit, unsigned. Writing to this also starts the division process.|
-|$4214|Read|Unsigned division 16-bit quotient, low byte|
-|$4215|Read|Unsigned division 16-bit quotient, high byte|
-|$4216|Read|Unsigned division remainder, low byte|
-|$4217|Read|Unsigned division remainder, high byte|
+|$4204|Escrita|Dividendo, 16-bit, sem sinal, low byte.|
+|$4205|Escrita|Dividendo, 16-bit, sem sinal, high byte.|
+|$4206|Escrita|Divisor, 8-bit, sem sinal. Escrever neste registrador também inicia o processo de divisão.|
+|$4214|Leitura|Quociente da divisão16-bit, low byte|
+|$4215|Leitura|Quociente da divisão16-bit, high byte|
+|$4216|Leitura|Resto da divisão, sem sinal, low byte|
+|$4217|Leitura|Resto da divisão, sem sinal, high byte|
 
-Quotient means how many times the dividend can "fit" in the divisor. For example: `6 / 3 = 2`. Thus, the quotient is 2. Another way you can read this is: You can extract 3 **two** times from 6 and end up with exactly 0 as leftover.
+Quociente significa quantas vezes o dividendo pode "caber" no divisor. Por exemplo: `6/3 = 2`. Portanto, o quociente é 2. Outra maneira de ler isso é: Você pode extrair 3 **duas** vezes de 6 e terminar com exatamente 0 como resto.
 
-Modulo is an operation that determines the remainder of the dividend that couldn't "fit" into the divisor. For example: `8 / 3 = 2`. You can subtract 3 two times from 8, but at the end, you have a 2 as a remainder. Thus, the remainder for this equation is `2`. Because there are hardware registers that support remainders, the SNES also supports the modulo operation.
+Módulo é uma operação que determina o reso do dividendo que não poderia "caber" no divisor. Por exemplo: `8/3 = 2`. Você pode subtrair 3 duas vezes de 8, mas ao fim, você tem um 2 como resto. Assim, o resto desta expressão é `2`. Como há registros de hardware que suportam restos, o SNES também oferece suporte à operação de módulo.
 
-After you write to `$4206` to start the division process, you will need to wait 16 [machine cycles](../indepth/cycles.md), which is typically done by adding eight `NOP` instructions to the code. If you don't wait 16 machine cycles, the results are unpredictable.
+Após escrever em `$4206` para iniciar o processo de divisão, você deverá esperar 16 [ciclos de máquina](../indepth/cycles.md), o que é feito tradicionalmente adicionando oito instruções `NOP` ao código. Se você não aguardar 16 ciclos de máquina, os resultados serão imprevisíveis.
 
-Here's an example of `256 / 2 = 128` (in hexadecimal: `$0100 / $02 = $0080`):
+Aqui está um exemplo `256 / 2 = 128` (em hexadecimal: `$0100 / $02 = $0080`):
+
 ```
 LDA #$00
 STA $4204
-LDA #$01           ; Write $0100 to dividend
+LDA #$01           ; Escreve $0100 como dividendo
 STA $4205
-LDA #$02           ; Write $02 to divisor
+LDA #$02           ; Escreve $02 como divisor
 STA $4206
-NOP                ; Wait 16 machine cycles
+NOP                ; Aguarda 16 ciclos de máquina
 NOP
 NOP
 NOP
@@ -95,21 +105,21 @@ NOP
 NOP
 NOP
 NOP
-LDA $4214          ; A = $80 (result low byte)
-LDA $4215          ; A = $00 (result high byte)
-LDA $4216          ; A = $00, as there are no remainders
-LDA $4217          ; A = $00, as there are no remainders
+LDA $4214          ; A = $80 (resultado low byte)
+LDA $4215          ; A = $00 (resultado high byte)
+LDA $4216          ; A = $00, pois não há resto
+LDA $4217          ; A = $00, pois não há resto
 ```
 
-Here's an example demonstrating modulo: `257 / 2 = 128, remainder 1` (in hexadecimal: `$0101 / $02 = $0080, remainder $0001`)
+Um exemplo demonstrando uma operação de módulo: `257 / 2 = 128, resto 1` (em hexadecimal: `$0101 / $02 = $0080, resto $0001`)
 ```
 LDA #$01
 STA $4204
-LDA #$01           ; Write $0101 to dividend
+LDA #$01           ; Escreve $0101 como dividendo
 STA $4205
-LDA #$02           ; Write $02 to divisor
+LDA #$02           ; Escreve $02 como divisor
 STA $4206
-NOP                ; Wait 16 machine cycles
+NOP                ; Aguarda 16 ciclos de máquina
 NOP
 NOP
 NOP
@@ -117,10 +127,10 @@ NOP
 NOP
 NOP
 NOP
-LDA $4214          ; A = $80 (result low byte)
-LDA $4215          ; A = $00 (result high byte)
-LDA $4216          ; A = $01, as there is a remainder (remainder low byte)
-LDA $4217          ; A = $00 (remainder high byte)
+LDA $4214          ; A = $80 (resultado low byte)
+LDA $4215          ; A = $00 (resultado high byte)
+LDA $4216          ; A = $01, pois há resto (low byte do resto)
+LDA $4217          ; A = $00 (high byte do resto)
 ```
 
-There is no hardware signed division.
+Não há divisão usando hardware com sinal.
