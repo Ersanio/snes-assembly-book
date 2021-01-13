@@ -6,8 +6,13 @@ Existem dois opcodes que deslocam bits para a esquerda ou direita.
 
 |Opcode|Nome completo|Explicação|
 |-|-|-|
+<<<<<<< Updated upstream
 |**ASL**|A ou mudança de memória para a esquerda|Move os bits para a esquerda uma vez sem transportar, praticamente multiplicando um valor por 2|
 |**LSR**|A ou mudança de memória para a esquerda|Move os bits para a direita uma vez sem transportar, praticamente dividindo um valor por 2|
+=======
+|**ASL**|A ou mudança de memória para a esquerda|Move os bits para a esquerda uma vez sem carry, praticamente multiplicando um valor por 2|
+|**LSR**|A ou mudança de memória para a esquerda|Move os bits para a direita uma vez sem carry, praticamente dividindo um valor por 2|
+>>>>>>> Stashed changes
 
 ASL e LSR podem afetar A ou um endereço, assim como INC e DEC. Aqui está um exemplo de ASL em ação:
 
@@ -61,6 +66,7 @@ LSR $00            ; Mude os bits de $7E0000 para a direita uma vez
                    ; A ainda é $02, enquanto que $7E0000 é agora $01
 ```
 
+<<<<<<< Updated upstream
 ### Bordas e flags de transporte
 Você deve estar se perguntando o que acontece se você deslocar o bit `% 1000 0001` para a direita uma vez, usando LSR. O bit 7 está definido atualmente, mas não há nada para mudar para o bit 7. Ao mesmo tempo, o bit 0 também está definido, mas não tem para onde mudar. Quando isso acontecer, o bit 0 se moverá para a flag de transporte. Ao mesmo tempo, o bit 7 será definido como 0.
 
@@ -70,6 +76,17 @@ Aqui estão alguns exemplos de movimentação de bits para a flag de transporte.
 
 ```
 CLC                ; Garantia de transporte (C) = 0
+=======
+### Bordas e carry flag
+Você deve estar se perguntando o que acontece se você deslocar o bit `% 1000 0001` para a direita uma vez, usando LSR. O bit 7 está definido atualmente, mas não há nada para mudar para o bit 7. Ao mesmo tempo, o bit 0 também está definido, mas não tem para onde mudar. Quando isso acontecer, o flag carry recebe o bit 0. Ao mesmo tempo, o bit 7 será definido como 0.
+
+O inverso também é válido quando você muda '%1000 0001' para a esquerda uma vez, usando ASL. O flag carry recebe o bit 7, enquanto o bit 0 será definido para 0.
+
+Aqui estão alguns exemplos de movimentação de bits para a carry flag.
+
+```
+CLC                ; Garantindo carry (C) = 0
+>>>>>>> Stashed changes
 LDA #$80           ; A = %1000 0000 | C = 0
 ASL A              ; A = %0000 0000 | C = 1
 ASL A              ; A = %0000 0000 | C = 0
@@ -108,15 +125,26 @@ Existem dois opcodes que *rotacionam* bits para a esquerda ou direita, em vez de
 
 |Opcode|Nome completo|Explicação|
 |-|-|-|
+<<<<<<< Updated upstream
 |**ROL**|Rotacionar A ou a memória para a esquerda|Move os bits uma vez para a esquerda com transporte, envolvendo os bits ao redor|
 |**ROR**|Rotacionar A ou a memória para a direita|Move os bits uma vez para a direita com transporte, envolvendo os bits ao redor|
 
 Eles se comportam da mesma forma que LSR e ASL, exceto que estão usando o sinalizador de transporte como um bit extra para fazer com que os bits 'envolvam'. Isso significa que o valor não pode ficar 'preso' em $00 eventualmente, como acontece em ASL e LSR. É por isso que eles são chamados de rotação, em vez de deslocamento.
+=======
+|**ROL**|Rotacionar A ou a memória para a esquerda|Move os bits uma vez para a esquerda com carry, envolvendo os bits ao redor|
+|**ROR**|Rotacionar A ou a memória para a direita|Move os bits uma vez para a direita com carry, envolvendo os bits ao redor|
+
+Eles se comportam da mesma forma que LSR e ASL, exceto que estão usando o carry flag como um bit extra para fazer com que os bits 'envolvam'. Isso significa que o valor não pode ficar 'preso' em $00 eventualmente, como acontece em ASL e LSR. É por isso que eles são chamados de rotação, em vez de deslocamento.
+>>>>>>> Stashed changes
 
 
 Aqui está um exemplo de ROL
 ```
+<<<<<<< Updated upstream
 CLC                ; Garantia de transporte (C) = 0
+=======
+CLC                ; Garantindo carry (C) = 0
+>>>>>>> Stashed changes
 LDA #$80           ; A = %1000 0000 | C = 0
 ROL A              ; A = %0000 0000 | C = 1
 ROL A              ; A = %0000 0001 | C = 0
@@ -140,19 +168,35 @@ LDA #$00           ; A = %0000 0000 | C = 1
 ROL A              ; A = %0000 0001 | C = 0
                    ; A agora é $01
 ```
+<<<<<<< Updated upstream
 Como você pode ver, você pode definir a flag de transporte e rotacionar. Isso resultará em A sendo modificado de qualquer jeito, embora A tenha começado como $00.
+=======
+Como você pode ver, você pode definir o carry flag e rotacionar. Isso resultará em A sendo modificado de qualquer jeito, embora A tenha começado como $00.
+>>>>>>> Stashed changes
 
 A rotação também pode afetar os endereços, assim como ASL e LSR. Aqui está um exemplo:
 
 ```
+<<<<<<< Updated upstream
 CLC                ; Limpar o transporte
+=======
+CLC                ; Limpar o carry
+>>>>>>> Stashed changes
 LDA #$02           ; Carregar o valor $02 em A
 STA $00            ; Guardar isso no endereço $7E0000
 ROR $00            ; Mudar os bits de $7E0000 para a direita uma vez
                    ; A ainda é $02, enquanto que $7E0000 agora é $01
+<<<<<<< Updated upstream
                    ; e o transporte ainda está limpo
+=======
+                   ; e o carry ainda está limpo
+>>>>>>> Stashed changes
 ```
 
 ## Mudança de bit para o modo de 16 bits
 
+<<<<<<< Updated upstream
 Todas as explicações e comportamentos anteriores também se aplicam ao deslocamento de 16 bits. É que você está trabalhando com 16 bits e a flag de transporte, não com 8 bits.
+=======
+Todas as explicações e comportamentos anteriores também se aplicam ao deslocamento de 16 bits. É que você está trabalhando com 16 bits e a carry flag, não com 8 bits.
+>>>>>>> Stashed changes
