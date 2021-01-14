@@ -1,210 +1,214 @@
-# Addressing modes revisited
-In the [basic addressing modes](../the-basics/addressing.md) chapter, we briefly looked at the most commonly used addressing modes: 'Immediate 8-bit and 16-bit', 'direct page', 'absolute' and 'long'. In this chapter, we will look at the more advanced addressing modes: 'indirect', 'indexed' and 'stack relative'. These advanced addressing modes expand upon the earlier introduced addressing modes. This chapter also introduces the concept of pointers.
+# Mais sobre modos de endereçamento
+No capítulo [Modos de endereçamento](../the-basics/address.md), vimos brevemente os modos de endereçamento mais comumente usados: 'Imediato de 8 e 16-bit', 'direct page', 'absoluto' e 'longo'. Neste capítulo, veremos os modos de endereçamento mais avançados: 'indireto', 'indexado' e 'relativo à pilha'. Esses modos de endereçamento avançados complementa os modos de endereçamento introduzidos anteriormente. Este capítulo também apresenta o conceito de ponteiros.
 
-## Pointers
-This is where 'pointers' come into play. Pointers are values which 'point' to a certain memory location. Imagine the following SNES memory:
+## Ponteiros
+É aqui que os 'ponteiros' entram em jogo. Ponteiros são valores que 'apontam' para um determinado local da memória. Imagine a memória do SNES da seguinte forma::
 ```
          ; $7E0000: 12 80 00 55 55 55 ..
 ```
-In this example: the RAM at address $7E0000 contains the values $12, $80 and $00. This is in little-endian, so reverse the values and you get $00, $80, $12. Treat this as a 24-bit 'long' address and you have $008012. This means that RAM address $7E0000 has a 24-bit pointer to $008012. This is what 'indirect' is; accessing address $7E0000 'indirectly' accesses address $008012.
+Neste exemplo, o endereço $7E0000 da RAM contém os valores $12, $80 e $00, que estão na ordem little-endian, então inverta os valores e você terá $00, $80, $12. Trate isso como um endereço 'longo' de 24-bit e você terá a valor $008012. Isso significa que o endereço $7E0000 da RAM contém um ponteiro de 24-bit que aponta para o endereço $008012. Isso é o que chamamos de 'indireto', ao acessar o endereço $008012 'indiretamente' pelo endereço $7E0000.
 
-You can access indirect pointers in two ways: 16-bits and 24-bits. They have a special assembler syntax:
-|Syntax|Terminology|Pointer size|
+Você pode acessar ponteiros indiretos de duas formas: 16-bit e 24-bit. Eles possuem uma sintaxe especial:
+|Sintaxe|Terminologia|Tamanho do ponteiro|
 |-|-|-|
-|( )|Indirect|16-bit|
-|[ ]|Indirect long|24-bit|
+|( )|Indireto|16-bit|
+|[ ]|Indireto longo|24-bit|
 
-The bank byte of the 16-bit pointer depends on the type of instruction. When it comes to a `JSR`-opcode, which can only jump inside the current bank, the bank byte isn't determined nor used. However, when it comes to a loading instruction, such as `LDA`, the bank byte is determined by the *data bank register*.
+O byte do banco do ponteiro de 16-bit depende do tipo de instrução. Quando se trata de um opcode `JSR`, que só pode saltar dentro do mesmo banco, o byte do banco não é determinado e nem usado. No entanto, quando se trata de uma instrução de carregamento, como `LDA`, o byte do banco é determinado pelo *registrador databank*.
 
-Pointers can point to both *code* and *data*. Depending on the type of instruction, the pointers are accessed differently. For example, a `JSR` which utilizes a 16-bit pointer accesses the pointed location as code, while an `LDA` accesses the pointed location as a bank.
+Os ponteiros podem apontar para *código* e *dados*. Dependendo do tipo de instrução, os ponteiros são acessados ​​de forma diferente. Por exemplo, um `JSR` que utiliza um ponteiro de 16-bit acessa o local apontado como código, enquanto um` LDA` acessa o local apontado como um banco.
 
 
-## Indirect
-Indirect addressing modes are basically accessing addresses in such a way, that you access the address they point to, rather than directly accessing the contents of the specified address.
+## Indireto
+Os modos de endereçamento indireto são basicamente acessar endereços de forma que você acesse o endereço para o qual eles apontam, em vez de acessar diretamente o conteúdo do endereço especificado.
 
-### Direct, Indirect
-As paradoxical as it may sound, the naming actually makes sense. 'Direct' stands for direct page addressing mode, while 'indirect' means that we're accessing a pointer at the direct page address, rather than a value. Here's an example:
+### Direto, indireto
+Por mais paradoxal que possa parecer, a nomenclatura realmente faz sentido. 'Direto' significa modo de endereçamento direct page, enquanto 'indireto' significa que estamos acessando um ponteiro no endereço direct page, em vez de um valor. veja o exemplo a seguir:
 
 ```
-; Setup indirect pointer
+; Configura o ponteiro indireto
 REP #$20
-LDA #$1FFF         ; $1FFF to RAM $7E0000
+LDA #$1FFF         ; $1FFF para $7E0000
 STA $00
 SEP #$20
-                    ; $7E0000: FF 1F .. .. .. .. ..
+                   ; $7E0000: FF 1F .. .. .. .. ..
 
-; Access indirect pointer
-LDA ($00)   ; Load the value at address $1FFF into A
+; Acessa o ponteiro indireto
+LDA ($00)          ; Carrega o valor de $1FFF em A
 ```
-This accesses a 16-bit pointer at address $000000, due to the nature of direct page always accessing bank $00. Due to the effects of mirroring in the SNES mirroring, practically speaking, this accesses a 16-bit pointer at RAM $7E0000.
+LDA acessa um ponteiro de 16-bit no endereço $000000, devido à natureza do direct page sempre acessar o banco $00. Devido aos efeitos de espelhamento no espelhamento do SNES, praticamente falando, ele acessa um ponteiro de 16-bit em $7E0000 da RAM.
 
-You might think that `LDA ($00)` loads the `value $1FFF` into A. However, it doesn’t work that way. It loads the `value in address $1FFF` into A, because we use an indirect addressing mode. 
+Você pode pensar que `LDA ($00)` carrega o `valor $1FFF` em A. No entanto, não funciona dessa forma. Ele carrega o `valor do endereço $1FFF` em A, porque ele está usando um modo de endereçamento indireto.
 
-As we established earlier, parentheses denote 16-bit pointers. The bank of the indirect address, in the case of an LDA, depends on the data bank register. As a result, the `LDA ($00)` resolves into `LDA $1FFF`.
+Conforme estabelecido anteriormente, os parênteses  denotam ponteiros de 16-bit. O banco do endereço indireto, no caso de um LDA, depende do registador data bank. Como resultado, o `LDA ($00)` se comporta como `LDA $1FFF`.
 
-### Direct Indexed with X, Indirect
-As is the case with the previous addressing mode, the naming may seem contradicting. 'Direct' stands for direct page addressing mode. 'Indexed with X' means that this direct page address is indexed with X. 'Indirect' means that the previous elements are treated as an indirect address. Here's an example usage:
+### Indexado direto com X, indireto
+Como no caso do modo de endereçamento anterior, a nomenclatura pode parecer contraditória. 'Direto' significa modo de endereçamento de direct page. 'Indexado com X' significa que este endereço de direct page é indexado com X. 'Indireto' significa que os elementos anteriores são tratados como um endereço indireto. Aqui está um exemplo de uso:
 
 ```
-; Setup indirect pointers
+; Configura o ponteiro indireto
 REP #$20
-LDA #$1FFF         ; $1FFF to RAM $7E0000
+LDA #$1FFF         ; $1FFF para $7E0000
 STA $00
-LDA #$0FFF         ; $0FFF to RAM $7E0002
+LDA #$0FFF         ; $0FFF para $7E00020
 STA $02
 SEP #$20
                    ; $7E0000: FF 1F FF 0F .. .. ..
 
-; Access indirect pointer
-LDX #$02           ; Set X to $02
-LDA ($00,x)        ; Loads the value at address $0FFF into A
+; Acessa o ponteiro indireto
+LDX #$02           ; Carrega $02 em X
+LDA ($00, x)       ; Carrega o valor de $0FFF em A
 ```
-- The 16-bit value in address $7E0000 + $7E0001 is `$1FFF`.
-- The 16-bit value in address $7E0002 + $7E0003 is `$0FFF`.
+- O valor de 16-bit no endereço $7E0000 + $7E0001 é `$1FFF`.
+- O valor de 16-bit no endereço $7E0002 + $7E0003 é `$0FFF`.
 
-Thanks to using X as an indexer to the direct page address, `LDA ($00,x)` is resolved into `LDA ($02)`. This then resolves into `LDA $0FFF` because RAM $7E0002 points to `address $0FFF`.
+Graças ao uso de X como um indexador para o endereço de direct page, `LDA ($00, x)` é tratado como `LDA ($02)`. Então se transforma em `LDA $0FFF` porque $7E0002 aponta para o` endereço $0FFF`.
 
-### Direct, Indirect Indexed with Y
-This is practically the same as `Direct, Indirect` but the pointer is then indexed with the Y register:
+### Direto, Indireto indexado com Y
+É praticamente o mesmo que `Direto, Indireto`, mas o ponteiro é indexado com o registrador Y:
 ```
-; Setup indirect pointer
+; Configurar ponteiro indireto
 REP #$20
-LDA #$1FF0         ; $1FF0 to RAM $7E0000
+LDA #$1FF0         ; $1FF0 para $7E0000
 STA $00
 SEP #$20
                    ; $7E0000: F0 1F .. .. .. .. ..
 
-; Access indirect pointer
-LDY #$01           ; Set Y to $01
-LDA ($00),y        ; Load value at address $1FF1 into A
+; Acessa o ponteiro indireto
+LDY #$01; Defina Y como $01
+LDA ($00), y; Carregue o valor de $1FF1 em A
 ```
-As a result, `LDA ($00),y` resolves into `LDA $1FF0,y`, which then resolves into `LDA $1FF1` because Y contains the value $01.
+Como resultado, `LDA ($00), y` se transforma em ` LDA $1FF0, y`, que por sua vez se transforma em `LDA $1FF1`, por causa do Y que contém o valor $01.
 
-### Absolute, Indirect
-Exactly the same as `Direct, Indirect`, except the specified address is now 16-bit instead of 8-bit. This addressing mode is only used by jumping instructions. Example:
+### Absoluto, Indireto
+Exatamente igual ao `Direto, Indireto`, exceto que o endereço especificado agora é de 16-bit em vez de 8-bit. Este modo de endereçamento é usado apenas em instruções de salto. Exemplo:
 ```
-; Setup indirect pointer
+; Configurar ponteiro indireto
 REP #$20
-LDA #$8000         ; $8000 to RAM $7E0000
+LDA #$8000         ; $8000 para RAM $7E0000
 STA $00
 SEP #$20
                    ; $7E0000: 00 80 .. .. .. .. ..
 
-; Access indirect pointer
-JMP ($0000)        ; Jumps to $8000.
+; Acessa o ponteiro indireto
+JMP ($0000)        ; Salta para $8.000.
 ```
-This has the same exact effect as the example in `Direct, Indirect`. As a result, the `JMP ($0000)` resolves into `JMP $8000` and jumps to `address $8000` in the current bank.
+Tem exatamente o mesmo efeito que o exemplo em `Direto, Indireto`. Como resultado, o `JMP ($0000)` se transforma em `JMP $8000` e salta para o `endereço $8000` no banco atual.
 
-### Absolute Indexed with X, Indirect
-Exactly the same as `Direct Indexed with X, Indirect`, except the specified address is now 16-bit instead of 8-bit. This addressing mode is only used by jumping instructions. Example:
+### Absoluto indexado com X, indireto
+Exatamente o mesmo que `Direct Indexed with X, Indirect`, exceto que o endereço especificado agora é de 16-bit em vez de 8-bit. Este modo de endereçamento é usado apenas em instruções de salto. Exemplo:
 
 ```
 REP #$20
-LDA #$8000         ; $8000 to RAM $7E0000
+LDA #$8000         ; $8000 para $7E0000
 STA $00
-LDA #$9000         ; $9000 to RAM $7E0002
+LDA #$9000         ; $9000 para $7E0002
 STA $02
 SEP #$20
                    ; $7E0000: 00 80 00 90 .. .. ..
 
-; Access indirect pointer
-LDX #$02           ; Set X to $02
-JMP ($0000,x)      ; Jumps to $9000
+; Acessar ponteiro indireto
+LDX #$02           ; Carrega $02 em X
+JMP ($0000, x)     ; Salta para $9000
 ```
-- The 16-bit value in address $7E0000 + $7E0001 is `$8000`. 
-- The 16-bit value in address $7E0002 + $7E0003 is `$9000`.
+- O valor de 16-bit no endereço $7E0000 + $7E0001 é `$8000`.
+- O valor de 16-bit no endereço $7E0002 + $7E0003 é `$9000`.
 
-Thanks to using X as an indexer to the direct page address, `JMP ($0000,x)` is resolved into `JMP ($0002)`. This then resolves into `JMP $9000` because RAM $7E0002 points to `address $9000`.
+Graças ao uso de X como um indexador para o endereço de direct page, `JMP ($0000, x)` é convertido em `JMP ($0002)`, que então se resolve em `JMP $9000` porque $7E0002 aponta para o `endereço $9000`.
 
-### Direct, Indirect Long
-Exactly the same as `Direct, Indirect`, except the pointer located at an address is now 24-bits instead of 16-bits, meaning the bank byte of a pointer is also specified. Example:
+### Direto, Indireto Longo
+Exatamente igual a `Direto, Indireto`, exceto que o ponteiro localizado em um endereço agora é de 24-bit em vez de 16-bit, o que significa que o 'byte do banco' de um ponteiro também é especificado. Exemplo:
 ```
+; Configura o ponteiro
 REP #$20
-LDA #$1FFF         ; $1FFF to RAM $7E0000
+LDA #$1FFF         ; $1FFF para $7E0000
 STA $00
 SEP #$20
-LDX #$7F           ; $7F to RAM $7E0002
-STX $02            ; $7E0000 now contains the 24-bit pointer $7F1FFF
+LDX #$7F           ; $7F para $7E0002
+STX $02            ; Agora $7E0000 contém o ponteiro $7F1FFF de 24-bit
                    ; $7E0000: FF 1F 7F .. .. .. ..
-LDA [$00]          ; Load the value at address $7F1FFF into A
+                   
+; Acessa o ponteiro indireto
+LDA [$00]          ; Carrega o valor de $7F1FFF em A
 ```
-`LDA [$00]` resolves into `LDA $7F1FFF`.
+`LDA [$00]` é convertido em `LDA $7F1FFF`.
 
-### Direct, Indirect Indexed Long with Y
-Exactly the same as `Direct, Indirect Indexed with Y`, except the pointer located at an address is now 24-bits instead of 16-bits, meaning the bank byte of a pointer is also specified. Example:
+### Direto, Indireto Indexado Longo com Y
+Exatamente igual a `Direto, indireto indexado com Y`, exceto que o ponteiro localizado em um endereço agora é de 24-bit em vez de 16-bit, o que significa que o byte do banco de um ponteiro também é especificado. Exemplo:
 ```
-; Setup indirect pointer
+; Configura o ponteiro
 REP #$20
-LDA #$1FF0         ; $1FF0 to RAM $7E0000
+LDA #$1FF0         ; $1FF0 para $7E0000
 STA $00
 SEP #$20
-LDX #$7F           ; $7F to RAM $7E0002
-STX $02            ; $7E0000 now contains the 24-bit pointer $7F1FF0
+LDX #$7F           ; $7F para $7E0002(RAM)
+STX $02            ; Agora $7E0000 contém o ponteiro $7F1FF0 (24-bit)
                    ; $7E0000: F0 1F 7F .. .. .. ..
 
-; Access indirect pointer
-LDY #$01           ; Set Y to $01
-LDA [$00],y        ; Load value at address $7F1FF1 into A
+; Acessa o ponteiro indireto
+LDY #$01           ; Carrega $01 em Y
+LDA [$00],y        ; Carrega o valor de $7F1FF1 em A
 ```
-As a result, `LDA [$00],y` resolves into `LDA $7F1FF0,y` (practically speaking), which then resolves into `LDA $7F1FF1` because Y contains the value $01.
 
-## Indexed
-Indexed addressing mode was actually briefly touched upon in an [earlier chapter](../collections/indexing.md). This chapter will discuss all the possible indexed addressing modes.
+Como resultado, `LDA [$00], y` é convertido em` LDA $7F1FF0, y` (praticamente falando), que então é convertido em `LDA $7F1FF1` por causa de Y que contém o valor $01.
 
-### Direct, Indexed with X
-This addressing mode indexes a direct page address with X. Example:
+## Indexado
+O modo de endereçamento indexado foi brevemente abordado no [capítulo anterior](../collections /indexing.md). Este capítulo discutirá todos os modos de endereçamento indexados possíveis.
+
+### Direto, indexado com X
+Este modo de endereçamento indexa um endereço de direct page com X. Exemplo:
 ```
 LDX #$02
-LDA $00,x          ; Loads the value at address $7E0002 into A
+LDA $00, x         ; Carrega o valor de $7E0002 em A
 ```
 
-### Direct, Indexed with Y
-This addressing mode indexes a direct page address with Y. This addressing mode only exists on the `LDX` and `STX`-opcodes. Example:
+### Direto, indexado com Y
+Este modo de endereçamento indexa um endereço de direct page com Y. Este modo de endereçamento só é possível nos opcodes `LDX` e` STX`. Exemplo:
 ```
 LDY #$02
-LDX $00,y          ; Loads the value at address $7E0002 into X
+LDX $00, y         ; Carrega o valor do endereço $7E0002 em X
 ```
 
-### Absolute, Indexed with X
-This addressing mode indexes an absolute address with X. Example:
+### Absoluto, indexado com X
+Este modo de endereçamento indexa um endereço absoluto com X. Exemplo:
 ```
 LDX #$02
-LDA $0000,x        ; Loads the value at address $7E0002 into A
+LDA $0000, x       ; Carrega o valor do endereço $7E0002 em A
 ```
 
-### Absolute, Indexed with Y
-This addressing mode indexes an absolute address with Y. Example:
+### Absoluto, indexado com Y
+Este modo de endereçamento indexa um endereço absoluto com Y. Exemplo:
 ```
 LDY #$02
-LDA $0000,y        ; Loads the value at address $7E0002 into A
+LDA $0000, y       ; Carrega o valor de $7E0002 em A
 ```
 
-### Absolute, Long Indexed with X
-This addressing mode indexes a long address with X. Example:
+### Absoluto, Long indexado com X
+Este modo de endereçamento indexa um endereço longo com X. Exemplo:
 ```
 LDX #$02
-LDA $7E0000,x      ; Loads the value at address $7E0002 into A
+LDA $7E0000, x     ; Carrega o valor de $7E0002 em A
 ```
 
 ## Stack Relative
-Stack relative is a special type of indexer addressing mode. It uses the stack pointer register as a 16-bit index, rather than using the X or Y register.
+O stack relative é um tipo especial de modo de endereçamento do indexador. Ele usa o registrador de ponteiro de pilha como um índice de 16-bit, em vez de usar o registrador X ou Y.
 
 ### Stack Relative
-This loads a value from the RAM, relative to the stack pointer. The bank byte is always $00. Example:
+Carrega um valor da RAM, relativo ao ponteiro da pilha. O byte do banco é sempre $00. Exemplo:
 ```
-; Stack pointer register: $1FF0
-LDA $00,s          ; ($001FF0) Loads the value in the current free slot in the stack, into A.
-LDA $01,s          ; ($001FF1) Loads the last pushed value into A.
-LDA $02,s          ; ($001FF2) Loads the second last pushed value into A.
+; Registrador stack pointer = $1FF0
+LDA $00,s          ; ($001FF0) Carrega em A o valor no slot livre atual da pilha.
+LDA $01,s          ; ($001FF1) Carrega em A o último valor inserido na pilha.
+LDA $02,s          ; ($001FF2) Carrega em A o penultimo valor inserido na pilha.
 LDA $03,s          ; ($001FF3) ...
 ```
-In 16-bit A mode, the address increments would be 2, rather than 1, like in the example above.
+No modo 16-bit de A, os incrementos de endereço seriam 2, em vez de 1, como no exemplo acima.
 
-### Stack Relative, Indirect Indexed with Y
-This is pretty much the same as `Direct, Indirect Indexed with Y`, except the value is loaded from a stack relative address. Example:
+### Pilha relativa, indireta indexada com Y
+É praticamente igual a `Direto, indireto indexado com Y`, exceto que o valor é carregado de um endereço relativo da pilha. Exemplo:
 
 ```
-; Stack pointer register = $01FD
+; Registrador stack pointer = $01FD
 REP #$20
 LDA #$0100
 PHA
@@ -212,6 +216,6 @@ SEP #$20
 LDY #$03
 LDA ($01,s),y      ; → LDA ($01FE),y → LDA $0100,y → LDA $0103
 ```
-`$01,s` refers to the last pushed value into A, which is $0100 in the case of this example. The parentheses applies on this stack relative address, resolving the instruction to an `LDA $0100,y`. This finally resolves into `LDA $0103` because of the indexer.
+`$01, s` refere-se ao último valor colocado em A, que é $0100 no caso deste exemplo. Os parênteses se aplicam a este endereço relativo da pilha, convertendo a instrução para `LDA $0100, y`, que por sua vez, é convertido para  `LDA $0103` por causa do indexador.
 
-This addressing mode is handy if you'd like to treat certain pushed values as an indexed memory address.
+Este modo de endereçamento será útil se você quiser tratar certos valores enviados como um endereço de memória indexado.
