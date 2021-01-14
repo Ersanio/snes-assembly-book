@@ -216,6 +216,6 @@ SEP #$20
 LDY #$03
 LDA ($01,s),y      ; → LDA ($01FE),y → LDA $0100,y → LDA $0103
 ```
-`$01, s` refere-se ao último valor colocado em A, que é $0100 no caso deste exemplo. Os parênteses se aplicam a este endereço relativo da pilha, convertendo a instrução para `LDA $0100, y`, que por sua vez, é convertido para  `LDA $0103` por causa do indexador.
+`$01, s` refere-se ao carregamento de A com o último valor empilhado, que é $0100 no caso deste exemplo. Os parênteses se aplicam a este endereço relativo da pilha, convertendo a instrução para `LDA $0100, y`, que por sua vez, é convertido para  `LDA $0103` por causa do indexador.
 
-Este modo de endereçamento será útil se você quiser tratar certos valores enviados como um endereço de memória indexado.
+Este modo de endereçamento será útil se você quiser tratar certos valores empilhados como um endereço de memória indexado.
