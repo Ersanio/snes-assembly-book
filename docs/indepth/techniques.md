@@ -55,12 +55,12 @@ The examples within this section only loops through tables to copy them to RAM a
 It's possible to loop from the beginning to the end of a table. The following code demonstrates this.
 
 ```
-   LDX.b #$00      ; Initialize the loop counter
--  LDA Table,x     ; Reads out the values in the table
-   STA $00,x       ; Store them to addresses $7E0000-$7E0003
-   INX             ; Increase loop counter by one
-   CPX.b #Table_end-Table ; Use the size of the table as the check
-   BNE -           ; If the loop counter doesn't equal this, then continue looping.
+   LDX.b #$00               ; Initialize the loop counter
+-  LDA Table,x              ; Reads out the values in the table
+   STA $00,x                ; Store them to addresses $7E0000-$7E0003
+   INX                      ; Increase loop counter by one
+   CPX.b #Table_end-Table   ; Use the size of the table as the check
+   BNE -                    ; If the loop counter doesn't equal this, then continue looping.
    RTS
 
 Table:   db $01,$02,$04,$08 ; The values are read out in order
@@ -402,4 +402,48 @@ TAX                ; Transfer A to X. X has now decreased by $42
 By temporarily transferring X to A and back, the `SBC` practically is used on the X register, instead.
 
 ## Checking flags
-TODO BIT or AND
+[Flags](../the-basics/binary.md), are bits which serve as some sort of an "on/off" switch on a certain property. One byte contains 8 bits, but how do you actually *check* if a flag is on or off? In ASM, when you usually use comparison and branching opcodes, you check for whole bytes rather than a single bit within that byte. There are two opcodes which are suitable for this. We will use the example from the binary chapter:
+```text
+10100000
+││└───── "Is daytime" flag
+│└───── "Is horizontal level" flag
+└───── "Is raining" flag
+```
+Imagine this byte is stored in address $7E0095 for the examples to follow.
+
+### The "AND" opcode
+`AND` is handled in the [Bitwise Operations](../math/logic.md) chapter. By using AND, you can basically "isolate" bits and check if any of them are set or cleared. For example, if we want to check if the "daytime" flag is set, you would load the address into A, then `AND` just that one bit:
+
+```
+LDA $95
+AND #%00100000     ; can also be written as #$20
+BNE DayTimeIsSet
+...
+DayTimeIsSet:
+RTS
+```
+If that one bit in address $7E0095 is set, then the result of that `AND` will also be that A gets the value `$20`. Thus, the zero flag is cleared, and the branch is taken.
+
+If you want to check if either of the two flags are set (e.g. the daytime flag *or* the raining flag), you'd use `AND` to check two bits, rather than one:
+```
+LDA $95
+AND #%10100000     ; can also be written as #$A0
+BNE IsRainingOrDaytime
+...
+IsRainingOrDaytime:
+RTS
+```
+
+If you want to check if both of the two flags are set (e.g. the daytime flag *and* the raining flag), you'd have to use `AND` and then a `CMP`. Then, you'd branch if the value resulting from the `AND` is equal to the flags you want set:
+```
+LDA $95
+AND #%10100000         ; First filter the bits
+CMP #%10100000         ; Then check if both bits are set
+BEQ IsRainingOrDaytime ; If set, then branch
+...
+IsRainingOrDaytime:
+RTS
+```
+
+### The "BIT" opcode
+The `BIT` opcode is special because it can actually check if bits 7 and 6 (bits 15 and 14 in 16-bit mode) of an address' value are set, without having to modify A. TODO: Continue

@@ -1,7 +1,7 @@
 # Processor flags
 As you saw in the "8-bit and 16-bit mode" chapter earlier, the SNES can switch between 8-bit and 16-bit mode by using the opcodes REP and SEP. These affect the processor flags, which affect the behaviour of the SNES. Two of the prcoessor flags are dedicated to A and X & Y being 8-bit or 16-bit mode. There are in total 9 processor flags stored in the processor flags register as a single byte:
 
-```
+```text
 Processor flags
 Bits: 7   6   5   4   3   2   1   0
 
@@ -125,7 +125,7 @@ The emulation mode of the 65c816 also fixes some of the bugs that the 6502 had. 
 ### Processor flags
 The emulation mode has a different set of processor flags.
 
-```
+```text
 Processor flags
 Bits: 7   6   5   4   3   2   1   0
 
