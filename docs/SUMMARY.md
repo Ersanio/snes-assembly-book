@@ -4,7 +4,7 @@
 * [Getting started](getting-started.md)
 * [Contributing](contributing.md)
 
-## The basics
+## The fundamentals
 * [Hexadecimal](the-basics/hexadecimal.md)
 * [Binary](the-basics/binary.md)
 * [The SNES memory](the-basics/memory.md)
@@ -13,7 +13,7 @@
 * [Little-endian](the-basics/endian.md)
 * [Glossary](the-basics/glossary.md)
 
-## The basics (again)
+## The basics
 * [Loading and storing](programming/loading-and-storing.md)
 * [Shorter addresses](programming/shorter-addresses.md)
 * [8-bit and 16-bit mode](programming/816.md)

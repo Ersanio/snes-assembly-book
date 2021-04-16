@@ -16,9 +16,9 @@ The SNES memory is mapped from address $000000 to $FFFFFF, although only $000000
 
 Addresses can be written in 3 ways: $BBHHDD, $HHDD and $DD, such as $7E0003, $0003 and $03.
 
-* Addresses in the $DD-notation are called “direct page"
-* Addresses in the $HHDD-notation are called “absolute addresses”
-* Addresses in the $BBHHDD-notation are called “long addresses”
+* Addresses in the $DD-notation are called "direct page"
+* Addresses in the $HHDD-notation are called "absolute addresses"
+* Addresses in the $BBHHDD-notation are called "long addresses"
 
 As established earlier, an address may contain only one byte. If you access a certain address in 16-bit mode, it means you actually access both "address" and "address+1", because a 16-bit number consists of two bytes.
 
@@ -36,7 +36,7 @@ ROM stands for "Read-Only Memory" and it's exactly that: memory that can be only
 
 RAM stands for "Random-Access Memory". This is the dynamic memory which allows anything to be written to it at any time. You could say that this is the place where you have variables which are important and have meaning. RAM can be written to in order to achieve a certain effect. For example, if you write $04 to the player’s extra lives, then the player will have exactly 4 extra lives.
 
-The SNES RAM is 128kB big, and it is located at addresses $7E0000-$7FFFFF. The SNES RAM is completely generic. There is no such rule as “address $7E0120 is used for lives in every SNES game ever". You define the purpose of RAM yourself, by writing ASM code.
+The SNES RAM is 128kB big, and it is located at addresses $7E0000-$7FFFFF. The SNES RAM is completely generic. There is no such rule as "address $7E0120 is used for lives in every SNES game ever". You define the purpose of RAM yourself, by writing ASM code.
 
 The memory map shows that banks $00-3F contain a RAM "mirror". Mirrored RAM addresses are addresses which contain the same value across every bank. This means that RAM address $001234 contains the exact same value as $0F1234 at all times. Having the RAM mirrored means that code executing in the ROM at those banks can access RAM $7E0000-$7E1FFF more "easily". Conversely, code executing at banks $40-6F have more trouble accessing the RAM because the RAM isn't mirrored there.
 

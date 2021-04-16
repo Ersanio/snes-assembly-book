@@ -33,7 +33,7 @@ There are various ways to write hex numbers so readers cannot confuse them with 
 
 In this tutorial, the convention is to prefix hexadecimal numbers with "$".
 
-In assembly, a hexadecimal number with two digits is called a “byte”. This means that values between $00-$FF are considered a byte.
+In assembly, a hexadecimal number with two digits is called a "byte". This means that values between $00-$FF are considered a byte.
 
 ## Signed and unsigned values
 

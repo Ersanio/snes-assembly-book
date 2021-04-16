@@ -16,7 +16,7 @@ There are four types of values which you can use to write tables:
 |**dl**|direct long|A value denoting a long (24-bit value, e.g. $XXXXXX)|
 |**dd**|direct double|A value denoting a double (32-bit value, e.g. $XXXXXXXX)|
 
-In this case, the bytes are a “byte”, not “word” or “long”, hence “db”: direct byte. The table in this example serves no other purpose than demonstrating indexing. In this case, the table is located somewhere inside the ROM. Tables are preceded by a label so that you can refer to it easily within your code.
+In this case, the bytes are a "byte", not "word" or "long", hence "db": direct byte. The table in this example serves no other purpose than demonstrating indexing. In this case, the table is located somewhere inside the ROM. Tables are preceded by a label so that you can refer to it easily within your code.
 
 Here's an example of a table definition:
 ```

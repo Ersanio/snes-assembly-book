@@ -55,12 +55,12 @@ The examples within this section only loops through tables to copy them to RAM a
 It's possible to loop from the beginning to the end of a table. The following code demonstrates this.
 
 ```
-   LDX.b #$00      ; Initialize the loop counter
--  LDA Table,x     ; Reads out the values in the table
-   STA $00,x       ; Store them to addresses $7E0000-$7E0003
-   INX             ; Increase loop counter by one
-   CPX.b #Table_end-Table ; Use the size of the table as the check
-   BNE -           ; If the loop counter doesn't equal this, then continue looping.
+   LDX.b #$00               ; Initialize the loop counter
+-  LDA Table,x              ; Reads out the values in the table
+   STA $00,x                ; Store them to addresses $7E0000-$7E0003
+   INX                      ; Increase loop counter by one
+   CPX.b #Table_end-Table   ; Use the size of the table as the check
+   BNE -                    ; If the loop counter doesn't equal this, then continue looping.
    RTS
 
 Table:   db $01,$02,$04,$08 ; The values are read out in order
@@ -263,9 +263,10 @@ The same concept can be applied for data (i.e. tables). Imagine you want to read
   CMP #$FF
   BEQ Return
 
+  ; Do something with the loaded level data here
+
   INY
   BRA -
-  ; Do something with level data here
   
 Return:
   SEP #$10
@@ -374,8 +375,8 @@ Here's an example of a pseudo 16-bit `DEC`:
    DEC $59
 +  RTS              ; These would now make the 16-bit value $02FF
                     ; across two addresses
-As you can see, there's an extra check for the value $FF, because there's no shorthand way to check if the result of a `DEC` is exactly the value $FF. If the result indeed is the value `$FF`, then the other address needs to be decreased also.
 ```
+As you can see, there's an extra check for the value $FF, because there's no shorthand way to check if the result of a `DEC` is exactly the value $FF. If the result indeed is the value `$FF`, then the other address needs to be decreased also.
 
 ## ADC and SBC on X and Y
 Increasing and decreasing A by a certain amount is easy because of `ADC` and `SBC`. However, these kind of instructions do not exist for X and Y. If you want to increase or decrease X and Y by a small amount, you would have to use `INX`, `DEX`, `INY` and `DEY`. This quickly gets impractical if you have to increase or decrease X and Y by great numbers (5 or more) though. In order to do that, you can temporarily transfer X or Y to A, then perform an `ADC` or `SBC`, then transfer it back to X or Y. 
@@ -399,3 +400,51 @@ SBC #$42           ; Subtract $42 from A
 TAX                ; Transfer A to X. X has now decreased by $42
 ```
 By temporarily transferring X to A and back, the `SBC` practically is used on the X register, instead.
+
+## Checking flags
+[Flags](../the-basics/binary.md), are bits which serve as some sort of an "on/off" switch on a certain property. One byte contains 8 bits, but how do you actually *check* if a flag is on or off? In ASM, when you usually use comparison and branching opcodes, you check for whole bytes rather than a single bit within that byte. There are two opcodes which are suitable for this. We will use the example from the binary chapter:
+```text
+10100000
+││└───── "Is daytime" flag
+│└───── "Is horizontal level" flag
+└───── "Is raining" flag
+```
+Imagine this byte is stored in address $7E0095 for the examples to follow.
+
+### The "AND" opcode
+`AND` is handled in the [Bitwise Operations](../math/logic.md) chapter. By using AND, you can basically "isolate" bits and check if any of them are set or cleared. For example, if we want to check if the "daytime" flag is set, you would load the address into A, then `AND` just that one bit:
+
+```
+LDA $95
+AND #%00100000     ; can also be written as #$20
+BNE DayTimeIsSet   ; branches when the daytime flag is set
+...
+```
+If that one bit in address $7E0095 is set, then the result of that `AND` will also be that A gets the value `$20`. Thus, the zero flag is cleared, and the branch is taken.
+
+If you want to check if either of the two flags are set (e.g. the daytime flag *or* the raining flag), you'd use `AND` to check two bits, rather than one:
+```
+LDA $95
+AND #%10100000         ; can also be written as #$A0
+BNE IsRainingOrDaytime ; branches when both rain OR daytime flags are set
+...
+```
+
+If you want to check if both of the two flags are set (e.g. the daytime flag *and* the raining flag), you'd have to use `AND` and then a `CMP`. Then, you'd branch if the value resulting from the `AND` is equal to the flags you want set:
+```
+LDA $95
+AND #%10100000         ; First filter the bits
+CMP #%10100000         ; Then check if both bits are set
+BEQ IsRainingOrDaytime ; branches when both rain AND daytime flags are set
+...
+```
+
+### The "BIT" opcode
+The `BIT` opcode, which is also handled in the [Bitwise Operations](../math/logic.md) chapter, is special because it can actually check if bits 7 and 6 (bits 15 and 14 in 16-bit mode) of an address' value are set, without having to modify A. Here's an example:
+
+```
+BIT $95
+BMI IsRaining          ; Branches when bit 7 (negative flag) is set
+BVS IsHorizontalLevel  ; Branches when bit 6 (overflow flag) is set
+...
+```

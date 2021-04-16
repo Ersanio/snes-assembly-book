@@ -12,7 +12,7 @@ Here are some definitions of the most commonly used terms throughout the tutoria
 |Opcode|A three-letter instruction; a command|
 |Addressing mode|An optional parameter for an opcode denoting a value or an address|
 |Instruction/Operation|The combination of an opcode and optionally an addressing mode|
-|Bytecode|An instruction assembled into bytes understandable by processors; machine code|
+|Machine code|An instruction assembled into bytes, which can be understood by processors|
 |Value|A magnitude, quantity, or number; a number representing information|
 |Signed|A value that semantically allows itself to be negative as well|
 |Unsigned|A value that semantically allows itself to be positive-only, allowing for greater positive numbers|
