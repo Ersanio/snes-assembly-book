@@ -28,7 +28,7 @@ This section concern the styling of the document.
 ### Inline code
 - All opcodes and instructions shall be surrounded by the markdown backtick (`), regardless of the context.
 
-Example: The opcode `LDA` is used to load values into the A register. Thus, `LDA #$49` loads the value $49 into A. This then can be increased to the value $$A by using `INC A`.
+Example: The opcode `LDA` is used to load values into the A register. Thus, `LDA #$49` loads the value $49 into A. This then can be increased to the value $4A by using `INC A`.
 
 ### Markdown tables
 - Sentences and phrases within table cells generally shouldn't end with a period.

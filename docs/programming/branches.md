@@ -91,8 +91,8 @@ CMP $02 would try to compare address $7E0002 with the register A, instead of X. 
 These are branch opcodes which branch depending on if a value is signed or unsigned.
 |Opcode|Full name|Explanation|
 |-|-|-|
-|**BMI**|Branch if minus|Branches if the last operation resulted in a negative value|
-|**BPL**|Branch if plus|Branches if the last operation resulted in a positive value|
+|**BMI**|Branch if minus|Branches if the last operation resulted in a negative value (thus, negative flag set)|
+|**BPL**|Branch if plus|Branches if the last operation resulted in a positive value (thus, negative flag clear)|
 
 BMI branches if the last operation is a minus/negative value. Minus values are the values $80-$FF. BPL branches if the last operation is not a minus value; it branches when the value is $00-$7F.
 
@@ -100,19 +100,19 @@ BMI branches if the last operation is a minus/negative value. Minus values are t
 These are branch opcodes which branch depending on if a value is greater than or less than.
 |Opcode|Full name|Explanation|
 |-|-|-|
-|**BCS**|Branch if carry set|Basically branches if the loaded value is greater than or equal to the compared value|
-|**BCC**|Branch if carry clear|Basically branches if the loaded value is less than the compared value|
+|**BCS**|Branch if carry set|Basically branches if the loaded value is greater than or equal to the compared value (thus, carry flag set)|
+|**BCC**|Branch if carry clear|Basically branches if the loaded value is less than the compared value (thus, carry flag clear)|
 
 BCS branches if the loaded value is equal or greater than the compared value. Alternatively, this also branches when the carry flag is set.
 
 BCC branches if the loaded value is lesser than the compared value. Alternatively, this also branches when the carry flag is clear. Please note that this BCC doesn’t get taken if the compared value is equal, unlike BCS.
 
 ## BVS and BVC
-These are branch opcodes which branch depending on if a value results in a mathematical overflow or not.
+These are branch opcodes which branch depending on if a value results in a mathematical overflow or not, thus, when the overflow flag is set or clear.
 |Opcode|Full name|Explanation|
 |-|-|-|
-|**BVS**|Branch if overflow set|Branches if the comparison causes a mathematical overflow|
-|**BVC**|Branch if overflow clear|Branches if the comparison doesn't cause a mathematical overflow|
+|**BVS**|Branch if overflow set|Branches if the comparison causes a mathematical overflow (thus, overflow flag set)|
+|**BVC**|Branch if overflow clear|Branches if the comparison doesn't cause a mathematical overflow (thus, overflow flag clear)|
 
 The "overflow" flag is a processor flag, explained later in the tutorial.
 
