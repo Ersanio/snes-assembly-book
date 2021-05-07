@@ -32,7 +32,7 @@ JSL has the same purpose as JSR, except it can jump everywhere. Above example ca
 
 The opcode JSR will get assembled as `JSR $XXXX` by the assembler (because labels get turned into addresses), but you shouldn’t worry about that. Furthermore, because JSR uses an absolute address as its parameter, it is limited to its current bank. Changing the data bank register doesn't affect JSR.
 
-The opcode JSR will get assembled as `JSL $XXXXXX`, instead.
+The opcode JSL will get assembled as `JSL $XXXXXX`, instead.
 
 ## RTS and RTL
 When you call a subroutine, you also need a way to return back to your original code. For that, there are two return opcodes.
