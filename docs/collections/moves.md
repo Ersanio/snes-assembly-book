@@ -31,7 +31,7 @@ MVN can be written in two ways:
 ```
 MVN $xxyy
 ; or
-MVN $yy, $xx
+MVN $xx, $yy
 ```
 Where `xx` is the source bank, and `yy` is the destination bank.
 
@@ -55,7 +55,7 @@ REP #$30           ; 16-bit AXY
 LDA #$0004         ; \
 LDX #$8908         ;  |
 LDY #$A000         ;  | Move 5 bytes of data from $1F8908 to $7FA000
-MVN $7F, $1F       ; /
+MVN $1F, $7F       ; /
 SEP #$30           ; 8-bit AXY
 PLB                ; Recover data bank
 ```
@@ -75,7 +75,7 @@ MVP can be written in two ways:
 ```
 MVP $xxyy
 ;or
-MVP $yy, $xx
+MVP $xx, $yy
 ```
 Where `xx` is the source bank, and `yy` is the destination bank.
 
@@ -95,7 +95,7 @@ REP #$30           ; 16-bit AXY
 LDA #$0004         ; \
 LDX #$8908         ;  |
 LDY #$A000         ;  | Move 5 bytes of data from ($1F8908-$0004) to ($7FA000-$0004)
-MVP $7F, $1F       ; /
+MVP $1F, $7F       ; /
 SEP #$30           ; 8-bit AXY
 PLB                ; Recover data bank
 ```
@@ -116,7 +116,7 @@ REP #$30
 LDA.w #SomeTable_end-SomeTable-$01
 LDX.w #SomeTable
 LDY #$A000
-MVN $7F, SomeTable>>16
+MVN SomeTable>>16, $7F
 SEP #$30
 PLB
 RTS
@@ -131,7 +131,7 @@ REP #$30
 LDA.w #SomeTable_end-SomeTable-$01
 LDX.w #SomeTable+SomeTable_end-SomeTable-$01
 LDY.w #$A000+SomeTable_end-SomeTable-$01
-MVP $7F, SomeTable>>16
+MVP SomeTable>>16, $7F
 SEP #$30
 PLB
 RTS
