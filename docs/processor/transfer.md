@@ -15,32 +15,32 @@ There are opcodes which transfers the values between A, X and Y registers. All t
 |**TYX**|Transfer Y to X|Copies over the value of Y to X|
 The opcodes are self-explanatory. Here's an example of a transfer:
 ```
-LDA #$45 ;A = $45
-LDY #$99 ;Y = $99
-TAY      ;A = $45, Y = $45
+LDA #$45           ; A = $45
+LDY #$99           ; Y = $99
+TAY                ; A = $45, Y = $45
 ```
 As you can see, the values are *copied* over to the target register.
 
 ## 8-bit and 16-bit mode
 Transfers work as you'd expect when the source and target registers are both 16-bit mode. You transfer a 16-bit value, like so:
 ```
-LDA #$4512 ;A = $4512
-LDY #$9900 ;Y = $9900
-TAY        ;A = $4512, Y = $4512
+LDA #$4512         ; A = $4512
+LDY #$9900         ; Y = $9900
+TAY                ; A = $4512, Y = $4512
 ```
 
 If you want to transfer an 8-bit register's value to a 16-bit register, the SNES looks at the target register's size, and transfers the value's low byte accordingly. Here's an example involving an 8-bit transfer to the 16-bit A register:
 
 ```
-LDA #$4512 ;A = $4512
-LDY #$99   ;Y = $0099
-TYA        ;A = $4599, Y = $0099
+LDA #$4512         ; A = $4512
+LDY #$99           ; Y = $0099
+TYA                ; A = $4599, Y = $0099
 ```
 Here's an example involving a 16-bit transfer to the 8-bit A register:
 ```
-LDA #$45   ;A = $xx45
-LDY #$99AA ;Y = $99AA
-TYA        ;A = $xxAA, Y = $99AA
+LDA #$45           ; A = $xx45
+LDY #$99AA         ; Y = $99AA
+TYA                ; A = $xxAA, Y = $99AA
 ```
 In the second example, the `xx` could be anything. Remember that [in the introduction of the A, X and Y registers](../the-basics/register.md), it's mentioned that the A register can actually be treated to be always 16-bit. The high byte isn't touched during the transfer, even if A is in 8-bit mode. If A was `$1245` before the transfer, it'll be `$12AA` after the transfer. This doesn't apply to X and Y, as their high bytes are immediately cleared when they exit 16-bit mode.
 

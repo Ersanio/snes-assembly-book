@@ -246,11 +246,11 @@ The long explanation is that we load the value into A and multiply it by two, be
 The same concept can be applied for data instead of just subroutines. Imagine you want to read level data, depending on the level number. A pointer table would be a perfect solution for that. Here's an example:
 
 ```
-  LDA $14            ; Load the level number into A...
-  ASL A              ; ...Multiply it by three...
+  LDA $14          ; Load the level number into A...
+  ASL A            ; ...Multiply it by three...
   CLC
   ADC $14
-  TAY                ; ...then transfer it into Y
+  TAY              ; ...then transfer it into Y
   LDA Pointers,y
   STA $00
   LDA Pointers+1,y

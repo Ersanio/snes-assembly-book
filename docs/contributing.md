@@ -55,9 +55,10 @@ This section concerns the usage of certain words in certain context.
 - Labels are written in PascalCase (e.g.: `Label1:`).
 - Sublabels are written entirely in lower, underscore-case and the name should semantically suit the parent label, without redundancy (e.g.: `.return`).
 - Defines are written in PascalCase (e.g.: `!SomeDefine`).
-- Direct data (`db`, `dw`, `dl`, `dd`) and opcode length specifiers (`.b`, `.w`, `.l`) are written entirely in lowercase.
+- Direct data (`db`, `dw`, `dl`, `dd`), indexers (`,x`, `,y`, `,s`) and opcode length specifiers (`.b`, `.w`, `.l`) are written entirely in lowercase.
 - Comment indicators (i.e. `;`) shall start on column 20, and left-padded by whitespace, not tabs.
-    - If there's no space for a comment on column 20, it will start on the same line.
+    - If there's no space for a comment on column 20, it should start on the same line anyway.
+- In fact, never use tabs.
 - Comment indicators shall be followed by a whitespace, before the comment itself.
 - There will be an extra new line after the opcodes `RTS`, `RTL`, `RTI`, `JMP`, `JML`, `BRA`, `BRL`.
 - These are guidelines which are to be followed as strictly as possible, but there may be exceptional cases. Use your best judgment.
