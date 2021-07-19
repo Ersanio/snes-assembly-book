@@ -5,10 +5,10 @@ You can run certain pieces of code depending on certain conditions. For this, yo
 ## Branches
 Branches are opcodes which control the flow of the code depending on the outcome of comparisons. Branches jump to a **label**.
 
-The branching opcodes have a range of -128 to 127 bytes. This means they can either jump 128 bytes backwards, or they can jump 127 bytes forward, relative to the program counter. One exception is BRL (Branch Long). BRL has a range of 32768 bytes (8000 in hex), which is a whole bank. If the branch goes out of range, the assembler gives an error. You’ll have to find a way to put the destination label into the branch’s reach. The "tips and tricks" chapter covers this.
+The branching opcodes have a range of -128 to 127 bytes. This means they can either jump 128 bytes backwards, or they can jump 127 bytes forward, relative to the program counter. One exception is BRL (Branch Long). BRL has a range of 32768 bytes (8000 in hex), which is a whole bank. If the branch goes out of range, the assembler gives an error. You'll have to find a way to put the destination label into the branch's reach. The "tips and tricks" chapter covers this.
 
 ## Labels
-Labels are basically text placed in code to locate an entry point of a jump or a "table". Labels are no opcodes or anything. It’s basically an easier way to specify an offset/address, because the labels get turned into numbers by the assembler. It is good practice to give labels meaningful names, for your own sake. Examples codes in this chapter will make use of labels.
+Labels are basically text placed in code to locate an entry point of a jump or a "table". Labels are no opcodes or anything. It's basically an easier way to specify an offset/address, because the labels get turned into numbers by the assembler. It is good practice to give labels meaningful names, for your own sake. Examples codes in this chapter will make use of labels.
 
 ## CMP
 To make comparisons, you usually compare the contents of A with something else. The primary way for that is the opcode `CMP`.
@@ -19,7 +19,7 @@ To make comparisons, you usually compare the contents of A with something else. 
 
 CMP takes whatever is in A, and compares it with a specified parameter. After using a CMP instruction, you need to use an opcode that will perform the type of "branch" that you wish to occur.
 
-It’s also possible to compare 16-bit values. Just change `CMP #$xx` to `CMP #$xxxx`.
+It's also possible to compare 16-bit values. Just change `CMP #$xx` to `CMP #$xxxx`.
 
 ## BEQ and BNE
 There are branch opcodes which branch depending on if a value equals or doesn't equal.
@@ -54,7 +54,7 @@ STA $1245          ; / Store something in RAM $7E1245
 Label1:            ;
 RTS                ; End.
 ```
-This code will store $01 to $7E1245, if $7E0000 has the value $02. If RAM address $7E0000 doesn’t have the value $02, the code will instead do nothing and simply return.
+This code will store $01 to $7E1245, if $7E0000 has the value $02. If RAM address $7E0000 doesn't have the value $02, the code will instead do nothing and simply return.
 
 ## Comparing addresses
 You can also compare RAM addresses with each other. For example:
@@ -106,7 +106,7 @@ These are branch opcodes which branch depending on if a value is greater than or
 
 BCS branches if the loaded value is equal or greater than the compared value. Alternatively, this also branches when the carry flag is set.
 
-BCC branches if the loaded value is lesser than the compared value. Alternatively, this also branches when the carry flag is clear. Please note that this BCC doesn’t get taken if the compared value is equal, unlike BCS.
+BCC branches if the loaded value is lesser than the compared value. Alternatively, this also branches when the carry flag is clear. Please note that this BCC doesn't get taken if the compared value is equal, unlike BCS.
 
 ## BVS and BVC
 These are branch opcodes which branch depending on if a value results in a mathematical overflow or not, thus, when the overflow flag is set or clear.
@@ -124,5 +124,5 @@ These are unconditional branches which are always taken.
 |**BRA**|Branch always|Always branches|
 |**BRL**|Branch always long|Always branches, but with greater reach|
 
-BRA will ALWAYS branch; it doesn’t even check for conditions.
+BRA will ALWAYS branch; it doesn't even check for conditions.
 BRL does the same, but it has a longer reach, enough to cover half a bank for each direction.

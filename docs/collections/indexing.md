@@ -46,7 +46,7 @@ ValuesTableExample: db $11,$86,$91,$38,$22
 ```
 The code will load a value from the table into A. Basically, this does `LDA ValuesTableExample`, and the value in Y, which is $03, is added to the address. In other words, in higher-level programming languages it'd be something like `ValuesTableExample[3]`. You start counting index from **zero**. Index 0 of that table has the value $11, index 1 has the value $86, and so on. Index 3 has the value $38 in this case, so this code example actually loads $38 in A, and stores it in RAM $7E0000.
 
-Indexing is quite useful when you don’t want to write very repetitive instructions all the time. Indexing can be performed with the X register too. X and Y behave exactly the same, after all.
+Indexing is quite useful when you don't want to write very repetitive instructions all the time. Indexing can be performed with the X register too. X and Y behave exactly the same, after all.
 
 Indexing is actually one of the many addressing modes. The basic addressing modes are covered [here](../the-basics/addressing.md) and the more advanced addressing modes [here](../indepth/addressing.md).
 

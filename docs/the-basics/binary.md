@@ -41,7 +41,7 @@ Bit 5432 1098 7654 3210
 
 ## Flags
 
-Binary is immensely useful when you’re giving a hex value multiple purposes, kind of like an on/off toggle for certain features. These bits are called "flags" and are generally used to save space in the working memory of games.
+Binary is immensely useful when you're giving a hex value multiple purposes, kind of like an on/off toggle for certain features. These bits are called "flags" and are generally used to save space in the working memory of games.
 
 For example, you can divide a byte into 8 bits with each bit having a different meaning. Bit 7 could indicate that a level has rain or not. Bit 6 could indicate that a level layout is horizontal or vertical. Bit 5 could indicate that the level setting is during day or night, etc. This way you can compress information into a single byte. It would look like this in binary:
 
@@ -92,4 +92,4 @@ In 16-bit:
 * `11` becomes `00000000 00000011`
 * `1100000` becomes `00000000 01100000`
 
-You can convert between decimal, hexadecimal and binary, by using Windows calculator’s "programming" mode. There are also many calculators online which can do this. Assembly syntax accepts decimal and binary also, so you usually don't need to convert between decimal and hexadecimal.
+You can convert between decimal, hexadecimal and binary, by using Windows calculator's "programming" mode. There are also many calculators online which can do this. Assembly syntax accepts decimal and binary also, so you usually don't need to convert between decimal and hexadecimal.

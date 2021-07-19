@@ -48,7 +48,7 @@ In the real world, numbers can be positive or negative. In assembly, depending o
 | ... | ... |
 | -1 | $FF |
 
-The presence of negative numbers depends on the game’s programming. For example, a player can have positive and negative speed (resulting in going forward or backward), but a player cannot have negative extra lives or points (because normally that doesn’t make sense). Needless to say, the value -0 does not exist.
+The presence of negative numbers depends on the game's programming. For example, a player can have positive and negative speed (resulting in going forward or backward), but a player cannot have negative extra lives or points (because normally that doesn't make sense). Needless to say, the value -0 does not exist.
 
 ## Four-digit hexadecimal values
 Hexadecimal numbers can count well past two digits, as you can see below.

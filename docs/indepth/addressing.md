@@ -37,7 +37,7 @@ LDA ($00)   ; Load the value at address $1FFF into A
 ```
 This accesses a 16-bit pointer at address $000000, due to the nature of direct page always accessing bank $00. Due to the effects of mirroring in the SNES mirroring, practically speaking, this accesses a 16-bit pointer at RAM $7E0000.
 
-You might think that `LDA ($00)` loads the `value $1FFF` into A. However, it doesn’t work that way. It loads the `value in address $1FFF` into A, because we use an indirect addressing mode. 
+You might think that `LDA ($00)` loads the `value $1FFF` into A. However, it doesn't work that way. It loads the `value in address $1FFF` into A, because we use an indirect addressing mode. 
 
 As we established earlier, parentheses denote 16-bit pointers. The bank of the indirect address, in the case of an LDA, depends on the data bank register. As a result, the `LDA ($00)` resolves into `LDA $1FFF`.
 

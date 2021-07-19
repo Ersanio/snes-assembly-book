@@ -12,7 +12,7 @@ LDA $0011          ; AD 11 00
 LDA $001122        ; AF 22 11 00
 ```
 
-An instruction without a hexadecimal parameter is only 1 byte, like `INC A` or `TAX`. An instruction with an 8-bit parameter is 2 bytes, like `LDA #$00`. An instruction with a 16-bit parameter is 3 bytes, like `LDA $0000`. An instruction with a 24-bit parameter is 4 bytes, like `LDA $000000`. It doesn’t matter if the addressing mode is indexed, direct indirect or something else. It all depends on the length of the `$`-value.
+An instruction without a hexadecimal parameter is only 1 byte, like `INC A` or `TAX`. An instruction with an 8-bit parameter is 2 bytes, like `LDA #$00`. An instruction with a 16-bit parameter is 3 bytes, like `LDA $0000`. An instruction with a 24-bit parameter is 4 bytes, like `LDA $000000`. It doesn't matter if the addressing mode is indexed, direct indirect or something else. It all depends on the length of the `$`-value.
 
 ## Shorthand zero comparison
 Faster comparison makes use of processor flags effectively, because branches actually depend on the processor flags. As mentioned in this tutorial earlier, `BEQ` branches if the zero flag is set, `BNE` branches if the zero flag is clear, `BCC` branches if the carry flag is clear, and so on. 

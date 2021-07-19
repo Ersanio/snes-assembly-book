@@ -1,6 +1,6 @@
 # Arithmetic operations
 
-At some point, you would probably want to *increase* RAM address $7E000F by $01, but a simple LDA and STA won’t work, because this simply changes the RAM Address’ contents to $01 – not increase it by one. Maybe you'd like to increase it by 2 instead, or even multiply by 2.
+At some point, you would probably want to *increase* RAM address $7E000F by $01, but a simple LDA and STA won't work, because this simply changes the RAM Address' contents to $01 – not increase it by one. Maybe you'd like to increase it by 2 instead, or even multiply by 2.
 
 The SNES has a few instructions capable of doing basic math operations.
 
@@ -37,9 +37,9 @@ RTS                ; Return. A remains unchanged
 There are also edge cases with these operations. When you use INC when the value that is being modified is currently $FF, it would result in a $00 and the zero flag being set. When you use DEC and the value that is being modified is currently $00, it would result in a $FF.
 
 {% hint style="info" %}
-INC and DEC don’t work with long addressing modes. They only work with absolute or direct page addressing modes. Therefore, instructions like `INC $7E000F` do not exist. Instead, you should use `INC $000F` or `INC $0F`.
+INC and DEC don't work with long addressing modes. They only work with absolute or direct page addressing modes. Therefore, instructions like `INC $7E000F` do not exist. Instead, you should use `INC $000F` or `INC $0F`.
 
-Why isn’t there a long addressing mode? The processor is simply made that way, so you'll have to deal with it, one way or another.
+Why isn't there a long addressing mode? The processor is simply made that way, so you'll have to deal with it, one way or another.
 {% endhint %}
 
 ## INX, DEX, INY and DEY
@@ -85,7 +85,7 @@ SEC                ; Set Carry Flag
 SBC #$04           ; How many you will subtract from A. It is $04 in this case.
 STA $0F            ; Store A in $0F
 ```
-This will subtract 4 from the RAM address’ content (`$0F-#$04`). You'll notice that for subtracting, we set the carry flag rather than clear it. If you didn’t set the carry flag, it would subtract $05 instead of $04. This might seem backwards, but it's just how the processor works.
+This will subtract 4 from the RAM address' content (`$0F-#$04`). You'll notice that for subtracting, we set the carry flag rather than clear it. If you didn't set the carry flag, it would subtract $05 instead of $04. This might seem backwards, but it's just how the processor works.
 
 {% hint style="info" %}
 In short: when adding, use `CLC`. When subtracting, use `SEC`.

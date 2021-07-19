@@ -53,7 +53,7 @@ If one of the bits has 1, the resulting bit will be 1. After ORA, the result wil
 |1|0|1|
 |0|0|0|
 
-So basically, whenever A or the ORA value’s bit is 1, the resulting bit is also 1.
+So basically, whenever A or the ORA value's bit is 1, the resulting bit is also 1.
 
 ## EOR
 EOR is an opcode which affects the accumulator by applying a logical exclusive OR (XOR) on all bits.
@@ -100,11 +100,11 @@ BIT has a feature which distinguishes it from a regular AND, involving processor
 BIT $04            ; Bit test $7E0004's value
 ```
 
-If $7E0004’s value was $80 (1000 0000), the negative flag would be set and the overflow flag would be clear. It’s useful to check really fast if the value of an address is negative.
+If $7E0004's value was $80 (1000 0000), the negative flag would be set and the overflow flag would be clear. It's useful to check really fast if the value of an address is negative.
 
-If $7E0004’s value was $40 (0100 0000), the negative flag would be clear and the overflow flag would be set. Useful to check if specifically bit 6 is set.
+If $7E0004's value was $40 (0100 0000), the negative flag would be clear and the overflow flag would be set. Useful to check if specifically bit 6 is set.
 
-If $7E0004’s value was $C0 (1100 0000), both the negative and overflow flags would be set.
+If $7E0004's value was $C0 (1100 0000), both the negative and overflow flags would be set.
 
 Coincidentally enough, the bits for negative (bit 7) and overflow (bit 6) correspond to the bits in the processor flag register: `nvmxdizc`.
 
@@ -114,4 +114,4 @@ Coincidentally enough, the bits for negative (bit 7) and overflow (bit 6) corres
 |Bit 6|Overflow flag set
 |Bits 7, 6|Negative & overflow flags set
 
-When you are performing a BIT operation on a RAM address, the N and V flags will be set or cleared, regardless of the value in the accumulator. The zero flag depends on the accumulator’s value and the RAM address’ value. So, BIT with a RAM address does both AND, and an inevitable check of bits 7 and 6 of the RAM address.
+When you are performing a BIT operation on a RAM address, the N and V flags will be set or cleared, regardless of the value in the accumulator. The zero flag depends on the accumulator's value and the RAM address' value. So, BIT with a RAM address does both AND, and an inevitable check of bits 7 and 6 of the RAM address.

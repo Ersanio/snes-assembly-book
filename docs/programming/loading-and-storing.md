@@ -52,7 +52,7 @@ LDA #$03           ; This is a comment!
 ```
 ### Loading and storing addresses
 
-Of course, what would be the use to store things to a RAM address when you don’t know how to access the address again? You can load a RAM address’ contents into the A register by using LDA with a different addressing mode. Here is an example.
+Of course, what would be the use to store things to a RAM address when you don't know how to access the address again? You can load a RAM address' contents into the A register by using LDA with a different addressing mode. Here is an example.
 
 ```
 LDA $7E0013
@@ -62,7 +62,7 @@ Again, we will look at this example line by line.
 ```
 LDA $7E0013
 ```
-This will load the contents of the RAM address `$7E0013` into A. Let’s assume that the contents were `$33`. So now, A has the value `$33`. The content of `$7E0013` remains unchanged, because LDA copies the number rather than extracting it from the address. Note that this time we have used $ instead of #$. This is because we wanted to access a RAM address. In the end, A has `$33` and RAM `$7E0013` has the value `$33` also.
+This will load the contents of the RAM address `$7E0013` into A. Let's assume that the contents were `$33`. So now, A has the value `$33`. The content of `$7E0013` remains unchanged, because LDA copies the number rather than extracting it from the address. Note that this time we have used $ instead of #$. This is because we wanted to access a RAM address. In the end, A has `$33` and RAM `$7E0013` has the value `$33` also.
 
 ```
 STA $7E0042
@@ -71,7 +71,7 @@ This instruction will store the contents of the A register into the RAM address 
 
 ## LDY, STY, LDX, STX
 
-Now that we have learned the basics of loading and store values into addresses, let’s introduce the same loading opcodes, but for the index registers:
+Now that we have learned the basics of loading and store values into addresses, let's introduce the same loading opcodes, but for the index registers:
 |Opcode|Full name|Explanation|
 |-|-|-|
 |**LDY**|Load into Y|Load a value into Y|
@@ -93,7 +93,7 @@ There is another opcode which stores the number $00 into addresses directly.
 |-|-|-|
 |**STZ**|Store zero to memory|Sets the value of an address to 0|
 
-This opcode stores the number $00 into an address. It doesn’t even need the A, X or Y registers to load $00 first.
+This opcode stores the number $00 into an address. It doesn't even need the A, X or Y registers to load $00 first.
 
 If you want to make a code that directly stores $00 in a RAM address, you could make it use 1 line:
 ```

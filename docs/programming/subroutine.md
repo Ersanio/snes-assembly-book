@@ -1,6 +1,6 @@
 # Jumping to subroutines
 
-What if you want to use the same code twice, but you don’t want to write, for example, the exact same 200 lines of codes again? You can turn code into "subroutines" and use jumping opcodes to run these subroutines. There are four jumping opcodes in total.
+What if you want to use the same code twice, but you don't want to write, for example, the exact same 200 lines of codes again? You can turn code into "subroutines" and use jumping opcodes to run these subroutines. There are four jumping opcodes in total.
 
 There's a difference between "subroutine" and "code" in this tutorial, as you'll see in the coming paragraphs.
 
@@ -30,7 +30,7 @@ This code will store $01 into $7E0001, will store $03 into $7E0000 AND execute t
 
 JSL has the same purpose as JSR, except it can jump everywhere. Above example can also be applied to JSL, except that the `RTS` is now an `RTL`.
 
-The opcode JSR will get assembled as `JSR $XXXX` by the assembler (because labels get turned into addresses), but you shouldn’t worry about that. Furthermore, because JSR uses an absolute address as its parameter, it is limited to its current bank. Changing the data bank register doesn't affect JSR.
+The opcode JSR will get assembled as `JSR $XXXX` by the assembler (because labels get turned into addresses), but you shouldn't worry about that. Furthermore, because JSR uses an absolute address as its parameter, it is limited to its current bank. Changing the data bank register doesn't affect JSR.
 
 The opcode JSL will get assembled as `JSL $XXXXXX`, instead.
 
@@ -63,7 +63,7 @@ STZ $00
 RTS
 ```
 
-JMP is limited to the current bank, like JSR. JML can jump anywhere like JSL. JMPs and JMLs don’t have a return instruction, but you can still use an RTS or RTL to return from a JMP/JMP depending on the current situation. Example:
+JMP is limited to the current bank, like JSR. JML can jump anywhere like JSL. JMPs and JMLs don't have a return instruction, but you can still use an RTS or RTL to return from a JMP/JMP depending on the current situation. Example:
 ```
 LDA #$01
 STA $00
@@ -74,7 +74,7 @@ Label1:
 JMP Label2         ; Jump to Label2
 
 Label2:
-RTS                ; This DOESN’T return to Label1. Instead, it returns to the RTS above.
+RTS                ; This DOESN'T return to Label1. Instead, it returns to the RTS above.
 ```
 
 It is good practice to put a blank line after a JMP or JML, so the reader knows that the program flow changes from that point on.

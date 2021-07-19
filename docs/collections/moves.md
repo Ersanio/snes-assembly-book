@@ -6,7 +6,7 @@
 |**MVN**|Move block negative|Moves a block of data, byte by byte, starting from the beginning and working towards the end|
 |**MVP**|Move block positive|Moves a block of data, byte by byte, starting from the end and working towards the beginning|
 
-MVP and MVN practically do a mass amount of LDA and STA to some RAM addresses. You can’t move data to ROM, because ROM is read-only.
+MVP and MVN practically do a mass amount of LDA and STA to some RAM addresses. You can't move data to ROM, because ROM is read-only.
 
 It's highly recommended to have the A, X and Y registers at 16-bit mode. It's also highly recommended to preserve the data bank using the stack, as the move opcodes implicitly change this. Here's an example of a proper block move setup:
 ```

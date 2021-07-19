@@ -22,7 +22,7 @@ Addresses can be written in 3 ways: $BBHHDD, $HHDD and $DD, such as $7E0003, $00
 
 As established earlier, an address may contain only one byte. If you access a certain address in 16-bit mode, it means you actually access both "address" and "address+1", because a 16-bit number consists of two bytes.
 
-Here’s a drawing to get a general overview of the basic SNES memory (also known as a memory map):
+Here's a drawing to get a general overview of the basic SNES memory (also known as a memory map):
 
 ![The &#x201C;LoROM&#x201D; Memory Map](../.gitbook/assets/memory.png)
 
@@ -30,11 +30,11 @@ This memory map is in the "LoROM" format. If you're a SMW hacker, you don't have
 
 ## ROM
 
-ROM stands for "Read-Only Memory" and it's exactly that: memory that can be only read. This means that you cannot change the ROM by storing values to it with ASM. You can say it is the game or program itself, which contains all the ASM code and data tables, as well as assets like graphics, music, and so on. Alternatively: It’s the .smc/.sfc/.fig/etc. file which you load in emulators.
+ROM stands for "Read-Only Memory" and it's exactly that: memory that can be only read. This means that you cannot change the ROM by storing values to it with ASM. You can say it is the game or program itself, which contains all the ASM code and data tables, as well as assets like graphics, music, and so on. Alternatively: It's the .smc/.sfc/.fig/etc. file which you load in emulators.
 
 ## RAM
 
-RAM stands for "Random-Access Memory". This is the dynamic memory which allows anything to be written to it at any time. You could say that this is the place where you have variables which are important and have meaning. RAM can be written to in order to achieve a certain effect. For example, if you write $04 to the player’s extra lives, then the player will have exactly 4 extra lives.
+RAM stands for "Random-Access Memory". This is the dynamic memory which allows anything to be written to it at any time. You could say that this is the place where you have variables which are important and have meaning. RAM can be written to in order to achieve a certain effect. For example, if you write $04 to the player's extra lives, then the player will have exactly 4 extra lives.
 
 The SNES RAM is 128kB big, and it is located at addresses $7E0000-$7FFFFF. The SNES RAM is completely generic. There is no such rule as "address $7E0120 is used for lives in every SNES game ever". You define the purpose of RAM yourself, by writing ASM code.
 
@@ -44,7 +44,7 @@ For the sake of simplicity, you can **always** assume that bank $00 equals bank 
 
 ## SRAM
 
-SRAM stands for "Static Random-Access Memory". It is also 128kB big, and it is located in blocks of 32kB at $700000-$707FFF, $710000-$717FFF, $720000-$727FFF and $730000-$737FFF, although the final size of SRAM depends on the ROM specifications itself, thanks to something called the "internal ROM header. The SRAM isn’t mirrored in other banks.
+SRAM stands for "Static Random-Access Memory". It is also 128kB big, and it is located in blocks of 32kB at $700000-$707FFF, $710000-$717FFF, $720000-$727FFF and $730000-$737FFF, although the final size of SRAM depends on the ROM specifications itself, thanks to something called the "internal ROM header. The SRAM isn't mirrored in other banks.
 
 SRAM behaves exactly like RAM; you can store anything and load anything from it, but the values do not get cleared when the SNES resets. The SRAM is kept alive with an actual button-cell battery on a real SNES cartridge. When the battery dies, or is removed, SRAM won't function properly and will possibly lose data after every reset. On emulators, SRAM is stored in the well-known ".srm"-files.
 
