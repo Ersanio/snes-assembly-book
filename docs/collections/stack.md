@@ -9,7 +9,7 @@ The stack is a special type of "table" which is located inside the SNES RAM. Ima
 |[ ]|
 ‾‾‾‾‾
 ```
-The empty "boxes" in above example are basically the values inside the stack, and they can hold any value. The collection of boxes are closed off from all sides, except for the top.
+The empty "boxes" in above example are basically the values inside the stack, and they can hold any value. The collection of boxes are closed off from all sides, except from the top.
 
 {% hint style="info" %}
 Technically speaking, because the stack is an area inside the RAM, you can access any value you want, using special stack-relative addressing modes rather than using only push and pull opcodes. For the purposes of this chapter, we'll assume the stack indeed is a perfect stack of plates. 
@@ -17,7 +17,7 @@ Technically speaking, because the stack is an area inside the RAM, you can acces
 
 
 ## Push
-'Pushing' is the act of adding a value on top of the stack. Here's an example:
+"Pushing" is the act of adding a value on top of the stack. Here's an example:
 
 ```
  [$32]
@@ -86,7 +86,7 @@ The A, X and Y registers do not have a separate stack. There is only one stack, 
 ## 16-bit mode stack operations
 All the previous explanations and behaviours apply to 16-bit stack operations as well. It's just that you're pushing and pulling 16-bit values, not 8-bit values.
 
-This also means that if you push two 8-bit values onto the stack, that you can pull a single 16-bit value later.
+This also means that if you push two 8-bit values onto the stack, you can pull a single 16-bit value later.
 
 ## Other push and pull operations
 There are also other push and pull commands, which are not affected by 8-bit or 16-bit mode A, X and Y:
@@ -99,7 +99,7 @@ There are also other push and pull commands, which are not affected by 8-bit or 
 |**PLD**|Pull direct page register|Pulls a value from the stack into the direct page register|16-bit|
 |**PHP**|Push processor flags|Pushes the processor flags register's current value onto the stack|8-bit|
 |**PLP**|Pull processor flags|Pulls a value from the stack into the processor flag register|8-bit|
-|**PHK**|Push program bank|Pushes the bank value of the currently executed opcode (the PHK opcode) onto the stack. There's no pull version of this|8-bit|
+|**PHK**|Push program bank|Pushes the bank value of the currently executed opcode (which is PHK) onto the stack|8-bit|
 |**PEA $XXXX**|Push effective address|Pushes the specified 16-bit value onto the stack. Don't let the name of the opcode mislead you. This doesn't read out any address|16-bit|
 |**PEI ($XX)**|Push effective indirect address|Pushes the value at the given direct page address onto the stack. The direct page register can affect the given address|16-bit|
-|**PER *label***|Push program counter relative|A rather complicated push. Simply said, it pushes the absolute address of the given label onto the stack. What happens is, when you supply a label, the assembler calculates the relative distance between the PER opcode and the given label. This relative distance is a signed 16-bit value, thus the opcode finally assembles into `PER $XXXX`.|16-bit|
+|**PER *label***|Push program counter relative|A rather complicated push. In short: it pushes the absolute address of the given label onto the stack. What happens during assembly is that the assembler calculates the relative distance between PER and the given label. This relative distance is a signed 16-bit value and is used as the parameter for PER. The opcode finally assembles into `PER $XXXX`. Because of its relative nature, the opcode can also be used in the SNES RAM|16-bit|

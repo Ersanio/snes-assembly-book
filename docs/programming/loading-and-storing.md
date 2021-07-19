@@ -27,7 +27,7 @@ We will look at this code line by line.
 ```
 LDA #$03
 ```
-This loads the value $03 into A. The "#" means that we're loading an actual value, not an address. After this instruction, the content of the A register is now $03. LDA can load values into A, ranging from $00-$FF in 8-bit mode and $0000-$FFFF in 16-bit mode.
+This loads the value `$03` into A. The "#" means that we're loading an actual value, not an address. After this instruction, the content of the A register is now `$03`. LDA can load values into A, ranging from `$00-$FF` in 8-bit mode and `$0000-$FFFF` in 16-bit mode.
 ```
 STA $7E0001
 ```
@@ -39,7 +39,7 @@ STA $7E0001
 STA $7E0053
 ```
 
-A common beginner's mistake is writing STA #$7E0001 or any form of "STA #$". This instruction doesn't exist. It also doesn't make sense; there's no logic behind storing the value of A into another value.
+A common beginner's mistake is writing `STA #$7E0001` or any form of "STA #$". This instruction doesn't exist. It also doesn't make sense; there's no logic behind storing the value of A into another value.
 
 {% hint style="info" %}
 Remember, using $ instead of #$ after an opcode means that the parameter is an address, not an immediate value.
@@ -62,12 +62,12 @@ Again, we will look at this example line by line.
 ```
 LDA $7E0013
 ```
-This will load the contents of the RAM address $7E0013 into A. Let’s assume that the contents were $33. So now, A has the value $33. The content of $7E0013 remains unchanged, because LDA copies the number rather than extracting it from the address. Note that this time we have used $ instead of #$. This is because we wanted to access a RAM address. In the end, A has $33 and RAM $7E0013 has the value $33 also.
+This will load the contents of the RAM address `$7E0013` into A. Let’s assume that the contents were `$33`. So now, A has the value `$33`. The content of `$7E0013` remains unchanged, because LDA copies the number rather than extracting it from the address. Note that this time we have used $ instead of #$. This is because we wanted to access a RAM address. In the end, A has `$33` and RAM `$7E0013` has the value `$33` also.
 
 ```
 STA $7E0042
 ```
-This instruction will store the contents of the A register into the RAM address $7E0042. Of course, A will remain unchanged. RAM address $7E0042 is now $33. In short: the full example will copy the contents of $7E0013 over to $7E0042.
+This instruction will store the contents of the A register into the RAM address `$7E0042`. Of course, A will remain unchanged. RAM address `$7E0042` is now `$33`. In short: the full example will copy the contents of `$7E0013` over to `$7E0042`.
 
 ## LDY, STY, LDX, STX
 

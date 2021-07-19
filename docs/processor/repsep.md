@@ -37,6 +37,7 @@ Because the emulation mode bit is "hidden" above the carry flag, there's a dedic
 |Opcode|Full name|Explanation|
 |-|-|-|
 |**XCE**|Exchange carry and emulation|Swaps the values of carry flag and emulation mode flag|
+
 You can access the emulation mode by using `SEC` then `XCE`, and leave it using `CLC` then `XCE`. By default, SNES starts up in emulation mode. This is why you often see the opcodes `CLC` and `XCE` among the very first opcodes in disassemblies.
 
 ## Other opcodes

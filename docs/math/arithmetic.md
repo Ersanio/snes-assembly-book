@@ -34,7 +34,7 @@ DEC $0F            ; Decrease the value in $7E000F by one
 RTS                ; Return. A remains unchanged
 ```
 
-When you use INC when the value being modified is currently $FF, it would result in a $00 and the zero flag being set. Conversely, when you use DEC and the value being modified is currently $00, it would result in a $FF.
+There are also edge cases with these operations. When you use INC when the value that is being modified is currently $FF, it would result in a $00 and the zero flag being set. When you use DEC and the value that is being modified is currently $00, it would result in a $FF.
 
 {% hint style="info" %}
 INC and DEC don’t work with long addressing modes. They only work with absolute or direct page addressing modes. Therefore, instructions like `INC $7E000F` do not exist. Instead, you should use `INC $000F` or `INC $0F`.
@@ -101,7 +101,7 @@ With this, you can use the carry flag to check if some sort of value wrapping ha
 ### Overflow flag
 The opcodes ADC and SBC are unique in the sense that they're two of the three opcodes which can affect the *signed overflow* processor flag as a result of a calculation.
 
-The overflow flag is especially relevant when you decide to treat values as signed values. Remember the hexadecimal chapter with the signed and unsigned values? Values $00-$7F are considered positive, and values $80-$FF are considered negative. 
+The overflow flag is especially relevant when you decide to treat values as signed values. Remember the hexadecimal chapter with the signed and unsigned values? Values `$00-$7F` are considered positive, and values `$80-$FF` are considered negative. 
 
 The overflow flag is set when the result of an operation doesn't make sense in the math world:
 * Adding a negative value to a negative value, and getting a positive value as a result, when it should be negative

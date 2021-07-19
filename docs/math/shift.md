@@ -1,5 +1,5 @@
 # Bit shifting operations
-'Bit shifting' is a bitwise operation in which you move bits left or right. As a result, practically speaking, you divide or multiply a number by two.
+"Bit shifting" is a bitwise operation in which you move bits left or right. As a result, practically speaking, you divide or multiply a number by two.
 
 ## ASL and LSR
 There are two opcodes which shift bits to the left or right.

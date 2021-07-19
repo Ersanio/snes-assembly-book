@@ -14,7 +14,7 @@ Bit 7654 3210
     .... ....
 ```
 
-The table below shows a relatively easy way to memorize binary.
+The table below shows a relatively easy way to memorize binary, as it displays a pattern.
 
 | Binary | Hexadecimal |
 | :--- | :--- |
@@ -29,7 +29,7 @@ The table below shows a relatively easy way to memorize binary.
 
 Note that there is a space inbetween 4 bits for easier readability, although assemblers generally don't accept this syntax. Groups of 4 bits are called "nibbles" and for the purposes of this chapter, they are there to make binary easier to read, because one nibble corresponds to one digit in hexadecimal.
 
-The SNES is capable of working with both 8-bit and 16-bit numbers. While 8-bit numbers are called a byte, 16-bit numbers are called a "word". They would look like they have 16 bits in binary \(e.g. `10000101 11010101`, which is `$85D5` in hexadecimal\). In the case of 16-bit numbers, the leftmost bit is called "bit 15" while the rightmost bit is called "bit 0":
+The SNES is capable of working with both 8-bit and 16-bit numbers. While 8-bit numbers are called a byte, 16-bit numbers are called a "word". They would look like they have 16 bits in binary (e.g. `10000101 11010101`, which is `$85D5` in hexadecimal). In the case of 16-bit numbers, the leftmost bit is called "bit 15" while the rightmost bit is called "bit 0":
 
 ```
     1111 11             (read from top to bottom)            
@@ -92,5 +92,4 @@ In 16-bit:
 * `11` becomes `00000000 00000011`
 * `1100000` becomes `00000000 01100000`
 
-You can convert between decimal, hexadecimal and binary, by using Windows calculator’s "programming" mode. There are also many calculators online which can do this. Assembly syntax accepts decimal numbers also, so you usually don't need to convert between decimal and hexadecimal.
-
+You can convert between decimal, hexadecimal and binary, by using Windows calculator’s "programming" mode. There are also many calculators online which can do this. Assembly syntax accepts decimal and binary also, so you usually don't need to convert between decimal and hexadecimal.

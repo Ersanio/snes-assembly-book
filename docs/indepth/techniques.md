@@ -106,7 +106,7 @@ Table:   db $01,$02,$04,$08
 In this case, it's possible to loop through ‭32769 bytes of data at most.
 
 ### Looping with an "end-of-data" check.
-This method basically keeps looping and iterating through values, until it reaches some kind of an "end-of-data" marker. Generally speaking, this value is something that the code normally never uses as an actual value. In most cases, it is the value `$FF` or `$FFFF`, although the decision is entirely up to the programmer. Here's an example which uses such a marker.
+This method basically keeps looping and iterating through values, until it reaches some kind of an "end-of-data" marker. Generally speaking, this value is something that the code normally never uses as an actual value. The general consensus for this value is `$FF` or `$FFFF`, although the decision is entirely up to the programmer. Here's an example which uses such a marker.
 
 This type of loop is especially handy when it needs to process multiple tables with the exact same logic, but with varying table sizes. One example of such implementation is loading levels; The logic to parse levels is always the same, but the levels vary in size. 
 
@@ -135,7 +135,7 @@ In the [branches chapter](../programming/branches), it is mentioned that branche
             NOP #1000     ; 1000 times "NOP"
 SomeLabel:  RTS
 ```
-Would cause the following error:
+Would cause the following error in Asar, during assembly:
 ```
 file.asm:3: error: (E5037): Relative branch out of bounds. (Distance is 1000). [BEQ SomeLabel]
 ```
@@ -196,7 +196,7 @@ Pointers: dw Label1
           dw Label3
           dw Label4
 ```
-As you can see, it's nothing but a bunch of table entries pointing somewhere. You can use labels in order to point to ROM, or defines to point to RAM.
+As you can see, it's nothing but a bunch of table entries pointing to addresses. You can use labels in order to point to ROM, or defines to point to RAM.
 
 ### Pointer tables for code
 There are a few instructions designed for making use of pointer tables. They are as follows:
@@ -207,6 +207,7 @@ There are a few instructions designed for making use of pointer tables. They are
 |**JMP (*absolute address*,x)**|JMP ($0000,x)|Jumps to the absolute address located at address $7E0000, which is indexed by X|
 |**JML [*absolute address*]**|JML [$0000]|Jumps to the long address located at address $7E0000|
 |**JSR (*absolute address*,x)**|JSR ($0000,x)|Jumps to the absolute address located at address $7E0000, which is indexed by X, then returns|
+
 With these opcodes, as well as a pointer table, it is possible to run a subroutine depending on the value of a certain RAM address. Here's an example which runs a routine depending on the value of RAM address $7E0014:
 
 ```
@@ -242,7 +243,7 @@ The short explanation is that depending on the value of RAM address $14, the fou
 The long explanation is that we load the value into A and multiply it by two, because we use *words* for our pointer tables. Thus, we need to index every two bytes instead of every byte. This means that value `$00` stays as index value `$00` thus reading the `Label1` pointer. Value `$01` becomes index value `$02`, thus reading the `Label2` pointer. Value `$02` becomes index value `$04`, thus reading the `Label3` pointer. Value `$03` becomes index value `$06`, thus reading the `Label4` pointer. Because the JSR uses an "absolute, indirect" addressing mode, the labels are also absolute, thus they only run in the same bank as that JSR.
 
 ### Pointer tables for data
-The same concept can be applied for data (i.e. tables). Imagine you want to read level data, depending on the level number. A pointer table would be a perfect solution for that. Here's an example:
+The same concept can be applied for data instead of just subroutines. Imagine you want to read level data, depending on the level number. A pointer table would be a perfect solution for that. Here's an example:
 
 ```
   LDA $14            ; Load the level number into A...
@@ -255,11 +256,11 @@ The same concept can be applied for data (i.e. tables). Imagine you want to read
   LDA Pointers+1,y
   STA $01
   LDA Pointers+2,y ; Store the pointed address into RAM
-  STA $01          ; To use as an indirect pointer
+  STA $02          ; To use as an indirect pointer
 
   REP #$10
   LDY #$0000
-- LDA [$00],Y      ; Read level data until you reach an end-of-data marker
+- LDA [$00],y      ; Read level data until you reach an end-of-data marker
   CMP #$FF
   BEQ Return
 
@@ -285,7 +286,7 @@ Level3:   db $D9,$B0,$A0,$21,$FF
 
 Level4:   db $C0,$92,$84,$81,$82,$99,$FF
 ```
-In the first section, we use the same concept of multiplying a value to access a pointer table. Except this time, we multiply by three, because the pointer tables contain values that are *long*. We use this value as an index to the pointer table, and store the pointer in RAM $7E0000 to $7E0002, in little endian. After that, in the second section, we use RAM $7E0000 as an indirect pointer and start looping through its values, using Y as an index again. We keep looping indefinitely, until we hit an "end-of-data" marker, in this case the value `$FF`. We use this method because levels could be variable in length. We also use 16-bit Y because level data *could* be bigger than 256 bytes in size. Finally, we finish the routine by setting Y back to 8-bit and then returning.
+In the first section, we use the same concept of multiplying a value to access a pointer table. Except this time, we multiply by three, because the pointer tables contain values that are *long*. We use this value as an index to the pointer table, and store the pointer in `RAM $7E0000` to `$7E0002`, in little endian. After that, in the second section, we use `RAM $7E0000` as an indirect pointer and start looping through its values, using Y as an index again. We keep looping indefinitely, until we hit an "end-of-data" marker, in this case the value `$FF`. We use this method because levels could be variable in length. We also use 16-bit Y because level data *could* be bigger than 256 bytes in size. Finally, we finish the routine by setting Y back to 8-bit and then returning.
 
 This example also shows how to use 24-bit pointers rather than 16-bit pointers. The pointer table contains long values. We use this in combination with a "direct, indirect *long*" addressing mode (i.e. the square brackets).
 
@@ -376,7 +377,7 @@ Here's an example of a pseudo 16-bit `DEC`:
 +  RTS              ; These would now make the 16-bit value $02FF
                     ; across two addresses
 ```
-As you can see, there's an extra check for the value $FF, because there's no shorthand way to check if the result of a `DEC` is exactly the value $FF. If the result indeed is the value `$FF`, then the other address needs to be decreased also.
+As you can see, there's an extra check for the value `$FF`, because there's no shorthand way to check if the result of a `DEC` is exactly the value `$FF`. If the result indeed is the value `$FF`, then the other address needs to be decreased also.
 
 ## ADC and SBC on X and Y
 Increasing and decreasing A by a certain amount is easy because of `ADC` and `SBC`. However, these kind of instructions do not exist for X and Y. If you want to increase or decrease X and Y by a small amount, you would have to use `INX`, `DEX`, `INY` and `DEY`. This quickly gets impractical if you have to increase or decrease X and Y by great numbers (5 or more) though. In order to do that, you can temporarily transfer X or Y to A, then perform an `ADC` or `SBC`, then transfer it back to X or Y. 

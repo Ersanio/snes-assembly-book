@@ -22,4 +22,4 @@ STZ $00            ; 3 cycles
 ```
 At first, we use a full notation to write the value $00 to address $7E0000. But then, in the next example, we shorten the address, saving 2 cycles. Finally, we figure that we can use `STZ`, as we store zero to an address anyway.
 
-Having a low cycle count is especially important when executing code during an NMI, because there are limited machine cycles there. Exceeding that limit causes flickering black scanlines to appear from the top of the screen.
+Having a low cycle count is especially important when executing code during an NMI, because there are limited machine cycles there. Exceeding that limit causes black scanlines to flicker on the top of the SNES display.

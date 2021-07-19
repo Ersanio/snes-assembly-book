@@ -9,6 +9,7 @@ The SNES has a set of hardware registers used for unsigned multiplication:
 |$4203|Write|Multiplier, 8-bit, unsigned. Writing to this also starts the multiplication process.|
 |$4216|Read|Unsigned multiply 16-bit product, low byte|
 |$4217|Read|Unsigned multiply 16-bit product, high byte|
+
 After you write to `$4203` to start the multiplication process, you will need to wait 8 [machine cycles](../indepth/cycles.md), which is typically done by adding four `NOP` instructions to the code. If you don't wait 8 machine cycles, the results are unpredictable.
 
 Here's an example of `42 * 129 = 5418` (in hexadecimal: `$2A * $81 = $152A`):
@@ -34,13 +35,14 @@ There's a set of hardware registers which can be used for fast, signed multiplic
 |$2134|Read|Signed multiply 24-bit product, low byte|
 |$2135|Read|Signed multiply 24-bit product, middle byte|
 |$2136|Read|Signed multiply 24-bit product, high byte|
+
 There's a catch to using these hardware registers, however, as they double as certain Mode 7 registers as well:
 
 - You can only use them for **signed** multiplication
   - The result is signed 24-bit, meaning the results range from `-8,388,608` to `8,388,607`.
 - The results are instant. That means you don't have to use `NOP` to wait for the results.
 - You cannot use them when Mode 7 graphics are being rendered on the screen.
-  - This means that when Mode 7 is enabled, you can only use them inside NMI (v-blank).
+  - This means that when Mode 7 is enabled, you can only use them inside NMI (V-blank).
   - This also means that you can use them without any restrictions, outside of Mode 7.
 
 Note that register `$211B` is "write twice". This means that you have to write an 8-bit value twice to this same register which in total makes up a 16-bit value. First, you write the low byte, then the high byte of the 16-bit value.
@@ -75,7 +77,7 @@ The SNES has a set of hardware registers used for unsigned division. They are la
 
 Quotient means how many times the dividend can "fit" in the divisor. For example: `6 / 3 = 2`. Thus, the quotient is 2. Another way you can read this is: You can extract 3 **two** times from 6 and end up with exactly 0 as leftover.
 
-Modulo is an operation that determines the remainder of the dividend that couldn't "fit" into the divisor. For example: `8 / 3 = 2`. You can subtract 3 two times from 8, but at the end, you have a 2 as a remainder. Thus, the remainder for this equation is `2`. Because there are hardware registers that support remainders, the SNES also supports the modulo operation.
+Modulo is an operation that determines the remainder of the dividend that couldn't "fit" into the divisor. For example: `8 / 3 = 2`. You can subtract 3 two times from 8, but in the end, you have a 2 as a remainder. Thus, the modulo for this operation is `2`. Because there are hardware registers that support remainders, the SNES also supports the modulo operation.
 
 After you write to `$4206` to start the division process, you will need to wait 16 [machine cycles](../indepth/cycles.md), which is typically done by adding eight `NOP` instructions to the code. If you don't wait 16 machine cycles, the results are unpredictable.
 

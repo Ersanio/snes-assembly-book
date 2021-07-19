@@ -3,12 +3,12 @@
 
 |Opcode|Full name|Explanation|
 |-|-|-|
-|**MVN**|Move block negative|Moves a block of data byte by byte, starting from the beginning and working towards the end|
-|**MVP**|Move block positive|Moves a block of data byte by byte, starting from the end and working towards the beginning|
+|**MVN**|Move block negative|Moves a block of data, byte by byte, starting from the beginning and working towards the end|
+|**MVP**|Move block positive|Moves a block of data, byte by byte, starting from the end and working towards the beginning|
 
 MVP and MVN practically do a mass amount of LDA and STA to some RAM addresses. You can’t move data to ROM, because ROM is read-only.
 
-It's highly recommended to have the A, X and Y registers at 16-bit mode. It's also highly recommended to preserve the data bank using the stack, as the MVN opcode implicitly changes this. Here's an example of a proper block move setup:
+It's highly recommended to have the A, X and Y registers at 16-bit mode. It's also highly recommended to preserve the data bank using the stack, as the move opcodes implicitly change this. Here's an example of a proper block move setup:
 ```
 PHB                ; Preserve data bank
 REP #$30           ; 16-bit AXY
@@ -25,6 +25,7 @@ When using MVN, the three main registers all have a special purpose.
 |A|Specifies the amount of bytes to transfer, plus 1|
 |X|Specifies the high and low bytes of the data source memory address|
 |Y|Specifies the high and low bytes of the destination memory address|
+
 The A register is "plus 1". This means that if you want to move 4 bytes of data, you load $0003, as this means $0003+1, thus 4 bytes.
 
 MVN can be written in two ways: 
@@ -36,16 +37,17 @@ MVN $yy, $xx
 Where `xx` is the source bank, and `yy` is the destination bank.
 
 {% hint style="info" %}
-Note that the comma notation's parameters are reversed.
+Note that the comma notation's parameters are reversed in Asar. This is most likely because of the `MOV dest, src`-styled operations in other assembly languages.
 {% endhint %}
 
-When executing the MVN opcode, the SNES loops at that same opcode for each byte transferred. When a byte is transferred, the following happens:
+When executing the MVN opcode, the SNES stalls at that same opcode for each byte transferred. When a byte is transferred, the following happens:
 |Register|Event|
 |-|-|
 |A|Decreases by 1|
 |X|Increases by 1|
 |Y|Increases by 1|
 |Data bank|Is set to the bank of the destination address|
+
 Seeing that A decreases by 1, eventually it will reach the value $0000, then it'll wrap to $FFFF. Once that wrap happens, the block move finishes and the SNES proceeds to execute the opcodes that follow.
 
 Here's an example of a block move:
@@ -69,12 +71,13 @@ When using MVP, the three main registers all have a special purpose.
 |A|Specifies the amount of bytes to transfer, plus 1|
 |X|Specifies the high and low bytes of the data source memory address|
 |Y|Specifies the high and low bytes of the destination memory address|
-The A register is "plus 1". This means that if you want to move 4 bytes of data, you load $0003, as this means $0003+1, thus 4 bytes..
+
+The A register is "plus 1". This means that if you want to move 4 bytes of data, you load $0003, as this means $0003+1, thus 4 bytes.
 
 MVP can be written in two ways: 
 ```
 MVP $xxyy
-;or
+; or
 MVP $yy, $xx
 ```
 Where `xx` is the source bank, and `yy` is the destination bank.
@@ -86,6 +89,7 @@ When executing the MVP opcode, the SNES loops at that same opcode for each byte 
 |X|Decreases by 1|
 |Y|Decreases by 1|
 |Data bank|Is set to the bank of the destination address|
+
 Considering that X and Y decrease, rather than increase, this means that MVP moves blocks of data from the end towards the beginning.
 
 Here's an example of a block move:
@@ -107,7 +111,7 @@ This example will move 5 bytes of data from address $1F8904 to $7F9FFC. Although
 * When either the source or destination addresses cross a bank boundary, the high and low bytes reset to $0000, while the data bank remains unchanged.
 
 ## Easy notation
-Asar supports labels as parameters for LDA, so you can write block moves without having to calculate the source table size or address locations. The following examples allow for tables of all sizes, and assume the destination to be memory address $7FA000.
+Asar supports labels as parameters for LDA, LDX and LDY, so you can write block moves without having to calculate the source table size or address locations. The following examples allow for tables of all sizes, and assume the destination to be memory address $7FA000.
 
 An example for MVN:
 ```

@@ -72,6 +72,7 @@ You can also compare values by using the registers X and Y.
 |-|-|-|
 |**CPX**|Compare X|Compares X with something else|
 |**CPY**|Compare Y|Compares Y with something else|
+
 It's not just A which is capable of doing comparisons. For example, you can load a value into X or Y and compare it with something else. Here's an example using X:
 
 ```

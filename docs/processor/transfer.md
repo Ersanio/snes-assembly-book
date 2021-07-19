@@ -53,5 +53,5 @@ There are other opcodes which involve the general SNES registers.
 |**TDC**|Transfer direct page register to A|Transfer the 16-bit value in the direct page register to the A register, regardless of A being in 16-bit mode or not|
 |**TCS**|Transfer A to stack pointer register|Transfers the 16-bit value in A to the stack pointer register, regardless of A being in 16-bit mode or not|
 |**TSC**|Transfer stack pointer register to A|Transfers the 16-bit value in the stack pointer register to A, regardless of A being in 16-bit mode or not|
-|**TXS**|Transfer X to stack pointer register|Transfers the 16-bit value in X to the stack pointer register, regardless of X being in 16-bit mode or not. Note that when X is in 8-bit mode, the high byte is $00|
-|**TSX**|Transfer stack pointer register to X|Transfers the 16-bit value in the stack pointer register to X. Note thatn when X is in 8-bit mode, the high byte stays $00 after the transfer|
+|**TXS**|Transfer X to stack pointer register|Transfers the 16-bit value in X to the stack pointer register, regardless of X being in 16-bit mode or not. Note that when X is in 8-bit mode, the high byte is always $00|
+|**TSX**|Transfer stack pointer register to X|Transfers the 16-bit value in the stack pointer register to X. Note that when X is in 8-bit mode, the high byte stays $00 after the transfer|

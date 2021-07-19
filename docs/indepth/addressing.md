@@ -2,7 +2,7 @@
 In the [basic addressing modes](../the-basics/addressing.md) chapter, we briefly looked at the most commonly used addressing modes: "Immediate 8-bit and 16-bit", "direct page", "absolute" and "long". In this chapter, we will look at the more advanced addressing modes: "indirect", "indexed" and "stack relative". These advanced addressing modes expand upon the earlier introduced addressing modes. This chapter also introduces the concept of pointers.
 
 ## Pointers
-This is where "pointers" come into play. Pointers are values which "point" to a certain memory location. Imagine the following SNES memory:
+This is where "pointers" come into play. Pointers are values which pretty much "point" to a certain memory location. Imagine the following SNES memory:
 ```
          ; $7E0000: 12 80 00 55 55 55 ..
 ```
@@ -18,17 +18,16 @@ The bank byte of the 16-bit pointer depends on the type of instruction. When it 
 
 Pointers can point to both *code* and *data*. Depending on the type of instruction, the pointers are accessed differently. For example, a `JSR` which utilizes a 16-bit pointer accesses the pointed location as code, while an `LDA` accesses the pointed location as a bank.
 
-
 ## Indirect
 Indirect addressing modes are basically accessing addresses in such a way, that you access the address they point to, rather than directly accessing the contents of the specified address.
 
 ### Direct, Indirect
-As paradoxical as it may sound, the naming actually makes sense. "Direct" stands for direct page addressing mode, while "indirect" means that we're accessing a pointer at the direct page address, rather than a value. Here's an example:
+As contradicting as it may sound, the naming actually makes sense. "Direct" stands for direct page addressing mode, while "indirect" means that we're accessing a pointer at the direct page address, rather than a value. Here's an example:
 
 ```
 ; Setup indirect pointer
 REP #$20
-LDA #$1FFF         ; $1FFF to RAM $7E0000
+LDA #$1FFF          ; $1FFF to RAM $7E0000
 STA $00
 SEP #$20
                     ; $7E0000: FF 1F .. .. .. .. ..
@@ -93,7 +92,7 @@ SEP #$20
 ; Access indirect pointer
 JMP ($0000)        ; Jumps to $8000.
 ```
-This has the same exact effect as the example in `Direct, Indirect`. As a result, the `JMP ($0000)` resolves into `JMP $8000` and jumps to `address $8000` in the current bank.
+This has the same exact effect as the example in `Direct, Indirect`. As a result, the `JMP ($0000)` resolves into `JMP $8000`, thus jumps to `address $8000` in the current bank.
 
 ### Absolute Indexed with X, Indirect
 Exactly the same as `Direct Indexed with X, Indirect`, except the specified address is now 16-bit instead of 8-bit. This addressing mode is only used by jumping instructions. Example:
@@ -114,7 +113,7 @@ JMP ($0000,x)      ; Jumps to $9000
 - The 16-bit value in address $7E0000 + $7E0001 is `$8000`. 
 - The 16-bit value in address $7E0002 + $7E0003 is `$9000`.
 
-Thanks to using X as an indexer to the direct page address, `JMP ($0000,x)` is resolved into `JMP ($0002)`. This then resolves into `JMP $9000` because RAM $7E0002 points to `address $9000`.
+Thanks to using X as an indexer to the direct page address, `JMP ($0000,x)` is resolved into `JMP ($0002)`. This then resolves into `JMP $9000` because RAM $7E0002 points to `address $9000`. This addressing mode is handy for jump tables.
 
 ### Direct, Indirect Long
 Exactly the same as `Direct, Indirect`, except the pointer located at an address is now 24-bits instead of 16-bits, meaning the bank byte of a pointer is also specified. Example:
@@ -187,7 +186,7 @@ LDA $7E0000,x      ; Loads the value at address $7E0002 into A
 ```
 
 ## Stack Relative
-Stack relative is a special type of indexer addressing mode. It uses the stack pointer register as a 16-bit index, rather than using the X or Y register.
+Stack relative is a special type of an indexing addressing mode. It uses the stack pointer register as a 16-bit index, rather than using the X or Y register. The index is **always** 16-bit, regardless of the register size of A, X and Y.
 
 ### Stack Relative
 This loads a value from the RAM, relative to the stack pointer. The bank byte is always $00. Example:
@@ -198,7 +197,7 @@ LDA $01,s          ; ($001FF1) Loads the last pushed value into A.
 LDA $02,s          ; ($001FF2) Loads the second last pushed value into A.
 LDA $03,s          ; ($001FF3) ...
 ```
-In 16-bit A mode, the address increments would be 2, rather than 1, like in the example above.
+In 16-bit A mode, these instructions would read 16-bit values, rather than 8-bit values. If you don't use increments of 2, you'll start reading overlapping values.
 
 ### Stack Relative, Indirect Indexed with Y
 This is pretty much the same as `Direct, Indirect Indexed with Y`, except the value is loaded from a stack relative address. Example:

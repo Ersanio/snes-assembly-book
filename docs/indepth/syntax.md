@@ -92,7 +92,7 @@ RTS
 - Else, addresses `$7E0012`, `$7E0013` and `$7E0014` all are cleared
 
 ## The art of relativity
-It's possible to write programs completely devoid of fixed values and addresses, by making smart use of labels and defines outside of branches and jumps. When you use labels with loading instructions, for example, it'll grab the address of the label and use it as a parameter. This was seen in the [indexing](../collections/indexing.md) chapter. However, you can also use labels as values, rather than addresses. This is especially useful when setting up indirect pointers, which is why it's important to be able to grab certain *parts* of an address rather than the full address. This is also demonstrated in the [moves](../collections/moves.md) chapter, in the "Easy notation" section.
+It's possible to write programs completely devoid of fixed values and addresses (also known as "magic numbers"), by making smart use of labels and defines outside of branches and jumps. When you use labels with loading instructions, for example, it'll grab the address of the label and use it as a parameter. This was seen in the [indexing](../collections/indexing.md) chapter. However, you can also use labels as values, rather than addresses. This is especially useful when setting up indirect pointers, which is why it's important to be able to grab certain *parts* of an address rather than the full address. This is also demonstrated in the [moves](../collections/moves.md) chapter, in the "Easy notation" section.
 
 In the following example, an `LDA` loading the address of a label as a value would look like this:
 ```
@@ -154,6 +154,7 @@ If you wanted to store the high byte of this define in address `$7E0001`, instea
 |-|-|-|
 |>>|Shift right|Shifts bits right n times|
 |<<|Shift left|Shifts bits left n times|
+
 Remember that a byte consists of 8 bits, thus you need to "skip" 8 bits to grab the next 8 bits we need. By bitshifting 8 times to the right, you discard the low byte of the value:
 
 ```

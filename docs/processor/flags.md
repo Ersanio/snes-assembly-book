@@ -18,7 +18,7 @@ Bits: 7   6   5   4   3   2   1   0
       └───────────────────────────────── Negative: 1 = Negative set
 ```
 
-The processor flags are usually displayed as a single mnemonic: "nvmxdizc". This chapter will explain all the processor flags in detail.
+The processor flags are usually displayed as a single mnemonic in debuggers: "nvmxdizc". This chapter will explain all the processor flags in detail.
 
 ## Negative flag (n)
 Most opcodes modify the negative flag depending on the results of that opcode. These opcodes generally are opcodes which are handled in the mathematics chapter, but also loads, comparisons and pulls.
@@ -50,7 +50,7 @@ These opcodes adjust the accumulator on-the-fly. This means that, if you for exa
 Although decimal-mode math properly affects the carry flag and negative flag, it doesn't do this with the overflow flag.
 
 ### Binary-coded decimal
-Because these numbers are stored in decimal, they're stored in "binary-coded decimal" (BCD). BCD is basically the same as hexadecimal, with the values $0A-0F, $1A-1F, etc. ignored. Here's a table showing how counting in BCD goes like:
+Because numbers are treated as decimal, they are called "binary-coded decimal" (BCD). BCD is basically the same as hexadecimal, with the values $0A-0F, $1A-1F, etc. ignored. Here's a table showing how counting in BCD goes like:
 
 |Binary|Hexadecimal|Decimal|BCD|
 |-|-|-|-|
@@ -80,16 +80,16 @@ Because these numbers are stored in decimal, they're stored in "binary-coded dec
 |%1001 1011|$9B|Not available|Not available|
 |...|...|...|...|
 
-In this mode, the SNES supports calculation results from `$00` to `$99`. In 16-bit A mode, this would be from `$0000` to `$9999`.
+In decimal mode, the SNES supports calculation results from `$00` to `$99`. In 16-bit A mode, this would be from `$0000` to `$9999`.
 
 ## Interrupt disable flag (i)
-This flag determines whether the IRQ of SNES is disabled or not.
+This flag determines whether the IRQ of the SNES is disabled or not.
 
 When it's set to 1, IRQ is disabled.
 When it's set to 0, IRQ is enabled.
 
 ## Zero flag (z)
-Most opcodes modify the zero depending on the results of that opcode. These opcodes generally are opcodes which are handled in the mathematics chapter, but also loads, comparisons and pulls.
+Most opcodes modify the zero flag depending on the results of that opcode. These opcodes generally are opcodes which are handled in the mathematics chapter, but also loads, comparisons and pulls.
 
 The zero flag doesn't affect the behaviour of the SNES. Rather, there are some branches which make use of the zero flag.
 
@@ -106,9 +106,9 @@ The SNES supports math in the form of adding and subtracting numbers. It also su
 
 Considering the carry is a "flag", when the carry flag is clear, the carry (C) will be 0. When it's set, the carry will be 1. You can safely assume that the carry flag is the "9th bit" of the A register when A is in 8-bit mode, and the "17th bit" when A is in 16-bit mode. Assuming A is in 8-bit mode, the carry flag will look like this:
 ```
-BBBBBBBB C
+AAAAAAAA C
 ```
-Where C is the Carry Flag and B are the bits – in other words the A register's contents.
+Where C is the Carry Flag and A are the bits of the A register.
 
 Depending on the carry flag, various mathematical and bit shifting instructions will behave differently.
 

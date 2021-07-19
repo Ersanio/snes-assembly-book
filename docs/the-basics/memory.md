@@ -6,7 +6,7 @@ The SNES memory basically is a region of bytes, and each byte is located at an "
 
 ![](../.gitbook/assets/chessboard.png)
 
-You can see that in order to refer to a certain cell, the image makes use of column and cell names. The "address" of the shown queen \(the "value"\) would be address D8, for example. Also, a single cell can't hold two units. This same concept applies to the SNES memory.
+You can see that in order to refer to a certain cell, the image makes use of column and cell names. The "address" of the shown queen (the "value") would be address D8, for example. Also, a single cell can't hold two units. This same concept applies to the SNES memory.
 
 The SNES memory is mapped from address $000000 to $FFFFFF, although only $000000-$7FFFFF is used in most cases. The format of an address is as follows: $BBHHDD.
 
@@ -22,7 +22,7 @@ Addresses can be written in 3 ways: $BBHHDD, $HHDD and $DD, such as $7E0003, $00
 
 As established earlier, an address may contain only one byte. If you access a certain address in 16-bit mode, it means you actually access both "address" and "address+1", because a 16-bit number consists of two bytes.
 
-Here’s a drawing to get a general overview of the basic SNES memory \(also known as a memory map\):
+Here’s a drawing to get a general overview of the basic SNES memory (also known as a memory map):
 
 ![The &#x201C;LoROM&#x201D; Memory Map](../.gitbook/assets/memory.png)
 

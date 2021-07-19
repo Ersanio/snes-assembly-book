@@ -31,7 +31,7 @@ This rule can be written in a "truth table".
 In short, whenever there's a 0 in A or in the AND value's bit, the resulting bit is also 0.
 
 ## ORA
-ORA is an opcode which affects the accumulator by applying a logical ORA on all bits.
+ORA is an opcode which affects the accumulator by applying a logical OR on all bits.
 
 |Opcode|Full name|Explanation|
 |-|-|-|
@@ -52,6 +52,7 @@ If one of the bits has 1, the resulting bit will be 1. After ORA, the result wil
 |0|1|1|
 |1|0|1|
 |0|0|0|
+
 So basically, whenever A or the ORA value’s bit is 1, the resulting bit is also 1.
 
 ## EOR
@@ -108,7 +109,7 @@ If $7E0004’s value was $C0 (1100 0000), both the negative and overflow flags w
 Coincidentally enough, the bits for negative (bit 7) and overflow (bit 6) correspond to the bits in the processor flag register: `nvmxdizc`.
 
 |Set bits|BIT result
-|-|-|-|
+|-|-|
 |Bit 7|Negative flag set
 |Bit 6|Overflow flag set
 |Bits 7, 6|Negative & overflow flags set

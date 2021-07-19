@@ -20,7 +20,7 @@ LDA #$0231         ; A = $0231
 XBA                ; A is now $3102
 ```
 
-This even works with 8-bit A, as the high byte of A is"'hidden'"rather than set to $00:
+This even works with 8-bit A, as the high byte of A is "hidden" rather than set to $00:
 ```
 LDA #$12           ; A = $xx12
 XBA                ; A = $12xx
@@ -31,18 +31,21 @@ LDA #$05           ; A = $1205
 |Opcode|Full name|Explanation|
 |-|-|-|
 |**WAI**|Wait for interrupt|Halts the SNES CPU until either an NMI or IRQ occurs.|
+
 Exactly what it says, it halts the SNES CPU until either an NMI or IRQ (both are interrupts) occurs. Practically speaking, the opcode loops itself infinitely until an interrupt occurs.
 
 ## STP
 |Opcode|Full name|Explanation|
 |-|-|-|
 |**STP**|Stop the clock|The "clock" being the SNES CPU in this case, it halts the CPU completely until either a soft or hard reset occurs.|
+
 Exactly what it says, it stops the SNES CPU until you hit reset or power cycle the SNES. It does lower the power consumption of the SNES, if the couple of cents it'll shave off your power bill means that much to you.
 
 ## BRK
 |Opcode|Full name|Explanation|
 |-|-|-|
 |**BRK**|Software break|Causes a break to occur|
+
 This opcode causes the SNES to jump to the [break vector](../indepth/vector.md). It also takes a byte parameter. Example usage:
 ```
 BRK #$02
@@ -82,6 +85,7 @@ When the COP opcode is executed, the following events happen:
 |Opcode|Full name|Explanation|
 |-|-|-|
 |**WDM**|Reserved for future expansion|Does absolutely nothing|
+
 WDM stands for "[William (Bill) David Mensch, Jr.](https://en.wikipedia.org/wiki/Bill_Mensch)", who designed the 65c816. This opcode was reserved for the possibility of multi-byte opcodes. Therefore, this opcode actually takes a parameter. Example:
 ```
 WDM #$01
