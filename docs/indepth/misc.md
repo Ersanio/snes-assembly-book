@@ -20,7 +20,7 @@ LDA #$0231         ; A = $0231
 XBA                ; A is now $3102
 ```
 
-This even works with 8-bit A, as the high byte of A is 'hidden' rather than set to $00:
+This even works with 8-bit A, as the high byte of A is"'hidden'"rather than set to $00:
 ```
 LDA #$12           ; A = $xx12
 XBA                ; A = $12xx
@@ -36,7 +36,7 @@ Exactly what it says, it halts the SNES CPU until either an NMI or IRQ (both are
 ## STP
 |Opcode|Full name|Explanation|
 |-|-|-|
-|**STP**|Stop the clock|The 'clock' being the SNES CPU in this case, it halts the CPU completely until either a soft or hard reset occurs.|
+|**STP**|Stop the clock|The "clock" being the SNES CPU in this case, it halts the CPU completely until either a soft or hard reset occurs.|
 Exactly what it says, it stops the SNES CPU until you hit reset or power cycle the SNES. It does lower the power consumption of the SNES, if the couple of cents it'll shave off your power bill means that much to you.
 
 ## BRK
@@ -47,7 +47,7 @@ This opcode causes the SNES to jump to the [break vector](../indepth/vector.md).
 ```
 BRK #$02
 ```
-The parameter is not used for anything in particular, but if you write a meaningful 'catch' to the BRK, you could probably read what the value of the BRK was supposed to be, and do certain things depending on the value.
+The parameter is not used for anything in particular, but if you write a meaningful "catch" to the BRK, you could probably read what the value of the BRK was supposed to be, and do certain things depending on the value.
 
 When the BRK opcode is executed, the following events happen:
 * First, the (24-bit) address of the instruction after `BRK #$xx` is pushed onto the stack
@@ -68,7 +68,7 @@ This opcode causes the SNES to jump to the [COP hardware vector](../indepth/vect
 ```
 COP #$04
 ```
-The parameter is not used for anything in particular, but if you write a meaningful 'catch' to the COP, you could probably read what the value of the COP was supposed to be, and do certain things depending on the value.
+The parameter is not used for anything in particular, but if you write a meaningful "catch" to the COP, you could probably read what the value of the COP was supposed to be, and do certain things depending on the value.
 
 When the COP opcode is executed, the following events happen:
 * First, the (24-bit) address of the instruction after `COP #$xx` is pushed onto the stack
@@ -82,7 +82,7 @@ When the COP opcode is executed, the following events happen:
 |Opcode|Full name|Explanation|
 |-|-|-|
 |**WDM**|Reserved for future expansion|Does absolutely nothing|
-WDM stands for '[William (Bill) David Mensch, Jr.](https://en.wikipedia.org/wiki/Bill_Mensch)', who designed the 65c816. This opcode was reserved for the possibility of multi-byte opcodes. Therefore, this opcode actually takes a parameter. Example:
+WDM stands for "[William (Bill) David Mensch, Jr.](https://en.wikipedia.org/wiki/Bill_Mensch)", who designed the 65c816. This opcode was reserved for the possibility of multi-byte opcodes. Therefore, this opcode actually takes a parameter. Example:
 ```
 WDM #$01
 ```

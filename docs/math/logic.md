@@ -93,7 +93,7 @@ BIT #$00           ; AND 0000 0000. None of the bits are set
                    ; the outcome *should* be $00.
 ```
 
-BIT has a feature which distinguishes it from a regular AND, involving processor flags other than the zero flag. When you use BIT on an address, rather than the accumulator, it can also affect the 'negative' and 'overflow' processor flags. If bit 7 of the address' value is set, the negative flag would be set as a result. If bit 6 of the address' value is set, the overflow flag would be set as a result. Here's an example of using BIT on an address:
+BIT has a feature which distinguishes it from a regular AND, involving processor flags other than the zero flag. When you use BIT on an address, rather than the accumulator, it can also affect the "negative" and "overflow" processor flags. If bit 7 of the address' value is set, the negative flag would be set as a result. If bit 6 of the address' value is set, the overflow flag would be set as a result. Here's an example of using BIT on an address:
 
 ```
 BIT $04            ; Bit test $7E0004's value

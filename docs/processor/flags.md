@@ -18,7 +18,7 @@ Bits: 7   6   5   4   3   2   1   0
       └───────────────────────────────── Negative: 1 = Negative set
 ```
 
-You can memorize these processor flags by memorizing the 'word' `nvmxdizc`. This chapter will explain all the processor flags in detail.
+The processor flags are usually displayed as a single mnemonic: "nvmxdizc". This chapter will explain all the processor flags in detail.
 
 ## Negative flag (n)
 Most opcodes modify the negative flag depending on the results of that opcode. These opcodes generally are opcodes which are handled in the mathematics chapter, but also loads, comparisons and pulls.
@@ -50,7 +50,7 @@ These opcodes adjust the accumulator on-the-fly. This means that, if you for exa
 Although decimal-mode math properly affects the carry flag and negative flag, it doesn't do this with the overflow flag.
 
 ### Binary-coded decimal
-Because these numbers are stored in decimal, they're stored in 'binary-coded decimal' (BCD). BCD is basically the same as hexadecimal, with the values $0A-0F, $1A-1F, et cetera 'cut out'. Here's a table showing how counting in BCD goes like:
+Because these numbers are stored in decimal, they're stored in "binary-coded decimal" (BCD). BCD is basically the same as hexadecimal, with the values $0A-0F, $1A-1F, etc. ignored. Here's a table showing how counting in BCD goes like:
 
 |Binary|Hexadecimal|Decimal|BCD|
 |-|-|-|-|

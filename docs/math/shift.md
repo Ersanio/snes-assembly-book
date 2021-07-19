@@ -24,7 +24,7 @@ LDA #$02           ; Load the value %00000010 into A
 ASL A              ; Shift bits left once
                    ; A is now %00000100
 ```
-As you can see, the digit '1' has moved to the left once. That is what ASL does, moving bits left.
+As you can see, the digit "1" has moved to the left once. That is what ASL does, moving bits left.
 
 ASL can also move bits in an address without affecting A.
 
@@ -50,7 +50,7 @@ LDA #$02           ; Load the value %00000010 into A
 LSR A              ; Shift bits right once
                    ; A is now %00000001
 ```
-As you can see, the digit '1' has moved to the right once. That is what LSR does, moving bits right.
+As you can see, the digit "1" has moved to the right once. That is what LSR does, moving bits right.
 
 LSR can also move bits in an address without affecting A.
 
@@ -110,7 +110,7 @@ There are two opcodes which *rotate* bits to the left or right, rather than shif
 |**ROL**|Rotate A or memory left|Moves bits left once with carry, wrapping the bits around|
 |**ROR**|Rotate A or memory right|Moves bits right once with carry, wrapping the bits around|
 
-They behave the same as LSR and ASL, except they are using the carry flag as an extra bit in order to make the bits 'wrap' around. This means that the value can't be 'stuck' at $00 eventually, like it happens in ASL and LSR. This is why they're called rotate, rather than shift.
+They behave the same as LSR and ASL, except they are using the carry flag as an extra bit in order to make the bits "wrap" around. This means that the value can't be "stuck" at $00 eventually, like it happens in ASL and LSR. This is why they're called rotate, rather than shift.
 
 Here's an example of ROL:
 ```
@@ -120,7 +120,7 @@ ROL A              ; A = %0000 0000 | C = 1
 ROL A              ; A = %0000 0001 | C = 0
                    ; A is now $01
 ```
-As you can see, bit 7 wrapped all the way around to bit 0, basically 'rotating' the bits without losing any information.
+As you can see, bit 7 wrapped all the way around to bit 0, basically "rotating" the bits without losing any information.
 
 ```
 CLC                ; C = 0
@@ -129,7 +129,7 @@ ROR A              ; A = %0000 0000 | C = 1
 ROR A              ; A = %1000 0000 | C = 0
                    ; A is now $80
 ```
-As you can see, bit 0 wrapped all the way around to bit 7, basically 'rotating' the bits without losing any information.
+As you can see, bit 0 wrapped all the way around to bit 7, basically "rotating" the bits without losing any information.
 
 ```
 SEC                ; C = 1

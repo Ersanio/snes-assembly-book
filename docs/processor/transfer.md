@@ -1,7 +1,7 @@
 # Transfers
 Imagine the following situation: You're using the index register X and you'd like to increase it by #$40. There's `INX` which increases the value in X by one, but what about increasing it by $40? There's no opcode which increases the value in X by $40, [but there is one](../math/arithmetic.md) which increases the value in A by $40. How do you get the value in X into A?
 
-There are a series of opcodes for exactly that purpose, and they're called 'transfers'. There are a bunch of transfer opcodes, all starting with the letter T.
+There are a series of opcodes for exactly that purpose, and they're called "transfers". There are a bunch of transfer opcodes, all starting with the letter T.
 
 ## Transferring A, X and Y
 There are opcodes which transfers the values between A, X and Y registers. All the combinations are possible:

@@ -22,10 +22,10 @@ When using MVN, the three main registers all have a special purpose.
 
 |Register|Purpose|
 |-|-|
-|A|Specifies the amount of bytes to transfer, *minus 1*|
+|A|Specifies the amount of bytes to transfer, plus 1|
 |X|Specifies the high and low bytes of the data source memory address|
 |Y|Specifies the high and low bytes of the destination memory address|
-The A register is 'minus 1'. This means that if you want to move 4 bytes of data, you load $0004-1, which is $0003, into A.
+The A register is "plus 1". This means that if you want to move 4 bytes of data, you load $0003, as this means $0003+1, thus 4 bytes.
 
 MVN can be written in two ways: 
 ```
@@ -66,10 +66,10 @@ When using MVP, the three main registers all have a special purpose.
 
 |Register|Purpose|
 |-|-|
-|A|Specifies the amount of bytes to transfer, *minus 1*|
+|A|Specifies the amount of bytes to transfer, plus 1|
 |X|Specifies the high and low bytes of the data source memory address|
 |Y|Specifies the high and low bytes of the destination memory address|
-The A register is 'minus 1'. This means that if you want to move 4 bytes of data, you load $0004-1, which is $0003, into A.
+The A register is "plus 1". This means that if you want to move 4 bytes of data, you load $0003, as this means $0003+1, thus 4 bytes..
 
 MVP can be written in two ways: 
 ```

@@ -1,10 +1,10 @@
 # Tables and indexing
-Indexing is the act of accessing a *table of data* from a certain offset, that offset being determined by an indexer. The registers X and Y are unmissable when it comes to indexing. They're called the 'indexer' registers, after all.
+Indexing is the act of accessing a collection of data from a certain offset, that offset being determined by an indexer. The registers X and Y are unmissable when it comes to indexing. They're called the "index" registers, after all.
 
 ## Tables
 'Tables' are simply a sequence of values. They are used in at least two cases:
 * Conditional cases (e.g. a collection of speed values, depending on the entity's direction)
-* Values that represent an 'asset' (e.g. graphics data, music data, level data)
+* Values that represent an "asset" (e.g. graphics data, music data, level data)
 
 Tables have very practical applications in SNES games. You can, for example, store text data in tables. Or level data. Or palette data. Tables can contain anything and can have any size, as long as they fit within the ROM.
 
@@ -22,9 +22,9 @@ Here's an example of a table definition:
 ```
 ValuesTableExample: db $03,$86,$91,$38,$22
 ```
-As you can see, we first define the value type as 'byte' by writing 'db'. Then, we follow with byte-values, seperated by a comma (,).
+As you can see, we first define the value type as "byte" by writing `db`. Then, we follow with byte-values, seperated by a comma (,).
 
-In order to access a table, we always use a label. In this case, we used the label 'ValuesTableExample'.
+In order to access a table, we always use a label. In this case, we used the label `ValuesTableExample`.
 
 ## Indexing
 Tables can be accessed using a label. Labels are translated into ROM memory addresses, after all. Expanding on above table example, the following code would read out a value from the table:

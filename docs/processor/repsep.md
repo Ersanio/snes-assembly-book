@@ -32,7 +32,7 @@ REP #$08 ;= 0000 1000
 In the beginning, the decimal mode was enabled, and the negative flag was set, but after `REP #$08`, the decimal mode flag got disabled and the negative flag is still set.
 
 ## XCE and the emulation mode
-Because the emulation mode bit is 'hidden' above the carry flag, there's an opcode which exchanges the carry flag with the emulation mode bit.
+Because the emulation mode bit is "hidden" above the carry flag, there's a dedicated opcode which exchanges the carry flag with the emulation mode flag.
 
 |Opcode|Full name|Explanation|
 |-|-|-|

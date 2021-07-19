@@ -1,5 +1,5 @@
 # The stack
-The stack is a special type of 'table' which is located inside the SNES RAM. Imagine the stack as a stack of plates. You can only add (push) or remove (pull/pop) a plate from the top. You can visualize it as something like this:
+The stack is a special type of "table" which is located inside the SNES RAM. Imagine the stack as a stack of plates. You can only add (push) or remove (pull/pop) a plate from the top. You can visualize it as something like this:
 
 ```
 |   |
@@ -9,7 +9,7 @@ The stack is a special type of 'table' which is located inside the SNES RAM. Ima
 |[ ]|
 ‾‾‾‾‾
 ```
-The empty 'boxes' in above example are basically the values inside the stack, and they can hold any value. The collection of boxes are closed off from all sides, except for the top.
+The empty "boxes" in above example are basically the values inside the stack, and they can hold any value. The collection of boxes are closed off from all sides, except for the top.
 
 {% hint style="info" %}
 Technically speaking, because the stack is an area inside the RAM, you can access any value you want, using special stack-relative addressing modes rather than using only push and pull opcodes. For the purposes of this chapter, we'll assume the stack indeed is a perfect stack of plates. 
@@ -33,7 +33,7 @@ Technically speaking, because the stack is an area inside the RAM, you can acces
 As you can see, the value $32 is added on top of the stack. The stack now has five values instead of four.
 
 ## Pull/Pop
-'Pulling' (or 'popping') is the act of reading a value from the top of the stack. Here's an example:
+"Pulling" (or "popping") is the act of reading a value from the top of the stack. Here's an example:
 
 ```
            [$32]
@@ -80,7 +80,7 @@ PLX                ; Restore X. X is now $19 again
 ```
 
 {% hint style="info" %}
-The A, X and Y registers do not have a separate stack. There is only one stack, specified by the 'stack pointer register'. For detailed explanations about the stack pointer register, see: [Stack pointer register](../processor/stackpointer.md)
+The A, X and Y registers do not have a separate stack. There is only one stack, specified by the "stack pointer register". For detailed explanations about the stack pointer register, see: [Stack pointer register](../processor/stackpointer.md)
 {% endhint %}
 
 ## 16-bit mode stack operations

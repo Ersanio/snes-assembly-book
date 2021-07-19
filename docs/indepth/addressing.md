@@ -1,12 +1,12 @@
 # Addressing modes revisited
-In the [basic addressing modes](../the-basics/addressing.md) chapter, we briefly looked at the most commonly used addressing modes: 'Immediate 8-bit and 16-bit', 'direct page', 'absolute' and 'long'. In this chapter, we will look at the more advanced addressing modes: 'indirect', 'indexed' and 'stack relative'. These advanced addressing modes expand upon the earlier introduced addressing modes. This chapter also introduces the concept of pointers.
+In the [basic addressing modes](../the-basics/addressing.md) chapter, we briefly looked at the most commonly used addressing modes: "Immediate 8-bit and 16-bit", "direct page", "absolute" and "long". In this chapter, we will look at the more advanced addressing modes: "indirect", "indexed" and "stack relative". These advanced addressing modes expand upon the earlier introduced addressing modes. This chapter also introduces the concept of pointers.
 
 ## Pointers
-This is where 'pointers' come into play. Pointers are values which 'point' to a certain memory location. Imagine the following SNES memory:
+This is where "pointers" come into play. Pointers are values which "point" to a certain memory location. Imagine the following SNES memory:
 ```
          ; $7E0000: 12 80 00 55 55 55 ..
 ```
-In this example: the RAM at address $7E0000 contains the values $12, $80 and $00. This is in little-endian, so reverse the values and you get $00, $80, $12. Treat this as a 24-bit 'long' address and you have $008012. This means that RAM address $7E0000 has a 24-bit pointer to $008012. This is what 'indirect' is; accessing address $7E0000 'indirectly' accesses address $008012.
+In this example: the RAM at address $7E0000 contains the values $12, $80 and $00. This is in little-endian, so reverse the values and you get $00, $80, $12. Treat this as a 24-bit "long" address and you have $008012. This means that RAM address $7E0000 has a 24-bit pointer to $008012. This is what "indirect" is; accessing address $7E0000 "indirectly" accesses address $008012.
 
 You can access indirect pointers in two ways: 16-bits and 24-bits. They have a special assembler syntax:
 |Syntax|Terminology|Pointer size|
@@ -14,7 +14,7 @@ You can access indirect pointers in two ways: 16-bits and 24-bits. They have a s
 |( )|Indirect|16-bit|
 |[ ]|Indirect long|24-bit|
 
-The bank byte of the 16-bit pointer depends on the type of instruction. When it comes to a `JSR`-opcode, which can only jump inside the current bank, the bank byte isn't determined nor used. However, when it comes to a loading instruction, such as `LDA`, the bank byte is determined by the *data bank register*.
+The bank byte of the 16-bit pointer depends on the type of instruction. When it comes to a `JSR`-opcode, which can only jump inside the current bank, the bank byte isn"t determined nor used. However, when it comes to a loading instruction, such as `LDA`, the bank byte is determined by the *data bank register*.
 
 Pointers can point to both *code* and *data*. Depending on the type of instruction, the pointers are accessed differently. For example, a `JSR` which utilizes a 16-bit pointer accesses the pointed location as code, while an `LDA` accesses the pointed location as a bank.
 
@@ -23,7 +23,7 @@ Pointers can point to both *code* and *data*. Depending on the type of instructi
 Indirect addressing modes are basically accessing addresses in such a way, that you access the address they point to, rather than directly accessing the contents of the specified address.
 
 ### Direct, Indirect
-As paradoxical as it may sound, the naming actually makes sense. 'Direct' stands for direct page addressing mode, while 'indirect' means that we're accessing a pointer at the direct page address, rather than a value. Here's an example:
+As paradoxical as it may sound, the naming actually makes sense. "Direct" stands for direct page addressing mode, while "indirect" means that we're accessing a pointer at the direct page address, rather than a value. Here's an example:
 
 ```
 ; Setup indirect pointer
@@ -43,7 +43,7 @@ You might think that `LDA ($00)` loads the `value $1FFF` into A. However, it doe
 As we established earlier, parentheses denote 16-bit pointers. The bank of the indirect address, in the case of an LDA, depends on the data bank register. As a result, the `LDA ($00)` resolves into `LDA $1FFF`.
 
 ### Direct Indexed with X, Indirect
-As is the case with the previous addressing mode, the naming may seem contradicting. 'Direct' stands for direct page addressing mode. 'Indexed with X' means that this direct page address is indexed with X. 'Indirect' means that the previous elements are treated as an indirect address. Here's an example usage:
+As is the case with the previous addressing mode, the naming may seem contradicting. "Direct" stands for direct page addressing mode. "Indexed with X" means that this direct page address is indexed with X. "Indirect" means that the previous elements are treated as an indirect address. Here's an example usage:
 
 ```
 ; Setup indirect pointers

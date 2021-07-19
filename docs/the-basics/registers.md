@@ -8,7 +8,7 @@ The accumulator, also known as **A**, is used for general math, bit shifts, bitw
 The accumulator sometimes is referred to as `B` or `C` in some opcodes. B means the high byte of the accumulator, while C means the full 16-bit accumulator.
 
 {% hint style="warning" %}
-In reality, this register can be considered to be always 16-bit. When A is in 8-bit mode, you access the low byte of this register. When A is in 16-bit mode, you access both the high and low bytes of this register. The high byte doesn't get cleared when A enters 8-bit mode, even when new values are written to A, which is why the high byte can be considered to be 'hidden'. Also, certain instructions use both high and low bytes of the A register, regardless of whether A is in 8-bit or 16-bit mode.
+In reality, this register can be considered to be always 16-bit. When A is in 8-bit mode, you access the low byte of this register. When A is in 16-bit mode, you access both the high and low bytes of this register. The high byte doesn't get cleared when A enters 8-bit mode, even when new values are written to A, which is why the high byte can be considered to be "hidden". Also, certain instructions use both high and low bytes of the A register, regardless of whether A is in 8-bit or 16-bit mode.
 {% endhint %}
 
 ## Indexers

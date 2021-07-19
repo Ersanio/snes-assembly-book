@@ -32,8 +32,8 @@ There's a set of hardware registers which can be used for fast, signed multiplic
 |$211B|Write twice|Multiplicand, 16-bit, signed. First write: Low byte of multiplicand. Second write: High byte of multiplicand|
 |$211C|Write|Multiplier, 8-bit.|
 |$2134|Read|Signed multiply 24-bit product, low byte|
-|$2134|Read|Signed multiply 24-bit product, middle byte|
-|$2134|Read|Signed multiply 24-bit product, high byte|
+|$2135|Read|Signed multiply 24-bit product, middle byte|
+|$2136|Read|Signed multiply 24-bit product, high byte|
 There's a catch to using these hardware registers, however, as they double as certain Mode 7 registers as well:
 
 - You can only use them for **signed** multiplication
