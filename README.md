@@ -6,7 +6,7 @@ This online, open-source version of the tutorial can be accessed here: https://e
 # Code of conduct
 Please open a pull request or an issue in the following situations:
 
-* In case of errors in the documents
+* In case of errors in the chapters
 * In case of (grammatical) improvements upon the chapters
 * In case of newly written chapters
 
