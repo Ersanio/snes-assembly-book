@@ -79,7 +79,7 @@ MVP $yy, $xx
 Where `xx` is the source bank, and `yy` is the destination bank.
 
 {% hint style="warning" %}
-Note that the MVP/MVN `$yy, $xx` notation is reversed in Asar. Various sources indicate that it should be the other way around, however, this tutorial follows Asar's assembly syntax.
+Note that the `MVP/MVN $yy, $xx` notation is indeed written as `MVP/MVN destination, source`. Various sources indicate that it should be the other way around (`source, destination`), however, this tutorial follows Asar's assembly syntax.
 {% endhint %}
 
 When executing the MVP opcode, the SNES loops at that same opcode for each byte transferred. From this point on, this is where MVP differs from MVN. When a byte is transferred, the following happens:
