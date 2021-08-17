@@ -36,10 +36,6 @@ MVN $yy, $xx
 ```
 Where `xx` is the source bank, and `yy` is the destination bank.
 
-{% hint style="info" %}
-Note that the comma notation's parameters are reversed in Asar. This is most likely because of the `MOV dest, src`-styled operations in other assembly languages.
-{% endhint %}
-
 When executing the MVN opcode, the SNES stalls at that same opcode for each byte transferred. When a byte is transferred, the following happens:
 |Register|Event|
 |-|-|
@@ -81,6 +77,10 @@ MVP $xxyy
 MVP $yy, $xx
 ```
 Where `xx` is the source bank, and `yy` is the destination bank.
+
+{% hint style="warning" %}
+Note that the MVP/MVN `$yy, $xx` notation is reversed in Asar. Various sources indicate that it should be the other way around, however, this tutorial follows Asar's assembly syntax.
+{% endhint %}
 
 When executing the MVP opcode, the SNES loops at that same opcode for each byte transferred. From this point on, this is where MVP differs from MVN. When a byte is transferred, the following happens:
 |Register|Event|
