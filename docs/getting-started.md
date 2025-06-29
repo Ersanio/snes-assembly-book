@@ -7,7 +7,7 @@ There are no dedicated IDEs for 65c816 assembly. You can use any ASCII editor, s
 * Josh Neta's "[65816 Assembly](https://marketplace.visualstudio.com/items?itemName=joshneta.65816-assembly)" plugin for VS Code
 * Vice's "[65816 SNES Assembly Language Server](https://marketplace.visualstudio.com/items?itemName=vicerust.snes-asm)" plugin for VS Code
 * lx5's "[Asar syntax highlight](https://github.com/TheLX5/AsarSyntaxHighlight-VSCode)" plugin for VS Code.
-* MatthewCallis'  "[65xx Assembly Language Support](https://atom.io/packages/language-65asm)" for Atom
+* Telinc1's "[65c818 ASM syntax for highlight.js](https://github.com/telinc1/smwcentral-highlightjs-asar)" as a JavaScript plugin
 
 Assembly files are generally saved with the file extension ".asm".
 
