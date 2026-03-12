@@ -311,7 +311,7 @@ ADC #$20           ; $F0+$20 = $10, C = 1
 STA $00            ; $7E0000 has now the value $10
 
 LDA $59            ; Load the value $05 into A
-ADC #$00           ; Add $00 to $7E0005. BUT because C = 1, this adds $01 to A instead
+ADC #$00           ; Normally adds $00 to value $05. BUT C = 1, so this adds $01 to $05 instead
 STA $59            ; A is now $06, and we store it into $7E0059
                    ; These would now make the 16-bit value $0610
                    ; across two addresses
@@ -334,7 +334,7 @@ SBC #$20           ; $10-$20 = $F0, C = 0
 STA $00            ; $7E0000 has now the value $F0
 
 LDA $59            ; Load the value $05 into A
-SBC #$00           ; Subtract $00 from $7E0005. BUT because C = 0, this subtracts $01 from A instead
+SBC #$00           ; Normally subtracts $00 from value $05. BUT C = 0, so this subtracts $01 from $05 instead
 STA $59            ; A is now $04, and we store it into $7E0059
                    ; These would now make the 16-bit value $04F0
                    ; across two addresses
