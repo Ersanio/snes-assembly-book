@@ -331,10 +331,10 @@ STA $59            ; Initialize address $7E0059 to value $05 for this example
 LDA $00            ; Load the value $10 into A
 SEC                ; Set Carry flag for subtraction. C = 1
 SBC #$20           ; $10-$20 = $F0, C = 0
-STA $00            ; $7E0000 has now the value $10
+STA $00            ; $7E0000 has now the value $F0
 
 LDA $59            ; Load the value $05 into A
-ADC #$00           ; Subtract $00 from $7E0005. BUT because C = 0, this subtracts $01 from A instead
+SBC #$00           ; Subtract $00 from $7E0005. BUT because C = 0, this subtracts $01 from A instead
 STA $59            ; A is now $04, and we store it into $7E0059
                    ; These would now make the 16-bit value $04F0
                    ; across two addresses
