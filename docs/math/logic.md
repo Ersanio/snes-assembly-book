@@ -1,77 +1,97 @@
-# Bitwise operations
-Bitwise operations are fundamental when it comes to assembly. The 65c816 supports several bitwise opcodes, which are explained in this chapter. Bitwise operators mainly work on bits rather than bytes, so in this chapter, vague terms such as `x` and `y` refer to bits rather than bytes.
+# 論理演算
+論理演算命令は、アセンブリにおいて非常に基礎的な命令です。
+この章では、65C816で使用可能な論理演算命令について解説します。
+論理演算命令は、バイトではなくビットに対して行われます。
+よって、この章では`x`や`y`といった、詳細を明示しない変数はバイトではなくビットを指すこととします。
 
-In this chapter, we will sometimes refer to binary value 1 as `true` and binary value 0 as `false`.
+また、この章では、2進数の1を`true`、2進数の0を`false`と表現することがあります。
 
 ## AND
-AND is an opcode which affects the accumulator by applying a logical AND on all bits.
+ANDは、アキュムレータの全ビットに対して論理積を取るオペコードです。
 
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**AND**|Logical AND|Logical AND, also known as a "`&`" in some other programming languages|
+|**AND**|Logical AND|論理積を取る（他のプログラミング言語では"`&`"とも表される）|
 
-The result of `x AND y` is `true` if both `x` and `y` evaluate to `true`. Otherwise, the result is `false`.
+`x AND y`を実行したとき、`x`と`y`がともに`true`なら`true`が返され、それ以外の場合は`false`が返されます。
 
-Here's an example of a logical AND.
+論理積は以下のように実装します。
+
 ```
 LDA #$F0           ; A = 1111 0000
 AND #$98           ; AND 1001 1000
                    ; A = 1001 0000 = $90
 ```
-To understand this code, you'll have to read the comments from top to bottom. As you can see, the first line contains the accumulator's binary value, while the second line contains the AND operator's parameter binary value. When two 1 come together, the result is a 1 as well. This is what it means when both x and y evaluate to true. If x = 1 and y = 1, then the result is 1 also.
+このコードを理解するために、コメントを上から下まで読んでみてください。
+1行目のコメントはアキュムレータの2進数値を表しています。
+また、2行目のコメントはANDのオペランドとなる数値の2進数値を表しています。
+各ビットがともに1の場合、演算結果の対応するビットは1になります。
+このことを、「xとyがともにtrueである」といいます。
+もし、xが1、yも1ならば、結果も1になります。
 
-This rule can be written in a "truth table".
-|Compared bit|AND operation|Result|
+これを「真理値表」で表すと以下のようになります。
+
+|比較対象ビット|論理積を与えるビット|結果|
 |-|-|-|
 |1|1|1|
 |0|1|0|
 |1|0|0|
 |0|0|0|
 
-In short, whenever there's a 0 in A or in the AND value's bit, the resulting bit is also 0.
+簡単に言えば、アキュムレータ、もしくはANDのオペランドのどちらかのビットが0ならば、演算結果の対応するビットも0になります。
 
 ## ORA
-ORA is an opcode which affects the accumulator by applying a logical OR on all bits.
+ORAは、アキュムレータの全ビットに対して論理和を取るオペコードです。
 
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**ORA**|Logical OR|Logical OR, also known as a pipe character in some other programming languages|
+|**ORA**|Logical OR|論理和を取る（他のプログラミング言語では"`\|`"とも表される）|
 
-The result of `x OR y` is true if either `x` or `y` evaluates to `true`. Otherwise, the result is `false`.
+`x OR y`を実行したとき、`x`もしくは`y`のいずれかが`true`なら`true`が返され、それ以外の場合は`false`が返されます。
 
-Here's an example of an ORA:
+論理和は以下のように実装します。
 ```
 LDA #$F0           ; A = 1111 0000
 ORA #$87           ; ORA 1000 0111
                    ; A = 1111 0111 = $F7
 ```
-If one of the bits has 1, the resulting bit will be 1. After ORA, the result will be stored in A. Here's the truth table for ORA:
-|Compared bit|OR operation|Result|
+
+あるビットのいずれかが1であるとき、結果は1になります。
+ORAを実行すると、演算結果はアキュムレータにストアされます。
+ORAの真理値表は以下のようになります。
+
+|比較対象ビット|論理和を与えるビット|結果|
 |-|-|-|
 |1|1|1|
 |0|1|1|
 |1|0|1|
 |0|0|0|
 
-So basically, whenever A or the ORA value's bit is 1, the resulting bit is also 1.
+基本的に、アキュムレータ、もしくはANDのオペランドのどちらかのビットが1ならば、演算結果の対応するビットも1になります。
 
 ## EOR
-EOR is an opcode which affects the accumulator by applying a logical exclusive OR (XOR) on all bits.
+EORは、アキュムレータの全ビットに対して排他的論理和（XOR）を取るオペコードです。
 
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**EOR**|Logical XOR|Logical XOR, also known as a "`^`" in some other programming languages|
+|**EOR**|Logical XOR|排他的論理和を取る（他のプログラミング言語では"`^`"とも表される）|
 
-The result of `x XOR y` is `true` if `x` evaluates to `true` and `y` evaluates to `false`, or `x` evaluates to `false` and `y` evaluates to `true`. Otherwise, the result is `false`.
+`x EOR y`を実行したとき、`x`が`true`かつ`y`が`false`、
+もしくは、`x`が`false`かつ`y`が`true`なら`true`が返され、
+それ以外の場合は`false`が返されます。
 
-Here's an example of an XOR:
+排他的論理和は以下のように実装します。
 ```
 LDA #$99           ; A = 1001 1001
 EOR #$F0           ; EOR 1111 0000
                    ; A = 0110 1001 = $69
 ```
-Basically, when the accumulator and the given value's bits are both 1, the result is 0. When they're both 0, the result is 0. When they're not equal, then the result is 1 also. Here's the truth table for EOR:
-|Compared bit|XOR operation|Result|
+基本的に、アキュムレータとANDのオペランドのビットがともに1ならば、演算結果の対応するビットは0になります。
+これらがともに0の場合も結果は0になります。
+もしこの2つが同値でないならば、結果は1になります。
+EORの真理値表は以下のようになります。
+
+|比較対象ビット|排他的論理和を与えるビット|結果|
 |-|-|-|
 |1|1|0|
 |0|1|1|
@@ -79,39 +99,50 @@ Basically, when the accumulator and the given value's bits are both 1, the resul
 |0|0|0|
 
 ## BIT
-BIT is an opcode which essentially does a logical AND, but the result is NOT stored in the accumulator. Instead, it only affects the processor flags.
+BITは、論理積を演算しますが、その結果はアキュムレータにストアされません。
+BITを用いた論理演算結果は、プロセッサフラグの変更にのみ用いられます。
 
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**BIT**|Bit test|Tests certain bits of the accumulator or memory|
+|**BIT**|Bit test|アキュムレータ、もしくはメモリの特定のビットを検査する|
 
-Here's an example of BIT in usage:
+BITは、以下のような場面で用いることができます。
+
 ```
 LDA #$04           ; A = 0000 0100 = $04
-BIT #$00           ; AND 0000 0000. None of the bits are set
-                   ; so normally, A should be $00, but it's still $04
-                   ; However, the zero flag has been set because
-                   ; the outcome *should* be $00.
+BIT #$00           ; AND 0000 0000 これは、すべてのビットが0である
+                   ; なのでアキュムレータに$00がストアされそうだが、アキュムレータは$04のままである
+                   ; しかし、演算結果が$00なので、
+                   ; ゼロフラグがセットされる
 ```
 
-BIT has a feature which distinguishes it from a regular AND, involving processor flags other than the zero flag. When you use BIT on an address, rather than the accumulator, it can also affect the "negative" and "overflow" processor flags. If bit 7 of the address' value is set, the negative flag would be set as a result. If bit 6 of the address' value is set, the overflow flag would be set as a result. Here's an example of using BIT on an address:
+BITは、ゼロフラグ以外のプロセッサフラグに影響するという点でANDとは異なった命令です。
+BITをアキュムレータではなくアドレスに対して実行した場合、ネガティブフラグとオーバーフローフラグを変更します。
+指定したアドレスの第7ビットがセットされている場合、BITは、ネガティブフラグをセットし、
+6ビット目がセットされている場合は、オーバーフローフラグをセットします。
+以下のコードは、BITをアドレスに対して実行したものです。
 
 ```
-BIT $04            ; Bit test $7E0004's value
+BIT $04            ; $7E0004の数値をビットテストする
 ```
 
-If $7E0004's value was $80 (1000 0000), the negative flag would be set and the overflow flag would be clear. It's useful to check really fast if the value of an address is negative.
+もし$7E0004の値が$80（1000 0000）なら、ネガティブフラグがセットされ、オーバーフローフラグはクリアされます。
+よって、BITを用いることで、アドレスが負数かどうかを素早く判定できます。
 
-If $7E0004's value was $40 (0100 0000), the negative flag would be clear and the overflow flag would be set. Useful to check if specifically bit 6 is set.
+もし$7E0004の値が$40（0100 0000）なら、ネガティブフラグがクリアされ、オーバーフローフラグはセットされます。
+よって、BITを用いることで、アドレスの第6ビットがセットされているかどうかを判定できます。
 
-If $7E0004's value was $C0 (1100 0000), both the negative and overflow flags would be set.
+もし$7E0004の値が$C0（1100 0000）なら、ネガティブフラグとオーバーフローフラグがともにセットされます。
 
-Coincidentally enough, the bits for negative (bit 7) and overflow (bit 6) correspond to the bits in the processor flag register: `nvmxdizc`.
+偶然にも、BITがネガティブフラグを変更するために判定するビット（第7ビット）と
+オーバーフローフラグを変更するために判定するビット（第6ビット）は、プロセッサフラグにおけるビットに対応しています（`nvmxdizc`）。
 
-|Set bits|BIT result
+|セットされているビット|BIT演算結果|
 |-|-|
-|Bit 7|Negative flag set
-|Bit 6|Overflow flag set
-|Bits 7, 6|Negative & overflow flags set
+|Bit 7|ネガティブフラグがセットされる|
+|Bit 6|オーバーフローフラグがセットされる|
+|Bits 7, 6|ネガティブフラグとオーバーフローフラグがセットされる|
 
-When you are performing a BIT operation on a RAM address, the N and V flags will be set or cleared, regardless of the value in the accumulator. The zero flag depends on the accumulator's value and the RAM address' value. So, BIT with a RAM address does both AND, and an inevitable check of bits 7 and 6 of the RAM address.
+BIT命令をRAMアドレスに対して実行すると、アキュムレータの値に関わらず、ネガティブフラグとオーバーフローフラグがセット、もしくはクリアされます。
+一方、ゼロフラグはアキュムレータとRAMアドレスの値の論理積結果によってセットされるので、
+RAMアドレスに対するBIT命令は、論理積演算に加えて、指定されたRAMアドレスの第7ビットと第6ビットをチェックすることになります。

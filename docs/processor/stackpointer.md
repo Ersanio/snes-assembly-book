@@ -1,69 +1,87 @@
-# Stack pointer register
-The stack pointer register is a 16-bit register which the processor uses to determine the current stack location in the SNES RAM. After each push, the stack pointer *decreases*, so the bytes are pushed backwards. They overwrite the RAM address' contents. Conversely, after each pull, the stack pointer *increases*, but the pulled value still remains in the stack. Therefore, a pull is actually a read. The stack pointer increases or decreases by 1 when it deals with an 8-bit value, and by 2 when it deals with a 16-bit value. This can be summarized as follows:
+# スタックポインタ
+スタックポインタは、プロセッサがスーパーファミコンのRAMに存在するスタックの現在位置を特定するために用いられる16-bitレジスタです。
+プッシュを行うごとにスタックポインタは**デクリメント**されていきます。つまり、プッシュは後ろから行われるということです。
+プッシュを行うと、スタックポインタが指すRAMアドレスの内容を書き換えます。
+反対に、プルを行うとスタックポインタは**インクリメント**されていきますが、プルされた値はスタックの中に残り続けます。
+したがって、プルとは単純な数値の読み取りに過ぎません。
+8-bit値を扱う場合、スタックポインタは1インクリメント、または1デクリメントされますが、
+16-bit値を扱う場合には、スタックポインタは2インクリメント、もしくは2デクリメントされます。
+ここまでの内容をまとめてみましょう。
 
-|Operation|Where|Stack pointer modification|
+|操作|操作位置|スタックポインタの増減|
 |-|-|-|
-|Push (8-bit)|Stack pointer location|-1|
-|Pull (8-bit)|Stack pointer location +1|+1|
-|Push (16-bit)|Stack pointer location|-2|
-|Pull (16-bit)|Stack pointer location +1|+2|
+|プッシュ（8-bit）|スタックポインタの位置|-1|
+|プル （8-bit）|スタックポインタの位置+1|+1|
+|プッシュ（16-bit）|スタックポインタの位置|-2|
+|プル（16-bit）|スタックポインタの位置+1|+2|
 
-The stack pointer register assumes that it works with bank $00, regardless of the current value of the data bank register. This means that from the SNES memory mapping point of view, if the stack pointer ever starts pointing to absolute address $8000 or above, it'll start pointing to the ROM. If it points to absolute address $2000 or above, it'll start pointing to the SNES hardware registers. Therefore, the only useable stack area is $000000-$001FFF.
+スタックポインタは、データバンクレジスタの値に関わらず、バンク$00のアドレスを指定します。
+メモリマッピングを考えると、もしスタックポインタが絶対アドレス$8000以上を指している場合、
+スタック操作はROMに対して行われてしまいます。
+同様に、もしスタックポインタが絶対アドレス$2000以上を指している場合、
+スタック操作はハードウェアレジスタに対して行われてしまいます。
+よって、スタックとして使用できる領域は$000000から$001FFFの間に限られます。
 
-The stack doesn't have a defined size. Instead, you, as a programmer, just reserve an area of RAM for the stack you think you need. The reason it doesn't have a defined size is because as long as you keep pushing, the stack pointer keeps decreasing without any set limits. If you push too many values, you might accidentally overwrite other RAM addresses which have other predetermined purposes.
+スタックは予めサイズが決まっていません。代わりに、プログラマが必要と思われる分だけRAMの特定領域をスタック領域として予約しておく必要があります。
+スタックが決まったサイズを持っていない理由は、プッシュを続ける限りスタックポインタの値は際限なく減少し続けるためです。
+もしプッシュを何度も繰り返した場合、意図せずスタック領域外、つまり他の役割を持ったRAM領域の値を書き換えてしまいます。
 
-## Push
-Here is an example of how the stack works from the RAM's point of view, when you push an 8-bit value:
+## プッシュ
+8-bit値をプッシュしたときに、RAMの観点からスタックがどのように動作するかを表してみます。
 ```
          ;Stack: .. 55 55 55 55 55 55 ..
-LDA #$42                            └─Stack pointer points to this value
+LDA #$42                            └─スタックポインタはこの値を示している
 PHA
          ;Stack: .. 55 55 55 55 55 42 ..
-LDA #$AA                         └─Stack pointer now points to this value
+LDA #$AA                         └─スタックポインタはこの値を示すようになった
 PHA
          ;Stack: .. 55 55 55 55 AA 42 ..
-                              └─Stack pointer now points to this value
+                              └─スタックポインタはこの値を示すようになった
 ```
 
-Here is an example of a 16-bit push:
+16-bit値のプッシュは以下のようになります。
 ```
 REP #$20 ;16-bit A mode
          ;Stack: .. 55 55 55 55 55 55 ..
-LDA #$4210                          └─Stack pointer points to this value
+LDA #$4210                          └─スタックポインタはこの値を示している
 PHA
          ;Stack: .. 55 55 55 55 10 42 ..
-LDA #$AA99                    └─Stack pointer now points to this value
+LDA #$AA99                    └─スタックポインタはこの値を示すようになった
 PHA
          ;Stack: .. 55 55 99 AA 10 42 ..
-                        └─Stack pointer now points to this value
+                        └─スタックポインタはこの値を示すようになった
 ```
 
-## Pull
-When you pull something from the stack, it gets pulled from the location of the stack pointer, +1. After each pull, the stack pointer increases depending on the size of the pulled value. You do not literally extract the byte out of the RAM. You just copy the byte to the register you pull it into. The byte in the stack does not reset or anything. It remains the same. 
+## プル
+値をスタックからプルするとき、プルは、スタックポインタが示すアドレス+1のアドレスから行われます。
+プルする値のバイト数に応じて、スタックポインタはプルごとにインクリメントされます。
+なお、プルとは、RAMから値を「取り出す」ことではありません。
+プルは単純に、プル先のレジスタへそのバイトをコピーしているに過ぎないのです。
+プルを行っても、スタック内の数値が初期化されたり消滅したりすることはありません。
 
-Here's an example of pulling an 8-bit value:
+8-bit値のプルは以下のようになります。
 ```
         ;Stack: .. 55 55 12 34 56 78 ..
-                          └─Stack pointer points to this value
+                          └─スタックポインタはこの値を示している
 PLA     ; A is now $34
         ;Stack: .. 55 55 12 34 56 78 ..
-                             └─Stack pointer now points to this value
+                             └─スタックポインタはこの値を示すようになった
 PLA
         ; A is now $56
         ;Stack: .. 55 55 12 34 56 78 ..
-                                └─Stack pointer now points to this value
+                                └─スタックポインタはこの値を示すようになった
 ```
 
-Here's an example of pulling a 16-bit value:
+16-bit値のプルは以下のようになります。
 ```
 REP #$20 ;16-bit A mode
          ;Stack: .. 55 55 12 34 56 78 ..
-                        └─Stack pointer points to this value
+                        └─スタックポインタはこの値を示している
 PLA      ; A is now $3412
          ;Stack: .. 55 55 12 34 56 78 ..
-                             └─Stack pointer now points to this value
+                             └─スタックポインタはこの値を示すようになった
 PLA
          ; A is now $7856
          ;Stack: .. 55 55 12 34 56 78 ..
-                                    └─Stack pointer now points to this value
+                                    └─スタックポインタはこの値を示すようになった
 ```

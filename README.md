@@ -1,13 +1,16 @@
-# Assembly for the SNES
-This is the Git repository of my "Assembly for the SNES" 65c816 ASM tutorial, which is mostly updated and rewritten, compared to the one [hosted at SMW Central](https://www.smwcentral.net/?p=section&a=details&id=14268). The tutorial has been open sourced so that the SNES emulation community may improve upon it. 
+# スーパーファミコンのためのアセンブリ言語
+このGitレポジトリは、筆者が執筆した65C816アセンブリの入門書である『スーパーファミコンのためのアセンブリ言語』のレポジトリです。
+このレポジトリの内容は、[SMW Centralで公開している版](https://www.smwcentral.net/?p=section&a=details&id=14268)よりも頻繁に更新・加筆が行われています。
+本書をスーパーファミコンのエミュレーションコミュニティが改善できるようにするため、筆者は本書をオープンソースとしました。
 
-This online, open-source version of the tutorial can be accessed here: https://ersanio.gitbook.io/assembly-for-the-snes/
+本書のオンライン、かつオープンソース版には以下のリンクからアクセスできます：https://ersanio.gitbook.io/assembly-for-the-snes/
 
-# Code of conduct
-Please open a pull request or an issue in the following situations:
+# 利用規約
+以下のような場合にはPull RequestかIssueを作成してください。
 
-* In case of errors in the chapters
-* In case of (grammatical) improvements upon the chapters
-* In case of newly written chapters
+* 各章の内容に誤りがある場合
+* 各章の内容に（文法的な）改善点がある場合
+* 新しく章を追加する場合
 
-Please provide details as well if possible and necessary. For example, explain why something is an error and if you have verified it or not, or explain why a new chapter is needed.
+もし可能、かつ必要であれば、Pull RequestやIssueには詳細を記述してください。
+例えば、誤りの詳細や、それを何らかの方法によって確認したか、あるいはなぜ新しい章が必要なのかといった内容です。

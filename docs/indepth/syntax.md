@@ -1,10 +1,15 @@
-# Common assembler syntax
-In this chapter, you'll learn the art of proper assembler syntax, so that in theory, you'll can write "relative"-only code. This means that when your code shifts around (by inserting or removing new lines of code), opcodes that make use of addresses and relative addresses, such as branches or jumps, will keep their correct values.
+# 一般的なアセンブラシンタックス
+この章では、適切なアセンブラシンタックスの使い方について学んでいきます。
+これによって、理論上は「相対アドレス」のみを使用してコードを書けるようになるはずです。
+すなわち、コードのアドレスが（行を追加したり削除したりすることによって）変化しても、
+相対アドレスを使用している分岐命令やジャンプ命令が適切な値をオペランドに取ることができる、ということです。
 
-Note that everything discussed here can also be found in Asar's documentation. However, they're important enough topics to be mentioned in this tutorial.
+この章で解説するすべての内容はAsarのドキュメントにも記載されていることに注意してください。
+しかしそれらの内容は、本書で取り上げるに値するほど重要なことなのです。
 
-## Defines
-Defines are basically variable definitions you can use, so your code suffers less from so-called "magic numbers". Here's an example which defines an immediate value:
+## 宣言
+宣言とは、基本的には変数の宣言であり、これを使用することで、いわゆる「マジックナンバー」の出現を抑えられます。
+以下のコードでは、即値を宣言しています。
 
 ```
 !Value = $03
@@ -12,27 +17,35 @@ Defines are basically variable definitions you can use, so your code suffers les
 LDA #!Value
 STA $01
 ```
-Here's an example which defines an address:
+以下のコードでは、アドレスを宣言しています。
+
 ```
 !Address = $01
 
 LDA #$03
 STA !Address
 ```
-Be aware that Asar actually does a simple text search and replace, rather than evaluating the expression in a define. In other words, Asar isn't smart enough to figure out that a define is an "address", "immediate value" or anything else. Here's an example of improper define usage:
+Asarは、実際には宣言の式自体を評価しているわけではなく、単純にコード内のテキストを検索して置換しているに過ぎません。
+つまり、Asarは宣言が「アドレス」なのか「即値」なのかを判断しているわけではないのです。
+よって、以下のコードは不適切な宣言となります。
 
 ```
-!Value = #$03      ; Note the #
+!Value = #$03      ; #を使用している
 
-LDA #!Value        ; A search and replace turns this into "LDA ##$03"
-STA $01            ; Therefore, it will throw an error!
+LDA #!Value        ; 検索と置換によって、このコードは"LDA ##$03"となる
+STA $01            ; よって、エラーが返されてしまう
 ```
 
-## Labels
-As discussed in the [branches](../programming/branches.md) and [subroutines](../programming/subroutine.md) chapters, the SNES processor can make use of labels to determine locations it can jump to. The labels used by the opcodes are replaced by actual values which denote the locations to jump to, either relative or absolute addresses.
+## ラベル
+[分岐](../programming/branches.md)の章や[サブルーチン](../programming/subroutine.md)の章で説明したように、
+スーパーファミコンではジャンプ先の特定にラベルを使用できます。
+オペランドで使用されるラベルは、アセンブル時に実際の値（絶対アドレスか相対アドレス）に置換されます。
 
-### Sublabels
-Sublabels are special type of labels which have a parent label, and are prefixed with a dot ("`.`"), and aren't suffixed with a colon ("`:`"). Sublabels are useful if you tend to use labels which aren't unique (e.g. "return"). Here's an example of a recurring "return" sublabel:
+### サブラベル
+サブラベルは、親ラベルを持つラベルの一種です。
+サブラベルを記述する際にはドット（"`.`"）を前置し、コロン（"`:`"）は後置しません。
+サブラベルは、一意ではないラベル（例えば"return"）を使用したい場合に有用です。
+以下は、"return"というサブラベルを使用した例です。
 
 ```
 JSR Main
@@ -53,12 +66,19 @@ STA $21
 .return
 RTS
 ```
-Sublabels don't have any rules in terms of writing style. You could capitalize or keep it all lowercase. In this example, it's all lowercase.
+サブラベルには定められた命名規則がなく、キャピタルケースで命名しても、あるいはすべて小文字で命名しても構いません。
+上記のコードでは、すべて小文字で命名しています。
 
-### Relative labels
-Relative labels are an alternate solution to sublabels and are often used when the code is already self-documenting enough, for example, when the code needs to skip a single store depending on a branch. It saves you from thinking up a label name, such as "skipstorewhenplayerisbig". Relative labels are written using `+` and `-`. The plus is ahead of the branch instruction, while the minus is behind the branch instruction. They can be repeated as often as needed to denote different levels of depth.
+### 相対ラベル
+相対ラベルはサブラベルの代替となる選択肢で、コード自体が自己説明的である場合によく用いられます。
+例えば、コードが単純なストア命令を分岐によってスキップする必要がある場合などが挙げられます。
+サブラベルを使用することで、"skipstorewhenplayerisbig"といったラベル名を考える手間を省くことができます。
+相対ラベルは`+`もしくは`-`を使用して記述されます。
+プラス記号は分岐命令の後ろに、マイナス記号は分岐命令の前に用いられます。
+これらの記号は、深度に合わせて複数個用いることができます。
 
-Here's an example of relative labels:
+以下は、相対ラベルを使用した例です。
+
 ```
 LDA $10
 BEQ +
@@ -66,15 +86,15 @@ STA $11
 +
 RTS
 ```
-This code skips a single store to `$11` when address `$10` has the value `$00`.
+このコードは、アドレス`$10`が数値`$00`を保持している場合に、`$11`へのストアをスキップします。
 
-Here's another example, demonstrating a backwards branch, causing an infinite loop:
+以下は、無限ループとなる手前方向への分岐の例です。
 
 ```
 - BRA -
 ```
 
-Here's another example, demonstrating different levels of relative label depth:
+以下は、相対ラベルを深度別に使用した例です。
 ```
 LDA $10
 BEQ ++
@@ -87,35 +107,50 @@ STZ $13
 STZ $14
 RTS
 ```
-- If address `$7E0010` has the value `$00`, address `$7E0014` is cleared.
-- If address `$7E0011` has the value `$00`, addresses `$7E0013` and `$7E0014` are cleared
-- Else, addresses `$7E0012`, `$7E0013` and `$7E0014` all are cleared
+- もしアドレス`$7E0010`が数値`$00`を保持しているなら、アドレス`7E0014`は初期化される
+- もしアドレス`$7E0011`が数値`$00`を保持しているなら、アドレス`$7E0013`と`$7E0014`が初期化される
+- 上記のどちらにも当てはまらない場合、アドレス`$7E0012`、`$7E0013`、`$7E0014`がすべて初期化される
 
-## The art of relativity
-It's possible to write programs completely devoid of fixed values and addresses (also known as "magic numbers"), by making smart use of labels and defines outside of branches and jumps. When you use labels with loading instructions, for example, it'll grab the address of the label and use it as a parameter. This was seen in the [indexing](../collections/indexing.md) chapter. However, you can also use labels as values, rather than addresses. This is especially useful when setting up indirect pointers, which is why it's important to be able to grab certain *parts* of an address rather than the full address. This is also demonstrated in the [moves](../collections/moves.md) chapter, in the "Easy notation" section.
+## 相対性
+分岐やジャンプ命令に適切なラベルと宣言を使用することで、固定値やアドレスを直接記述することなく
+（いわゆる「マジックナンバー」を一切使用せずに）プログラムを記述できます。
+ラベルをロード命令で使用した場合、ロード命令はそのラベルをオペランドとして使用し、ラベルが表すアドレスからロード処理が行われます。
+このことについては、[インデックス](../collections/indexing.md)の章で解説しました。
+しかしならがら、ラベルをアドレスではなく数値として用いることも可能です。
+このことは特にインダイレクトポインタを設定する際に有用となります。
+よって、ロングアドレスではなく、アドレスの「一部分」を取り出せるようにすることが重要なのです。
+このことは、[データ転送](../collections/moves.md)の章の『簡単な記法』の項で示されています。
 
-In the following example, an `LDA` loading the address of a label as a value would look like this:
+以下の例では、`LDA`がラベルのアドレスを数値として解釈する例です。
+
 ```
 LDA #somelabel
 STA $00
 ```
-This is problematic, because the label assembles into a 24-bit value which is the address, and there's no LDA which accepts a 24-bit value. Instead, LDA tries to grab the largest possible supported value, thus grabs the high and low byte of the value instead (because it's 16-bit). But what if you're writing 8-bit code at that moment? The code won't run as expected, and will crash.
+このコードには問題があります。なぜなら、ラベルは24-bitのロングアドレスの示す数値としてアセンブルされますが、
+LDAは24-bitの即値をオペランドに取れないからです。
+代わりに、LDAは16-bitモードの場合、オペランドに取ることのできる最大の値を取ろうとして、24-bit値から16-bit値の上位バイトと下位バイトを取り出そうとします。
+もし、このときのアキュムレータが8-bitモードであれば、このコードは期待通りに動作せず、クラッシュしてしまうでしょう。
 
-### Opcode length specifiers
-In order to read a value at a well-defined, fixed width, you can make use of "opcode length specifiers". These are special notations appended to opcodes:
-|Syntax|Definition|Description|
+### オペコード長宣言子
+数値の読み取り幅を規定するには、「オペコード長宣言子」と呼ばれるものを使用します。
+これは特殊な記法で、オペコード長宣言子はオペコードに後置されます。
+
+|記法|宣言|説明|
 |-|-|-|
-|.b|byte (8-bit)|Forces the parameter to be 8-bit|
-|.w|word (16-bit)|Forces the parameter to be 16-bit|
-|.l|long (24-bit)|Forces the parameter to be 24-bit|
+|.b|バイト（8-bit）|オペランドを8-bitに強制する|
+|.w|ワード（16-bit）|オペランドを16-bitに強制する|
+|.l|ロング（24-bit）|オペランドを24-bitに強制する|
 
-In the previous example, you can force the assembler to use the low bytes of the label only, by using `.b`:
+例えば上記の例において、オペコード長宣言子`.b`を使用することで、アセンブラがラベルの下位バイトのみを使用するように強制できます。
+
 ```
 LDA.b #somelabel
 STA $00
 ```
 
-The same applies to defines. You can use defines as values, and by using an opcode length specification, you can only grab certain parts of the defines rather than the full value. For example:
+これは宣言においても当てはまります。
+具体的には、宣言を行った上でオペコード長宣言子を使用することで、宣言の値全体ではなく値の一部分のみを利用できます。
 
 ```
 !Size = $7FFF
@@ -123,62 +158,70 @@ The same applies to defines. You can use defines as values, and by using an opco
 LDA #!Size
 STA $00
 ```
-This would assemble as:
+このコードは、以下のようにアセンブルされます。
 ```
 LDA #$7FFF
 STA $00
 ```
-This would be problematic in 8-bit mode, as this assembles in 16-bit mode. To fix this problem, you can use `.b`:
+このコードは、アキュムレータを16-bitモードとして扱っているため、実際のアキュムレータが8-bitモードのとき、エラーとなります。
+この問題を解決するために`.b`を使用できます。
+
 ```
 !Size = $7FFF
 
 LDA.b #!Size
 STA $00
 ```
-This would assemble as:
+このコードは以下のようにアセンブルされます。
 ```
 LDA #$FF
 STA $00
 ```
 
-### Bitshifts
-Expanding upon the previous example:
+### 論理シフト
+上記のコードを拡張してみましょう。
 ```
 !Size = $7FFF
 
 LDA.b #!Size
 STA $00
 ```
-If you wanted to store the high byte of this define in address `$7E0001`, instead of the low byte, you'd need a way to grab *only* the high byte of the definition. In order to do that, you'll have to use bitshifts:
-|Syntax|Definition|Description|
-|-|-|-|
-|>>|Shift right|Shifts bits right n times|
-|<<|Shift left|Shifts bits left n times|
+もし、宣言の下位バイトではなく上位バイトをアドレス`$7E0001`にストアしたい場合、
+宣言の上位バイト**のみ**を取得する必要があります。
+このためには、論理シフトを利用する必要があります。
 
-Remember that a byte consists of 8 bits, thus you need to "skip" 8 bits to grab the next 8 bits we need. By bitshifting 8 times to the right, you discard the low byte of the value:
+|記法|宣言|説明|
+|-|-|-|
+|>>|右シフト|右論理シフトをn回実行する|
+|<<|左シフト|左論理シフトをn回実行する|
+
+既に学習した通り、1バイトは8ビットであるため、16-bit値の上位8ビットを取得するためには下位8ビットを「スキップする」必要があります。
+右論理シフトを8回行うことで、数値の下位バイトを破棄できます。
 
 ```
 !Size = $7FFF
 
-LDA.b #!Size>>8    ; Only $7F remains
+LDA.b #!Size>>8    ; 下位バイトに$7Fだけが残る
 STA $01
 ```
-Bitshifts are incredibly valuable when grabbing certain portions of addresses or values. They can also be used on labels, and thus, you can also grab bank bytes:
+アドレスや数値の特定部分のみを取得したい場合、論理シフトは非常に有用となります。
+この操作はラベルに対しても行えるため、バンクのみの取得も可能になります。
 
 ```
-LDA.b #somelabel>>16 ; Grab the bank byte of a label
+LDA.b #somelabel>>16 ; ラベルのバンクを取得する
 STA $01
 ```
-The same goes for defines:
+同じことが宣言においてもいえます。
 ```
 !Address = $7E8000
 
-LDA.b #!Address>>16 ; Grab $7E of the define
+LDA.b #!Address>>16 ; 宣言の値の$7E部分のみを取得する
 STA $02
 ```
 
-### Constructing addresses
-By making use of bitshifts and opcode length specifiers, it's possible to supply addresses to certain subroutines, or as indirect addresses. Here's an example which constructs an indirect address:
+### アドレスの構成
+論理シフトとオペコード長宣言子を使用することで、特定のサブルーチンを指定するアドレスやインダイレクトアドレスを構成することが可能になります。
+以下のコードでは、インダイレクトアドレスを構成しています。
 
 ```
 LDA.b #Sometable
@@ -192,15 +235,16 @@ RTS
 
 Sometable: db $01,$02,$04,$08
 ```
-### Table sizes
-There are situations where it's handy to know the size of tables, such as for [moves](../collections/moves.md). To get the size of a table, you put a label at both begin and end of a table, such as this:
+### テーブル長
+[データ転送命令](../collections/moves.md)のように、テーブルの大きさを知ることが重要となる場面が存在します。
+テーブルのサイズを取得するためには、テーブルの最初と最後にラベルを配置します。
 
 ```
 Sometable: db $01,$02,$04,$08
 .end
 ```
 
-Then, by using the subtract operator, "`-`", you subtract the starting and the ending address of the table, effectively getting the size of the table. For example:
+次に、減算子"`-`"を使用し、テーブルの開始アドレスと終了アドレスの差を取ることでテーブルの大きさを取得できます。
 
 ```
 LDA.b #Sometable_end-Sometable ; #$04
@@ -210,4 +254,4 @@ RTS
 Sometable: db $01,$02,$04,$08
 .end
 ```
-Note that it's important to use opcode length specifiers, as we're still dealing with labels, thus, 24-bit values.
+ラベルを取り扱っているため、オペコード長宣言子を使用しなければ、得られる値が24-bit値になってしまうことに注意してください。

@@ -1,31 +1,40 @@
-# Tables and indexing
-Indexing is the act of accessing a collection of data from a certain offset, that offset being determined by an indexer. The registers X and Y are unmissable when it comes to indexing. They're called the "index" registers, after all.
+# テーブルとインデックス
 
-## Tables
-"Tables" are simply a sequence of values. They are used in at least two cases:
-* Conditional cases (e.g. a collection of speed values, depending on the entity's direction)
-* Values that represent an "asset" (e.g. graphics data, music data, level data)
+インデックスとは、データの集合に対して特定のオフセットからアクセスすることで、そのオフセットはインデックスによって決定されます。
+XレジスタとYレジスタはインデックスにおいて欠かせない重要な要素であり、これらは「インデックス」レジスタと呼ばれています。
 
-Tables have very practical applications in SNES games. You can, for example, store text data in tables. Or level data. Or palette data. Tables can contain anything and can have any size, as long as they fit within the ROM.
+## テーブル
+「テーブル」とは、単純な数値列です。テーブルは、最低でも以下のような2つの場合に用いられます。
+* 条件に応じた数値を返却したい場合（例えば、エンティティの向きに応じた速さの値の集合）
+* 「アセット」を表す数値群（例えば、グラフィックデータや音楽データ、コースデータ）
 
-There are four types of values which you can use to write tables:
-|Instruction|Full name|Explanation|
+テーブルは、スーパーファミコンのゲームにおいて非常に実用的な形で使用されています。
+例えば、テキストデータをテーブル内に保存する、といったようなものです。
+あるいは、コースのデータ、パレットデータなどにもテーブルが用いられています。
+ROMの容量にさえ収まれば、テーブルはどのような大きさのどのようなデータも取ることができます。
+
+テーブルには、以下の4種類の数値を記述できます。
+
+|命令|正式名称|説明|
 |-|-|-|
-|**db**|direct byte|A value denoting a byte (8-bit value, e.g. $XX)|
-|**dw**|direct word|A value denoting a word (16-bit value, e.g. $XXXX)|
-|**dl**|direct long|A value denoting a long (24-bit value, e.g. $XXXXXX)|
-|**dd**|direct double|A value denoting a double (32-bit value, e.g. $XXXXXXXX)|
+|**db**|direct byte|バイトを表す数値（つまり、$XXのような8-bit値）|
+|**dw**|direct word|ワードを表す数値（つまり、$XXXXのような16-bit値）|
+|**dl**|direct long|ロングを表す数値（つまり、$XXXXXXのような24-bit値）|
+|**dd**|direct double|ダブルを表す数値（つまり、$XXXXXXXXのような32-bit値）|
 
-Here's an example of a table definition:
+テーブルは以下のように宣言します。
+
 ```
 ValuesTableExample: db $11,$86,$91,$38,$22
 ```
-As you can see, we first define the value type as "byte" by writing `db`. Then, we follow with byte-values, seperated by a comma (,).
+このように、テーブルの最初に`db`を記述することで、テーブル内の数値が「バイト」であることを宣言し、バイト値をコンマ（,）で繋げて記述していきます。
 
-In order to access a table, we always use a label. In this case, we used the label `ValuesTableExample`.
+テーブルにアクセスするにはラベルを使用します。今回はラベル`ValuesTableExample`を使用しています。
 
-## Indexing
-Tables can be accessed using a label. Labels are translated into ROM addresses, after all. Expanding on above table example, the following code would read out a value from the table:
+## インデックス
+テーブルにはラベルを用いてアクセスできます。ラベルはアセンブル時にROMアドレスへ変換されます。
+上で紹介したテーブルを用いたコードを拡張してみましょう。
+以下のコードはテーブルから数値を読み取ります。
 
 ```
 LDA ValuesTableExample
@@ -34,28 +43,38 @@ RTS
 
 ValuesTableExample: db $11,$86,$91,$38,$22
 ```
-However, what this code does is always reading the first value in that table, the value $11, and storing it into RAM $7E0000. This is because we haven't used any indexer.
+しかし、このコードは、テーブルの最初の値である$11を読み取って、それをRAM$7E0000にストアするだけです。
+なぜなら、この例ではインデックスを使用していないからです。
 
 ```
-LDY #$03           ; Y is now loaded with the number $03
-LDA ValuesTableExample,y ;Load a number from the table into A, using Y as index
+LDY #$03           ; Yレジスタに数値$03をロードする
+LDA ValuesTableExample,y ; インデックスYを使用してテーブルから値を読み取る
 STA $00
 RTS
 
 ValuesTableExample: db $11,$86,$91,$38,$22
 ```
-The code will load a value from the table into A. Basically, this does `LDA ValuesTableExample`, and the value in Y, which is $03, is added to the address. In other words, in higher-level programming languages it'd be something like `ValuesTableExample[3]`. You start counting index from **zero**. Index 0 of that table has the value $11, index 1 has the value $86, and so on. Index 3 has the value $38 in this case, so this code example actually loads $38 in A, and stores it in RAM $7E0000.
+このコードは、テーブルから値を読み取って、その値をアキュムレータにロードします。
+この例では、`LDA ValuesTableExample`で指定されたアドレスにYレジスタの値である$03を加えたアドレスから数値を読み取ります。
+これは、高級言語における`ValuesTableExample[3]`のような記述に相当するものです。
+インデックスは**0**から始まるので、0ではテーブルから数値$11を、1では数値$86を読み取ります。
+インデックスが3のときの数値は$38になるので、この例ではアキュムレータに$38をロードして、それをRAM$7E0000にストアすることとなります。
 
-Indexing is quite useful when you don't want to write very repetitive instructions all the time. Indexing can be performed with the X register too. X and Y behave exactly the same, after all.
+インデックスを用いることで、同じような処理を何度も記述する必要がなくなるので、インデックスは非常に有益な手段になります。
+XレジスタとYレジスタは同じように動作するので、インデックスにはXレジスタを用いることもできます。
 
-Indexing is actually one of the many addressing modes. The basic addressing modes are covered [here](../the-basics/addressing.md) and the more advanced addressing modes [here](../indepth/addressing.md).
+実際には、インデックスとは数あるアドレッシングモードのうちのひとつに過ぎません。
+基本的なアドレッシングモードは[この章で](../the-basics/addressing.md)、
+より発展的なアドレッシングモードは[この章で](../indepth/addressing.md)解説しています。
 
-## Indexing with RAM
-So far, the above examples were about ROM. You can also index values in RAM. You can treat the RAM as one giant table you could index. You simply replace the label with an address. For example:
+## RAMに対するインデックス
+ここまでのコード例ではROMに対するインデックスを行ってきましたが、RAMに対してもインデックスを用いることが可能です。
+RAMとはインデックスが可能な巨大なテーブルであると考えても良いでしょう。
+この場合は、ラベルをアドレスに置き換えるだけです。
 
 ```
 LDX #$03
 LDA $7E1000,x
 STA $00
 ```
-In this case, the LDA would resolve into address `$7E1003`. The code loads $7E1003's value into A, and stores it into $7E0000.
+この例では、LDAはアドレス`$7E1003`に解決されるので、このコードはアキュムレータに$7E0003の値をロードし、それを$7E0000にストアすることになります。

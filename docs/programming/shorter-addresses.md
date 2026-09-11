@@ -1,10 +1,23 @@
-# Shorter addresses
-It's possible to shorten addresses, but there are prerequisites. 
+# アドレスの短縮
 
-In order to shorten a long RAM address into an absolute (4-digit) address, the address has to be between $7E0000-$7E1FFF. $7E1234 can be shortened to $1234 for example. If you shorten address $7E2000 or higher into a 4-digit address, you'll write to areas other than the RAM. It has to do with the data bank register and the SNES memory map.
+アドレスの表記は短縮できますが、それには前提条件が必要となります。
 
-If you want to shorten long RAM addresses to a direct page (2-digit) address, the high and low bytes of the long address must never exceed the value $00FF. The address you want to store to must be in bank $00 or $7E. So you can shorten `LDA $7E0001` to `LDA $01` and `STA $000001` to `STA $01`. 
+RAMのロングアドレスを絶対アドレス（4桁）に短縮するには、
+そのアドレスが$7E0000から$7E1FFFの範囲でなければなりません。
+例えば、$7E1234は$1234と短縮できます。
+もし、ストアのコード内で$7E2000や、それより大きいアドレスを短縮してしまった場合、それはRAM以外の領域へのストア命令となってしまいます。
+このことは、データバンクレジスタとメモリマップに関係しています。
 
-It's often necessary to write shorter addresses as parameters, as certain opcodes don't support certain addressing modes. For example, the STZ opcode does not support long addresses, so you can't write `STZ $7E1234`. You'll have to write `STZ $1234` instead.
+RAMのロングアドレスをダイレクトページアドレス（2桁）に短縮するには、そのロングアドレスの上位バイトと下位バイトが$00FF以下でなければなりません。
+また、ストア先のアドレスのバンクは$00もしくは$7Eである必要があります。
+したがって、`LDA $7E0001`は`LDA $01` に、`STA $000001`は`STA $01`に短縮できます。
 
-Keep in mind that when you use 2 digits for loading and storing, the bank is always $00 by default, regardless of the data bank! You can use 2-digit addresses for RAM addresses $7E0000-$7E00FF, because RAM $7E0000-$7E1FFF is mirrored in banks $00-$3F by default.
+こうした短縮形式のアドレスは、オペランドでよく必要とされます。
+なぜならば、特定のオペコードは特定のアドレッシングモードを取らないからです。
+例えば、オペコードSTZはロングアドレス形式のアドレッシングモードに対応していないため、`STZ $7E1234`のように記述することはできません。
+この場合、`STZ $1234`と記述する必要があります。
+
+また、ロードやストアを実行する際に2桁のアドレス形式を用いようとする場合、そのバンクは必ず$00であり、
+データバンクレジスタの数値には依存しないという点に注意してください。
+2桁のアドレス形式は、RAMアドレス$7E0000から$7E00FFまでの範囲において使用可能ですが、
+これは、RAM$7E0000から$7E1FFFがバンク$00から$3Fまでにおいて標準的にミラーされているためです。

@@ -1,85 +1,91 @@
-# Contributing
-This chapter concerns the writers of this tutorial. When writing, there are a few standards to follow in order to maximize consistency throughout the tutorial.
+# コントリビュート
+この章では、本書のコントリビュータに向けた注意事項を共有します。
+解説を記述する際には、解説内の一貫性を保つため、いくつかの標準的な記法に従ってください。
 
-## Address explanations
-This section concerns the way addresses are written, as to avoid confusion.
+## アドレスの表現
+この項では、混乱を避けるためのアドレスの記述方法について説明します。
 
-### Direct page
-- For the sake of simplicity and explanation, all direct page addresses ("`$xx`") shall use address `$7E0000` as its base. This shall be emphasized in code block comments, as well as explanations.
+### ダイレクトページアドレス
+- 簡潔さと分かりやすさを保つため、すべてのダイレクトページアドレス（"`$xx`"）はアドレス`$7E0000`を基底としてください。
+このことは、コードブロック内、および説明文でも強調してください。
 
-Example:
+例：
 ```
 LDA #$42
-STA $08            ; Store the value $42 into address $7E0008
+STA $08            ; 数値$42をアドレス$7E0008にストアする
 ```
 
-### Absolute addressing
-- All absolute addresses ("$xxxx") use address `$7E0000` as its base, if the address is between $0000-$7FFF inclusive. For addresses between $8000-$FFFF, address `$000000` shall be used as its base instead. This shall be emphasized in code block comments, as well as explanations.
+### 絶対アドレス
+- すべての絶対アドレス（"$xxxx"）は、そのアドレスが$0000から$7FFFの範囲にある場合、アドレス`$7E0000`を基底としてください。
+アドレスが$8000から$FFFFの範囲にある場合、アドレス`$000000`を基底としてください。
+このことは、コードブロック内、および説明文でも強調してください。
 
-Example:
+例：
 ```
-LDA $8002            ; Load the value at address $008002 into A
-STA $1008            ; Store that value into address $7E1008
+LDA $8002            ; アドレス$008002の値をアキュムレータにロードする
+STA $1008            ; その値をアドレス$7E1008にストアする
 ```
 
-## Styling
-This section concern the styling of the document.
+## 書式
+この項では、ドキュメントの書式について説明します。
 
-### Inline code
-- All opcodes and instructions shall be surrounded by the markdown backtick (`), regardless of the context.
+### インラインコード
+- 文脈に関わらず、すべてのオペコードと命令をマークダウンのバックティック（`）によって囲んでください。
 
-Example: The opcode `LDA` is used to load values into the A register. Thus, `LDA #$49` loads the value $49 into A. This then can be increased to the value $4A by using `INC A`.
+例：オペコード`LDA`はアキュムレータに数値をロードする場合に使用します。したがって、`LDA #$49`はアキュムレータに数値$49をロードします。
+この数値は、`INC A`によって$4Aへインクリメントできます。
 
-### Markdown tables
-- Sentences and phrases within table cells generally shouldn't end with a period.
-- Tables introducing opcodes should have the opcodes in **bold** and have at least the three columns in below example:
+### マークダウンテーブル
+- 表のセル内に記述する文章は、読点を付けずに終了してください
+- オペコードを紹介する表においては、オペコードは**太字**で記述し、表は最低3列で構成してください。
 
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**LDA**|Load into accumulator|Load a value into A|
+|**LDA**|Load into accumulator|アキュムレータに値を読み込む（ロードする）|
 
-## Terminology
-This section concerns the usage of certain words in certain context.
+## 用語
+この項では、特定の文脈における特定の語の使用について説明します。
 
-|Rule|Example|
+|ルール|例|
 |-|-|
-|When referring to the `Ricoh 5A22` processor, use `the SNES` instead|`The SNES` is capable of entering 8-bit or 16-bit mode|
-|When referring to a specific area in the SNES memory, always prepend `address` to it, preferably with the memory area (i.e. `RAM`)|(The) `RAM address` $7E0000 contains [...]|
-|When referring to the accumulator (A) or the index registers (X and Y), just use `A`, `X` or `Y`|`A` is now in 8-bit mode. `X` is used to index addresses|
+|`Ricoh 5A22`プロセッサについて言及する際は、`スーパーファミコン`の語を代わりに使用してください|`スーパーファミコン`は、8-bitモード、もしくは16-bitモードを取ることができる|
+|スーパーファミコンの特定のメモリ領域について言及する際は、必ず`アドレス`の語を前置し、可能であれば、そのメモリ領域を示してください（例えば`RAM`）|`RAMアドレス`$7E0000は[...]を保持している|
+|アキュムレータ、もしくはインデックスレジスタに言及する際は、単に`アキュムレータ`、`Xレジスタ`、`Yレジスタ`と表現してください|`アキュムレータは`現在8-bitモードである。`Xレジスタ`はアドレスをインデックスするために用いられている|
 |When referring to values, always prepend `value` to it|A contains the `value` $00|
 
-## Example codes
-- Code shall use indentation when there are labels, sublabels or plus/minus labels on the same line as an instruction. The amount of indentation equals the length of the longest aforementioned type of label in the code block, including colon ("`:`"), plus two additional spaces.
-  - Code shall use whitespace for indentation, not tabs.
-- Opcodes are written entirely in uppercase (e.g.: `LDA`).
-- Labels are written in PascalCase (e.g.: `Label1:`).
-- Sublabels are written entirely in lower, underscore-case and the name should semantically suit the parent label, without redundancy (e.g.: `.return`).
-- Defines are written in PascalCase (e.g.: `!SomeDefine`).
-- Direct data (`db`, `dw`, `dl`, `dd`), indexers (`,x`, `,y`, `,s`) and opcode length specifiers (`.b`, `.w`, `.l`) are written entirely in lowercase.
-- Comment indicators (i.e. `;`) shall start on column 20, and left-padded by whitespace, not tabs.
-    - If there's no space for a comment on column 20, it should start on the same line anyway.
-- In fact, never use tabs.
-- Comment indicators shall be followed by a whitespace, before the comment itself.
-- There will be an extra new line after the opcodes `RTS`, `RTL`, `RTI`, `JMP`, `JML`, `BRA`, `BRL`.
-- These are guidelines which are to be followed as strictly as possible, but there may be exceptional cases. Use your best judgment.
+## コード
+- 命令と同じ行にラベル、サブラベル、プラス・マイナス記号のラベルが存在する場合には、コード部分はインデントしてください。インデント幅は前述したラベルのうち最も長いラベルに合わせてください。コロン（`:`）を使用している場合には、コロンの後に半角スペースを2つ挿入した長さを用いてください。
+  - インデントにはタブではなく半角スペースを用いてください。
+- オペコードはすべて大文字で記述してください（例：`LDA`）。
+- ラベルはパスカルケースで記述してください（例：`Label1:`）。
+- サブラベルはすべて小文字のアンダースコアケースで記述し、かつ、その名前は冗長性がないようにして、親ラベルに意味的に適合するようにしてください（例：`.return`）。
+- 宣言はパスカルケースで記述してください（例：`!SomeDefine`）。
+- ダイレクトデータ（`db`, `dw`, `dl`, `dd`）、インデックス（`,x`, `,y`, `,s`）、
+オペコード長指定子（`.b`, `.w`, `.l`）はすべて小文字で記述してください。
+- コメント記号（例：`;`）は20列目から開始し、タブではなく半角スペースによって左詰めしてください。
+  - もし20列目に空きがない場合でも、コメントは同じ行に記述してください。
+- タブを使用しないでください。
+- コメント記号とコメントそのものの間には半角スペースを挿入してください。
+- オペコード`RTS`、`RTL`、`RTI`、`JMP`、`JML`、`BRA`、`BRL`の後には空白行を挿入してください。
+- これらは可能な限り守られるべき標準的な規則ですが、例外的な場合には最良の判断によって対応してください。
 
-Examples:
+例：
 ```
-SomeLabel:         ; This label is on its own line
+SomeLabel:         ; このラベルは単独の行にある
 LDA.b #$42
-STA $00            ; This is a comment
+STA $00            ; これがコメントです
 RTS
 
 .table:
-db $01,$02,$03,$04 ; Another comment
+db $01,$02,$03,$04 ; 別のコメント
 
 .second_table:
-db $01,$02,$03,$04,$01,$02,$03,$04 ; An exceptional comment
+db $01,$02,$03,$04,$01,$02,$03,$04 ; コメントのルールの例外
 ```
 ```
-TestLabel:  LDA #$02 ; This label is on the same line as an instruction
+TestLabel:  LDA #$02 ; ラベルと命令が同じ行にある
             STA $01
             BNE +
             NOP
-+           RTS      ; The code is indented according to "TestLabel", not "+"
++           RTS      ; このコードは"+"ではなく"TestLabel1"に対応している
 ```

@@ -1,74 +1,84 @@
-# Bit shifting operations
-"Bit shifting" is a bitwise operation in which you move bits left or right. As a result, practically speaking, you divide or multiply a number by two.
+# ビットシフト
+「ビットシフト」とは、数値の各ビットを左にずらす、もしくは右にずらすことを表します。
+結果として、実際的には数値を2で掛けたり割ったりすることと同じことになります。
 
-## ASL and LSR
-There are two opcodes which shift bits to the left or right.
+## ASL・LSR
+左右へ論理シフトを行う2つのオペコードを紹介します。
 
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**ASL**|A or memory shift left|Moves bits left once without carry, practically multiplying a value by 2|
-|**LSR**|A or memory shift right|Moves bits right once without carry, practically dividing a value by 2|
+|**ASL**|A or memory shift left|繰り上がり無しで左シフトする。結果は数値を2で掛けた場合と同じになる|
+|**LSR**|A or memory shift right|繰り上がり無しで右シフトする。結果は数値を2で割った場合と同じになる|
 
-ASL and LSR can affect either A or an address, just like INC and DEC. Here's an example of ASL in action:
-
-```
-LDA #$02           ; Load the value $02 into A
-ASL A              ; Multiply A by 2
-                   ; A is now $04
-```
-
-This is what appears on the surface. When you look at the numbers in binary though, this is what it looks like:
+ASLとLSRはアキュムレータとアドレスのどちらに対しても実行できます。INCやDECと同じですね。
+以下は、ASLを用いた例です。
 
 ```
-LDA #$02           ; Load the value %00000010 into A
-ASL A              ; Shift bits left once
-                   ; A is now %00000100
-```
-As you can see, the digit "1" has moved to the left once. That is what ASL does, moving bits left.
-
-ASL can also move bits in an address without affecting A.
-
-```
-LDA #$02           ; Load the value $02 into A
-STA $00            ; Store this into address $7E0000
-ASL $00            ; Shift bits of $7E0000 left once
-                   ; A is still $02, while $7E0000 is now $04
+LDA #$02           ; 数値$02をアキュムレータにロードする
+ASL A              ; アキュムレータを2倍する
+                   ; アキュムレータは$04になる
 ```
 
-You can also shift bits to the right by using LSR.
+これが表面上の挙動です。一方、2進数の世界ではどのようなことが起こっているのでしょうか。
 
 ```
-LDA #$02           ; Load the value $02 into A
-LSR A              ; Divide A by 2
-                   ; A is now $01
+LDA #$02           ; 数値%00000010をアキュムレータにロードする
+ASL A              ; 左論理シフトを1回実行する
+                   ; アキュムレータは%00000100になる
 ```
+ここで分かる通り、"1"になっている位が左にずれていますね。
+これこそが、ASLの挙動、つまり左論理シフトなのです。
 
-And when you look at it on the level of binary, rather than hexadecimal:
-
-```
-LDA #$02           ; Load the value %00000010 into A
-LSR A              ; Shift bits right once
-                   ; A is now %00000001
-```
-As you can see, the digit "1" has moved to the right once. That is what LSR does, moving bits right.
-
-LSR can also move bits in an address without affecting A.
+また、ASLはアキュムレータを変更せずに実行することもできます。
 
 ```
-LDA #$02           ; Load the value $02 into A
-STA $00            ; Store this into address $7E0000
-LSR $00            ; Shift bits of $7E0000 right once
-                   ; A is still $02, while $7E0000 is now $01
+LDA #$02           ; 数値$02をアキュムレータにロードする
+STA $00            ; その数値をアドレス$7E0000にストアする
+ASL $00            ; $7E0000を左論理シフトする
+                   ; アキュムレータは$02のままだが、$7E0000は$04になる
 ```
 
-### Edge-cases and carry flag
-You might be wondering what happens if you bit shift `%1000 0001` to the right once, by using LSR. Bit 7 is currently set, but there's nothing to shift into bit 7. At the same time, bit 0 is also set, but it has nowhere to shift into. When this happens, bit 0 will move into the carry flag. At the same time, bit 7 will be set to 0.
+右論理シフトはLSRで行えます。
 
-The opposite is also true when you shift `%1000 0001` to the left once, by using ASL. Bit 7 will move into the carry flag, while bit 0 will be set to 0.
-
-Here are some examples of a bit moving into the carry flag.
 ```
-CLC                ; Ensuring carry (C) = 0
+LDA #$02           ; アキュムレータに数値$02をロードする
+LSR A              ; アキュムレータを2で割る
+                   ; アキュムレータは$01になる
+```
+
+一方、2進数の世界では、以下のようなことが起きています。
+
+```
+LDA #$02           ; アキュムレータに数値%00000010をロードする
+LSR A              ; 右論理シフトを1回実行する
+                   ; アキュムレータは%00000001になる
+```
+
+ここで分かる通り、"1"になっている位が右にずれていますね。
+これこそが、LSRの挙動、つまり右論理シフトなのです。
+
+また、LSRはアキュムレータを変更せずに実行することもできます。
+
+```
+LDA #$02           ; アキュムレータに数値$02をロードする
+STA $00            ; この数値をアドレス$7E00000にストアする
+LSR $00            ; $7E0000を右論理シフトする
+                   ; アキュムレータは$02のままだが、$7E0000は$01になる
+```
+
+### 特殊な場合とキャリーフラグ
+`%1000 0001`をLSRで右論理シフトした場合の結果が気になった方もいらっしゃるでしょう。
+このケースでは、7ビット目がセットされており、7ビット目へシフトするものはありません。
+同時に、0ビット目もセットされており、このビットのシフト先はありません。
+このような場合、0ビット目はキャリーフラグへシフトされ、ビット7には0がセットされます。
+
+反対のことが、`%1000 0001`をASLで左シフトする場合にもいえます。
+このとき、7ビット目がキャリーフラグへシフトされ、0ビット目には0がセットされます。
+
+ビットがキャリーフラグへシフトされる例を紹介します。
+
+```
+CLC                ; C = 0
 LDA #$80           ; A = %1000 0000 | C = 0
 ASL A              ; A = %0000 0000 | C = 1
 ASL A              ; A = %0000 0000 | C = 0
@@ -81,74 +91,79 @@ LSR A              ; A = %0000 0000 | C = 1
 LSR A              ; A = %0000 0000 | C = 0
 ```
 
-### Chaining ASL and LSR
-By chaining ASL and LSR, you can multiply or divide a value by 2 several times, therefore multiplying or dividing it by 2, 4, 8, 16, and so on. It's 2ⁿ, where n is the amount of ASL or LSR instructions you're chaining.
+### ASLとLSRの連続実行
+ASLやLSRを連続して実行することで、数値を何回かにわたって2倍、もしくは半分にできます。
+つまり、乗数や除数が2、4、8、16といった数、一般化すれば、nをASL・LSRの回数として2ⁿの乗算と除算が可能になります。
 
-Here's an example of multiplying a value by 8.
+以下のコードでは、数値を8倍しています。
 
 ```
-LDA #$07           ; A is now $07 = %0000 0111
-ASL A              ; A is now $0E = %0000 1110
-ASL A              ; A is now $1C = %0001 1100
-ASL A              ; A is now $38 = %0011 1000
-                   ; This is basically $07 * 2³
+LDA #$07           ; アキュムレータは$07 = %0000 0111
+ASL A              ; アキュムレータは$0E = %0000 1110
+ASL A              ; アキュムレータは$1C = %0001 1100
+ASL A              ; アキュムレータは$38 = %0011 1000
+                   ; つまり、$07 * 2³と同じことである
 ```
 
-Here's an example of dividing a value by 4
+以下のコードでは、数値を4で割っています。
 ```
-LDA #$07           ; A is now $07 = %0000 0111
-LSR A              ; A is now $03 = %0000 0011
-LSR A              ; A is now $01 = %0000 0001
-                   ; This is basically $07 / 2²
+LDA #$07           ; アキュムレータは$07 = %0000 0111
+LSR A              ; アキュムレータは$03 = %0000 0011
+LSR A              ; アキュムレータは$01 = %0000 0001
+                   ; つまり、$07 / 2²と同じことである
 ```
 
-## ROL and ROR
-There are two opcodes which *rotate* bits to the left or right, rather than shifting.
+## ROL・ROR
+論理シフトではなく、左右へビット**ローテート**を行う2つのオペコードを紹介します。
 
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**ROL**|Rotate A or memory left|Moves bits left once with carry, wrapping the bits around|
-|**ROR**|Rotate A or memory right|Moves bits right once with carry, wrapping the bits around|
+|**ROL**|Rotate A or memory left|繰り上がり付きで左ローテートする|
+|**ROR**|Rotate A or memory right|繰り上がり付きで右ローテートする|
 
-They behave the same as LSR and ASL, except they are using the carry flag as an extra bit in order to make the bits "wrap" around. This means that the value can't be "stuck" at $00 eventually, like it happens in ASL and LSR. This is why they're called rotate, rather than shift.
+これらのオペコードは、ビットの「巻き戻り」を可能にとするためにキャリーフラグを拡張ビットとして用いている、という点を除いてLSRやASLと同じです。
+つまり、ASLやLSRのように、何度も実行すると実行結果が$00から「動かなくなってしまう」、ということが起きない、ということです。
+このため、ROLやRORの操作はシフトではなくローテートと呼ばれています。
 
-Here's an example of ROL:
+以下はROLを用いた例です。
 ```
-CLC                ; Ensuring carry (C) = 0
+CLC                ; C = 0
 LDA #$80           ; A = %1000 0000 | C = 0
 ROL A              ; A = %0000 0000 | C = 1
 ROL A              ; A = %0000 0001 | C = 0
-                   ; A is now $01
+                   ; アキュムレータは$01になる
 ```
-As you can see, bit 7 wrapped all the way around to bit 0, basically "rotating" the bits without losing any information.
+ここから分かる通り、7ビット目の1が最終的にビット0へ戻ってきており、この1という情報は失われていません。
 
 ```
 CLC                ; C = 0
 LDA #$01           ; A = %0000 0001 | C = 0
 ROR A              ; A = %0000 0000 | C = 1
 ROR A              ; A = %1000 0000 | C = 0
-                   ; A is now $80
+                   ; アキュムレータは$80になる
 ```
-As you can see, bit 0 wrapped all the way around to bit 7, basically "rotating" the bits without losing any information.
+ここから分かる通り、0ビット目の1が最終的に7ビット目へ戻ってきており、この1という情報は失われていません。
 
 ```
 SEC                ; C = 1
 LDA #$00           ; A = %0000 0000 | C = 1
 ROL A              ; A = %0000 0001 | C = 0
-                   ; A is now $01
+                   ; アキュムレータは$01になる
 ```
-As you can see, you can set the carry flag and rotate. This will result in A being modified anyway, even though A started out as $00.
+このコードでは、キャリーフラグをセットしてローテートを実行しています。
+この場合、アキュムレータは元々$00であったにも関わらず、ローテート結果はアキュムレータの値を変更します。
 
-Rotation can also affect addresses, just like ASL and LSR. Here's an example:
+ASLやLSRと同じく、以下のようにローテート操作をアドレスに対して実行することもできます。
 
 ```
-CLC                ; Clear carry
-LDA #$02           ; Load the value $02 into A
-STA $00            ; Store this into address $7E0000
-ROR $00            ; Shift bits of $7E0000 right once
-                   ; A is still $02, while $7E0000 is now $01
-                   ; and carry is still cleared
+CLC                ; キャリーフラグをクリアする
+LDA #$02           ; 数値$02をアキュムレータにロードする
+STA $00            ; この数値をアドレス$7E0000にストアする
+ROR $00            ; $7E0000を右ローテートする
+                   ; アキュムレータは$02のままだが、$7E0000は$01になる
+                   ; キャリーフラグはクリアされる
 ```
 
-## 16-bit mode bit shifting
-All the previous explanations and behaviours apply to 16-bit bit shifting as well. It's just that you're working with 16 bits and the carry flag, not 8 bits.
+## 16-bitモードにおける論理シフト
+この章におけるすべての説明は16-bitモードにおける論理シフト・ビットローテートにおいても当てはまります。
+単純に、16のビットとキャリーフラグに対して操作が行われるだけです。

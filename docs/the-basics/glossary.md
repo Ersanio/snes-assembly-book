@@ -1,29 +1,31 @@
-# Glossary
-Here are some definitions of the most commonly used terms throughout the tutorial. For the sake of context and continuity, it's best read from top to bottom.
+# 用語集
 
-| Terminology | Definition |
+以下は、本書でよく使われる用語の定義です。
+文脈と一貫性のために、通読をおすすめします。
+
+| 用語 | 定義 |
 |-|-|
-|SNES|Super Nintendo Entertainment System|
-|Memory|The working space in the SNES in which the ROM, RAM and SRAM are present|
-|ROM|Read-only memory; the well-known .smc/.sfc/.fig files|
+|スーパーファミコン|スーパーファミコン|
+|メモリ|ROM、RAM、SRAMが存在するスーパーファミコンの動作領域|
+|ROM|Read-only memory。.smc、.sfc、.figファイルとしても知られる|
 |(W)RAM|(Work) Random-access memory|
-|SRAM|Static random-access memory; the well-known .srm files|
-|Register|A variable in the SNES not part of the standard SNES memory|
-|Opcode|A three-letter instruction; a mnemonic|
-|Addressing mode|An optional parameter for an opcode denoting a value or an address|
-|Instruction/Operation|The combination of an opcode and optionally an addressing mode|
-|Machine code|An instruction assembled into bytes, which can be understood by processors|
-|Value|A magnitude, quantity, or number; a number representing information|
-|Signed|A value that semantically allows itself to be negative as well|
-|Unsigned|A value that semantically allows itself to be positive-only, allowing for greater positive numbers|
-|Address|A location in the memory of the SNES. Ranges from $000000 to $FFFFFF|
-|Long address|An address represented by a 6-digit hexadecimal notation (e.g. $001200)|
-|Absolute address|An address represented by a 4-digit hexadecimal notation of the final 4 digits (e.g. $1200)|
-|Direct page|An address represented by a 2-digit hexadecimal notation of the final 2 digits (e.g. $00)|
-|Byte|An 8-bit value|
-|Word|A 16-bit value|
-|Long|A 24-bit value|
-|Double|A 32-bit value|
-|Bank byte|The first two digits of a long address or a long value (e.g. "$12" in $**12**3456)|
-|High byte|The middle two digits of a long address, absolute address, long value or word value (e.g. "$34" in both $12**34**56 and $**34**56)|
-|Low byte|The final two digits of a long address, absolute address, long value or word value (e.g. "$56" in both $1234**56** and $34**56**)|
+|SRAM|Static random-access memory。.srmファイルとしても知られる|
+|レジスタ|基本的なメモリではない、スーパーファミコン内の変数|
+|オペコード|3文字で表される命令（ニーモニック）|
+|アドレッシングモード|数値またはアドレスを表すオペコードの追加的なパラメータ|
+|命令/操作|オペコードとそれに付随するアドレッシングモードの組み合わせ|
+|機械語|2進数にアセンブルされた、プロセッサが理解できる命令|
+|数値|大きさ、量、数（情報を表す数字）|
+|サイン値|意味的に数値が負であることも示すことができる数値|
+|非サイン値|意味的に数値が正であることを示す数値|
+|アドレス|スーパーファミコンのメモリ内の位置（$000000から$FFFFFF）|
+|ロングアドレス|$001200のような、16進数6桁で表されたアドレス|
+|絶対アドレス|$1200のような、アドレスの下4桁を16進数4桁で表したアドレス|
+|ダイレクトページ|$00のような、アドレスの下2桁を16進数2桁で表したアドレス|
+|バイト値|8-bit幅の数値|
+|ワード値|16-bit幅の数値|
+|ロング値|24-bit幅の数値|
+|ダブル値|32-bit幅の数値|
+|バンクバイト|$**12**3456における「$12」のように、ロングアドレスもしくはロング値の最初の2桁|
+|上位バイト|$12**34**56と$**34**56における「$34」のように、ロングアドレス、絶対アドレス、ロング値、ワード値の中間2桁|
+|下位バイト|$1234**56**と$34**56**における「$56」のように、ロングアドレス、絶対アドレス、ロング値、ワード値の下2桁|

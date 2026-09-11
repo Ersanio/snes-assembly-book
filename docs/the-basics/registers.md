@@ -1,39 +1,72 @@
-# The SNES registers
+# スーパーファミコンのレジスタ
 
-In SNES, there are several "registers" used for different purposes. They cannot be missed; they're one of the reasons why the SNES can function properly. Basically, registers are "global variables" which can be used to hold values, or can be used for math and logic and all those fancy stuffs! These registers can be accessed anytime.
+スーパーファミコンには複数の「レジスタ」が存在し、それぞれが異なった用途で用いられています。
+レジスタは、スーパーファミコンが正常に動作する理由の1つであり、非常に重要な存在です。
+一般にレジスタは「グローバル変数」であり、数値の保持、算術演算、論理演算、その他の多様な機能に用いられています。
+また、これらのレジスタには常にアクセスすることができます。
 
-## Accumulator
-The accumulator, also known as **A**, is used for general math, bit shifts, bitwise operations and loading indirect values. A can also hold general-purpose variables to store things to the memory and other registers. This register can hold either an 8-bit or 16-bit value 
+## アキュムレータ
 
-The accumulator sometimes is referred to as `B` or `C` in some opcodes. B means the high byte of the accumulator, while C means the full 16-bit accumulator.
+**A**としても知られるアキュムレータは、一般的な算術演算、ビットシフト命令、ビット演算命令、間接数値の読み込みなどに用いられています。
+また、アキュムレータは、メモリや他のレジスタに値を保存するための多用途変数としても用いられています。
+このレジスタは8-bit、16-bitの両方の値を保持できます。
 
-{% hint style="warning" %}
-In reality, this register can be considered to be always 16-bit. When A is in 8-bit mode, you access the low byte of this register. When A is in 16-bit mode, you access both the high and low bytes of this register. The high byte doesn't get cleared when A enters 8-bit mode, even when new values are written to A, which is why the high byte can be considered to be "hidden". Also, certain instructions use both high and low bytes of the A register, regardless of whether A is in 8-bit or 16-bit mode.
-{% endhint %}
-
-## Indexers
-The indexers are two registers, known as **X** and **Y**. Even though they are separate registers, they have exactly the same purposes and behave exactly the same. These registers are made for indexing, explained later in this tutorial. These registers can also be 8-bit or 16-bit. X and Y can also hold general-purpose variables to store things to the memory and other registers. 
-
-X and Y are "paired" – they can be 8-bit or 16-bit mode only at the same time. One of them can't be 8-bit while the other one is 16-bit.
+いくつかのオペコードでは、アキュムレータは`B`や`C`で表されます。
+Bはアキュムレータの上位バイトを、Cは16-bitのアキュムレータの完全な数値を表します。
 
 {% hint style="warning" %}
-When X and Y leave 16-bit mode, their high bytes get cleared to the value $00, unlike the A register where the high byte remains intact. 
+実際には、アキュムレータは常に16-bit幅です。
+アキュムレータが8-bitモードのときはアキュムレータの下位バイトに、16-bitモードのときは上位バイトと下位バイトの両方にアクセスしているに過ぎません。
+また、アキュムレータが8-bitモードの場合、新しい数値が読み込まれても上位バイトは初期化されません。
+つまり、8-bitモードにおいて上位バイトは「隠されている」だけに過ぎません。
+加えて、特定の命令は、アキュムレータが8-bitモードか16-bitモードかに関わらず、アキュムレータの上位バイトと下位バイトの両方を用います。
 {% endhint %}
 
-## Direct Page 
-The direct page register is a 16-bit register, used for the direct page addressing mode (explained later in this tutorial). When you access a memory address by its direct page notation, the value in the direct page is added to that address. You can generally ignore this register if you're just beginning with assembly.
+## インデックスレジスタ
 
-## Stack Pointer
-The stack pointer register is a 16-bit that holds the pointer to the stack in the RAM (explained later in this tutorial), relative to memory address $000000. The register dynamically changes, as you push and pull values to the stack (explained later in the tutorial).
+インデックスレジスタには、**X**レジスタと**Y**レジスタの2つが存在します。
+これらはそれぞれ独立したレジスタですが、まったく同じ目的で用いられ、まったく同じように動作します。
+これらのレジスタは、本書の後半で解説するインデックスのために用いられます。
+また、これらのレジスタも、8-bit幅、16-bit幅のいずれも取ることができます。
+XレジスタとYレジスタは、メモリや他のレジスタに値を保存するための汎用変数としても用いることができます。
 
-## Processor Status
-The processor status register holds the current processor flags in 8-bit format. There are 8 processor flags, and they all occupy one bit. Changing this register would alter the SNES behaviour greatly. Processor flags are explained later in this tutorial.
+XレジスタとYレジスタは「ペア」であり、同時に8-bitモード、もしくは16-bitモードになり、
+片方だけが8-bitモード、あるいは片方だけが16-bitモードになることはありません。
 
-## Data bank
-The data bank register holds the current data bank address as a single byte. When you access an address using the "absolute address" notation, the SNES will use this register to determine the bank of the address.
+{% hint style="warning" %}
+アキュムレータとは異なり、XレジスタとYレジスタは16-bitモードでなくなったときに上位バイトが$00に初期化されます。
+{% endhint %}
 
-## Program bank
-The program bank register keeps track of the current bank of the currently executed instruction. So, if there is a code executed at address $018009, this register will hold the value $01.
+## ダイレクトページレジスタ
 
-## Program counter
-This register keeps track of the high and low bytes of the address of the currently executed instruction. So, if there is an instruction executed at $018009, this register will hold the value $8009.
+ダイレクトページレジスタは、本書の後半で解説する「ダイレクトモード」で使用される16-bit幅のレジスタです。
+メモリにダイレクトモードでアクセスするとき、実効アドレスはダイレクトモードで指定したアドレスにこのレジスタの値を足したアドレスになります。
+もしあなたがアセンブリの初心者なら、このレジスタは無視して構いません。
+
+## スタックポインタ
+
+スタックポインタは、RAM内のスタック（本書の後半で解説します）に対するポインタを保持する16-bit幅のレジスタで、
+メモリアドレス$000000に対する相対値です。
+このレジスタは、スタックに対するプッシュやプル（本書の後半で解説します）に合わせて動的に変化します。
+
+## プロセッサフラグ
+
+プロセッサフラグは、現在のプロセッサのフラグ状態を8-bit形式で保持しています。
+プロセッサフラグには8種類のフラグがあり、それぞれに1ビットが割り当てられています。
+このレジスタの値を変更することでスーパーファミコンの動作を大きく変えることが可能になります。
+プロセッサフラグについては、本書の後半で解説します。
+
+## データバンクレジスタ
+
+データバンクレジスタは、現在のデータバンクアドレスを1バイトで保持しています。
+「絶対アドレスモード」でアドレスにアクセスした場合、スーパーファミコンはアドレスのバンクをこのレジスタで判定します。
+
+## プログラムバンクレジスタ
+
+プログラムバンクレジスタは、現在実行されている命令のバンクを追跡するレジスタです。
+したがって、もしコードがアドレス$018009で実行されているなら、このレジスタは数値$01を保持しています。
+
+## プログラムカウンタ
+
+このレジスタは、現在実行されている命令のアドレスの上位バイトと下位バイトを追跡します。
+したがって、もしコードがアドレス$018009で実行されているなら、このレジスタは数値$8009を保持しています。

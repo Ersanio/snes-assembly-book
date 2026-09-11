@@ -1,26 +1,29 @@
-# Miscellaneous opcodes
+# その他のオペコード
 
-This chapter explains opcodes which don't really fit in any other chapter.
+この章では、他の章で紹介できなかったオペコードを紹介します。
 
 ## NOP
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**NOP**|No operation|Does absolutely nothing|
+|**NOP**|No operation|何もしない|
 
-It is often used to disable existing opcodes in a ROM without shifting around the machine code. It can also be used to give time for the [math hardware registers](../math/math.md) to do their work.
+このオペコードは、機械語の位置を変更することなくROMに記述してしまったオペコードを無効化する場合によく使用されます。
+また、[ハードウェア演算](../math/math.md)で計算時間を消費するためにも用いられます。
 
 ## XBA
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**XBA**|Exchange B and A|Swaps the high and the low bytes of the A register, regardless of the register size.|
+|**XBA**|Exchange B and A|モードに関わらず、アキュムレータの上位バイトと下位バイトを交換する|
 
-Here's an example:
+以下に例を挙げます。
 ```
 LDA #$0231         ; A = $0231
-XBA                ; A is now $3102
+XBA                ; アキュムレータは$3102になる
 ```
 
-This even works with 8-bit A, as the high byte of A is "hidden" rather than set to $00:
+このオペコードはアキュムレータが8-bitモードであっても機能します。
+なぜなら、アキュムレータが8-bitモードのとき、その上位バイトは「隠されている」に過ぎないからです。
+
 ```
 LDA #$12           ; A = $xx12
 XBA                ; A = $12xx
@@ -28,66 +31,88 @@ LDA #$05           ; A = $1205
 ```
 
 ## WAI
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**WAI**|Wait for interrupt|Halts the SNES CPU until either an NMI or IRQ occurs.|
+|**WAI**|Wait for interrupt|NMIかIRQが発生するまでスーパーファミコンのCPUを停止する|
 
-Exactly what it says, it halts the SNES CPU until either an NMI or IRQ (both are interrupts) occurs. Practically speaking, the opcode loops itself infinitely until an interrupt occurs.
+WAIは、NMIかIRQが発生するまでスーパーファミコンのCPUを停止させます。
+実際には、このオペコードは割り込みが発生するまでWAI自身を無限に繰り返し実行し続けます。
 
 ## STP
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**STP**|Stop the clock|The "clock" being the SNES CPU in this case, it halts the CPU completely until either a soft or hard reset occurs.|
+|**STP**|Stop the clock|ソフトリセット、もしくはハードリセットが発生するまでスーパーファミコンのCPUを完全に停止する（ここでの"clock"とは、CPUを指す）|
 
-Exactly what it says, it stops the SNES CPU until you hit reset or power cycle the SNES. It does lower the power consumption of the SNES, if the couple of cents it'll shave off your power bill means that much to you.
+STPは、リセットボタンが押されるか電源が入れ直されるまでスーパーファミコンのCPUを停止させます。
+これにより、スーパーファミコンの消費電力を抑えることができます。
+もし、皆さんの電気代を数円でも節約することが重要なら、このオペコードはきっと役に立つでしょう。
 
 ## BRK
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**BRK**|Software break|Causes a break to occur|
+|**BRK**|Software break|割り込みを発生させる|
 
-This opcode causes the SNES to jump to the [break vector](../indepth/vector.md). It also takes a byte parameter. Example usage:
+BRKを実行すると、実行位置が[BRKベクタ](../indepth/vector.md)にジャンプします。
+また、このオペコードは1バイトの即値オペランドを取ります。
+BRKは以下のように記述します。
 ```
 BRK #$02
 ```
-The parameter is not used for anything in particular, but if you write a meaningful "catch" to the BRK, you could probably read what the value of the BRK was supposed to be, and do certain things depending on the value.
+実際のところ、オペランドの数値は何にも使用されません。
+しかし、BRKに対する適切なcatch処理を書いておけば、
+このオペランドの値が何になるべきかを読み取り、その値に応じた対応ができるでしょう。
 
-When the BRK opcode is executed, the following events happen:
-* First, the (24-bit) address of the instruction after `BRK #$xx` is pushed onto the stack
-* Then, the (8-bit) processor flag register is pushed onto the stack.
-* The interrupt disable flag is set (akin to `SEI`)
-* The decimal mode flag is cleared (akin to `CLD`)
-* The program bank register is cleared to $00
-* The program counter is loaded from the break vector. In other words, the code jumps to the address at the break vector.
+オペコードBRKが実行されると、以下の順で処理が実行されます。
 
-If the emulators are made properly, the opcode BRK makes debuggers snap. You could also program the break vector to do meaningful things. In fact, on SMWCentral, [p4plus2 released a patch which does exactly this](https://www.smwcentral.net/?p=section&a=details&id=20796); it shows debug information about the crash.
+* まず、`BRK #$xx`の次の命令の24-bitアドレスをスタックにプッシュする
+* 次に、8-bitのプロセッサフラグをスタックにプッシュする
+* 割り込み禁止フラグがセットされる（`SEI`と同じ）
+* デシマルモードフラグがクリアされる（`CLD`と同じ）
+* プログラムバンクレジスタが$00に初期化される
+* プログラムカウンタがBRKベクタのアドレスになる。つまり、BRKベクタへジャンプする
+
+もしエミュレータが正確に作られていれば、BRKの実行時にデバッガが停止する機能を利用できるかもしれません。
+また、BRKベクタを適切に設定することで、デバッグに便利な機能を実装できます。
+実際にSMWCentralでは、[このような機能を追加するパッチがp4plus2によって公開されており](https://www.smwcentral.net/?p=section&a=details&id=20796)、このパッチを用いることでクラッシュの詳細な情報を確認できるようになります。
 
 ## COP
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**COP**|Coprocessor empowerment|Similar effects as BRK, as the SNES has no coprocessor to empower.|
+|**COP**|Coprocessor empowerment|スーパーファミコンには起動できるコプロセッサが存在しないので、BRKと同じ挙動になる|
 
-This opcode causes the SNES to jump to the [COP hardware vector](../indepth/vector.md). It also takes a byte parameter. Example usage:
+COPを実行すると、実行位置が[COPベクタ](../indepth/vector.md)にジャンプします。
+また、このオペコードは1バイトのオペランドを取ります。
+COPは以下のように記述します。
+
 ```
 COP #$04
 ```
-The parameter is not used for anything in particular, but if you write a meaningful "catch" to the COP, you could probably read what the value of the COP was supposed to be, and do certain things depending on the value.
 
-When the COP opcode is executed, the following events happen:
-* First, the (24-bit) address of the instruction after `COP #$xx` is pushed onto the stack
-* Then, the (8-bit) processor flag register is pushed onto the stack.
-* The interrupt disable flag is set (akin to `SEI`)
-* The decimal mode flag is cleared (akin to `CLD`)
-* The program bank register is cleared to $00
-* The program counter is loaded from the COP hardware vector. In other words, the code jumps to the address at the COP hardware vector.
+実際のところ、オペランドの数値は何にも使用されません。
+しかし、COPに対する適切なcatch処理を書いておけば、
+このオペランドの値が何になるべきかを読み取り、その値に応じた処理を記述できるでしょう。
+
+オペコードCOPが実行されると、以下の順で処理が実行されます。
+
+* まず、`COP #$xx`の次の命令の24-bitアドレスをスタックにプッシュする
+* 次に、8-bitのプロセッサフラグをスタックにプッシュする
+* 割り込み禁止フラグがセットされる（`SEI`と同じ）
+* デシマルモードフラグがクリアされる（`CLD`と同じ）
+* プログラムバンクレジスタが$00に初期化される
+* プログラムカウンタがCOPベクタのアドレスになる。つまり、COPベクタへジャンプする
 
 ## WDM
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**WDM**|Reserved for future expansion|Does absolutely nothing|
+|**WDM**|Reserved for future expansion|何もしない|
 
-WDM stands for "[William (Bill) David Mensch, Jr.](https://en.wikipedia.org/wiki/Bill_Mensch)", who designed the 65c816. This opcode was reserved for the possibility of multi-byte opcodes. Therefore, this opcode actually takes a parameter. Example:
+WDMは、65C816を設計した[William (Bill) David Mensch, Jr.](https://en.wikipedia.org/wiki/Bill_Mensch)の頭文字を取ったオペコードです。
+このオペコードは、複数バイトからなるオペコードの拡張のために予約されています。
+したがって、このオペコードは以下のように1バイトのオペランドを取ります。
+
 ```
 WDM #$01
 ```
-This opcode has the same effect as NOP however. Therefore, it does nothing.
+
+オペランドを取るものの、このオペコードはNOPと同じ挙動を取ります。
+つまり、何もしません。

@@ -1,25 +1,52 @@
-# Addressing modes
+# アドレッシングモード
 
-There are different addressing modes in 65c816. Addressing modes are used to make opcodes access addresses and values differently, such as "indexed" or "direct indirect" (explained later in this tutorial). Using them wisely, you can access values and memory addresses in many ways. For example, you can immediately load a value into a register, such as A, or load a byte from the ROM into A. Keep in mind that not all the opcodes supports all the types of addressing modes. Here are some of the important addressing modes you'll find yourself use very often.
+65C816には、様々なアドレッシングモードが存在します。
+アドレッシングモードのおかげで、オペコードは異なった方法でアドレスや数値にアクセスできるのです。
+アドレッシングモードには、例えば、「インデックスモード」や「ダイレクトインダイレクトモード」といったものが挙げられます（本書の後半で解説します）。
+これらを適切に使用することで、様々な方法で数値やメモリアドレスにアクセスすることが可能になります。
+例えば、数値を直接レジスタ（アキュムレータなど）に読み込むこともできますし、
+1バイトをROMからアキュムレータに読み込むこともできます。
+ただし、全てのオペコードが全てのアドレッシングモードに対応しているわけではないという点に注意してください。
+以下では、頻出であり重要なアドレッシングモードを紹介します。
 
-## Immediate 8/16 bit
-This addressing mode defines an absolute value, which is written as `#$XX` in 8-bit mode, or `#$XXXX` in 16-bit mode. The # means "immediate value", while the $ stands for hexadecimal. Using # alone makes the input decimal. For example, #10 is the same as #$0A. Think of an immediate value as a number you're directly defining.
+## 即値（8-bitと16-bit）
 
-## Direct page 
-This addressing mode defines a direct page address, which is written as `$XX`.
+このアドレッシングモードは、8-bitモードにおいて`#$XX`、16-bitモードにおいて`#$XXXX`と記述される絶対値を宣言します。
+「#」は「即値」を表し、「$」は16進数を表します。
+「#」を単独で使用すると、数値は10進数とみなされます。
+例えば、#10は#$0Aと同じ意味です。
+すなわち、即値とは直接定義する数値だといえます。
 
-The direct page is the last 2 hex digits of a long address. For example, address $7E0011 as direct page would be $11. When loading from a direct page address, the bank byte is ALWAYS treated as $00, no exceptions. If you write "LDA $11" for example, you would load the contents of $000011 into the accumulator, which is also mirrored at $7E0011 (remember the illustration of the SNES memory). Therefor, you load $7E0011's contents into A.
+## ダイレクトモード
 
-## Absolute
-This addressing mode defines an absolute address, which is written as `$XXXX`. 
+このアドレッシングモードは、`$XX`と記述されるダイレクトページアドレスを宣言します。
 
-An absolute address is the last 4 hex digits of a long address. Using the example from earlier, address $7E0011 as an absolute address would be $0011. The bank byte of the absolute address is determined by the data bank register.
+ダイレクトモードはロングアドレスの下2桁です。
+例えば、アドレス$7E0011はダイレクトページアドレスで$11です。
+ダイレクトページアドレスで数値を読み込むとき、バンクは例外なく常に$00として扱われます。
+「LDA $11」と記述した場合、アキュムレータには、$7E0011のミラーである$000011から値が読み込まれます（『スーパーファミコンのメモリ』で解説した通りです）。
+したがって、この場合は、アキュムレータに$7E0001の内容が読み込まれます。
 
-## Long
-This addressing mode defines a long address, which is written as `$XXXXXX`.
+## 絶対アドレスモード
 
-Long addresses deliver fewer complications when dealing with banks and mirroring. You also don't have to worry about what the data bank register currently contains. With long addresses, you can access any address in the SNES memory.
+このアドレッシングモードは、`$XXXX`と記述される絶対アドレスを宣言します。
 
-## Other addressing modes
+絶対アドレスはロングアドレスの下4桁です。
+先述の例を用いて考えると、$7E0011の絶対アドレスは$0011となります。
+なお、絶対アドレスモードにおけるバンクはデータバンクレジスタによって決定されます。
 
-The SNES supports more addressing modes. The above addressing modes are the basics. There are also addressing modes, such as: indexed versions of direct page, absolute and long addresses, and much more. They will be explained near the end of this tutorial because you don't need them at this point. It would make things only more confusing at the moment.
+## 絶対ロングモード
+
+このアドレッシングモードは、`$XXXXXX`と記述されるロングアドレスを宣言します。
+
+ロングアドレスではバンクとミラーをより簡単に扱うことが可能になります。
+データバンクレジスタが現在保持している値を心配する必要もありません。
+絶対ロングモードではスーパーファミコンが持つすべてのメモリにアクセスできます。
+
+## その他のアドレッシングモード
+
+スーパーファミコンには、さらに多くのアドレッシングモードが存在します。
+ここまで紹介したアドレッシングモードは基礎的なもので、
+例えば紹介したもの以外にも、ダイレクトモード、絶対アドレスモード、絶対ロングモードがインデックスされたアドレッシングモードなども存在します。
+現時点でそれらを理解する必要はないため、それらのアドレッシングモードは、本書の最後の方で解説します。
+今の段階でそれらについて理解しようとしても、ただ混乱するだけでしょう。

@@ -1,8 +1,15 @@
-# Techniques
-This chapter focuses on general techniques you can use in SNES ASM.
+# コーディングテクニック
+この章では、スーパーファミコンのアセンブリ言語で使用できる手法について紹介します。
 
-## Byte counting
-Each instruction assembles into one or more bytes. This happens as follows: First, the opcode is guaranteed assembled into a byte. Then the byte is followed by 0-3 bytes which serves as the parameter of the opcode. Every 2 hex digits equals 1 byte. This means that the maximum amount of bytes an instruction in SNES can use, is four bytes: opcode + a 24-bit parameter. Here is an example on how LDA would look like, when it's assembled with different addressing modes:
+## バイト数の計算
+それぞれの命令は1バイト以上の16進数にアセンブルされます。
+これは、以下のような順番で行われます。
+初めに、オペコードは1バイトにアセンブルされることが保証されています。
+次に、オペコードに応じたオペランドが0バイトから3バイト続いてアセンブルされます。
+このとき、16進数2桁が1バイトになります。
+つまり、スーパーファミコンにおいて、1つの命令は最大で4バイトにアセンブルされます。
+これはオペコードに24-bitのオペランドが続く場合です。
+LDAが異なるアドレッシングモードを取るとき、アセンブル結果は以下のようになります。
 
 ```
 LDA #$00           ; A9 00
@@ -12,14 +19,25 @@ LDA $0011          ; AD 11 00
 LDA $001122        ; AF 22 11 00
 ```
 
-An instruction without a hexadecimal parameter is only 1 byte, like `INC A` or `TAX`. An instruction with an 8-bit parameter is 2 bytes, like `LDA #$00`. An instruction with a 16-bit parameter is 3 bytes, like `LDA $0000`. An instruction with a 24-bit parameter is 4 bytes, like `LDA $000000`. It doesn't matter if the addressing mode is indexed, direct indirect or something else. It all depends on the length of the `$`-value.
+`INC A`や`TAX`のように、16進数のオペランドを取らない命令は1バイトにアセンブルされます。
+`LDA #$00`のように、8-bitのオペランドを取る命令は2バイトにアセンブルされます。
+`LDA $0000`のように、16-bitのオペランドを取る命令は3バイトにアセンブルされます。
+`LDA $000000`のように、24-bitのオペランドを取る命令は4バイトにアセンブルされます。
+アドレッシングモードがインデックスモードやダイレクトインダイレクトモード、
+あるいはその他のアドレッシングモードであっても、アセンブル結果のバイト数には影響しません。
+バイト数はあくまで`$`以下のバイト幅によって決定されます。
 
-## Shorthand zero comparison
-Faster comparison makes use of processor flags effectively, because branches actually depend on the processor flags. As mentioned in this tutorial earlier, `BEQ` branches if the zero flag is set, `BNE` branches if the zero flag is clear, `BCC` branches if the carry flag is clear, and so on. 
+## ゼロ比較の短縮
+分岐処理はプロセッサフラグによって行われるため、プロセッサフラグを適切に使用することで、比較処理を高速に実行できます。
+本書で既に紹介した通り、例えば`BEQ`はゼロフラグがセットされている場合に、`BNE`はゼロフラグがクリアされている場合に、
+`BCC`はキャリーフラグがクリアされている場合に分岐を実行します。
 
-Often, if the result of ​any​ operation is zero (`$00`, or `$0000` in 16-bit mode), the zero flag gets set. For example, if you do `LDA #$00`, the zero flag is set. Nearly all opcodes which modify an address or register affect the zero flag.
+多くの場合、実行結果が`$00`、もしくは16-bitモードにおいて`$0000`になったとき、ゼロフラグがセットされます。
+例えば、`LDA #$00`という命令を実行するとゼロフラグがセットされます。
+また、アドレスやレジスタの値を変更するほとんどのオペコードがゼロフラグを変更します。
 
-By making use of the zero flag, it's possible to check if a certain instruction has zero as its result (including loads). This way, you can write shorthand methods to check if an address actually contains the value `$00` or `$0000`. Here's an example:
+ゼロフラグを利用することで、ある命令の実行結果（ロードを含む）が0になったかどうかを確認できます。
+これを活かすことで、アドレスが数値`$00`もしくは`$0000`を保持しているかを簡単に確認できます。
 
 ```
 LDA $59
@@ -31,9 +49,11 @@ STA $02
 IsZero:
 RTS
 ```
-This code checks if address $7E0059 contains the value `$00`. If it does contain this value, then it immediately returns. If it does not contain the value `$00`, then it stores the value `$01` into address $7E0002.
+このコードは、アドレス$7E0059が数値`$00`を保持しているかを確認します。
+もし数値`$00`が保持されているならば、コードは即座にリターンします。
+一方、もし数値`$00`が保持されていないならば、数値`$01`がアドレス`$7E0002`にストアされます。
 
-The reverse is also possible: checking if an address does *not* contain zero. here's an example:
+逆に、指定したアドレスが0を保持して*いない*ことを確認することもできます。
 ```
 LDA $59
 BNE IsNotZero
@@ -44,117 +64,150 @@ STA $02
 IsNotZero:
 RTS
 ```
-This code checks if address $7E0059 does *not* contain the value `$00`. If it indeed does not contain this value, then it immediately returns. If it does contain the value `$00`, then it stores the value `$01` into address $7E0002, instead.
+このコードは、アドレス$7E0059が数値`$00`を保持して*いない*ことを確認します。
+もし実際に数値`$00`が保持されていないならば、コードは即座にリターンします。
+一方、もし数値`$00`が保持されているならば、数値`$01`がアドレス`$7E0002`にストアされます。
 
-## Looping
-Loops are certain type of code flow which allow you to execute code repeatedly. It is especially useful when you need to read out a table or a memory region value-by-value. A practical example is reading out level data from the SNES ROM, in order to build a playable level. Levels are essentially a long list of object and sprite data, therefore, this data can be read out in a repetetive way, until you reach the end of such data.
+## 繰り返し処理
+繰り返し処理とは、コードを繰り返し実行できるようにするためのコードフローの制御です。
+特にこの処理方法は、テーブルや特定のメモリ領域から数値を1つずつ読み取る場合に有用です。
+例えば、プレイ可能なコースを構築するために、コースのデータをROMから読み取る場合などが挙げられます。
+コースとは、本質的にはオブジェクトデータやスプライトデータの長いリストであり、
+こうしたデータでは、そのデータの終端までが繰り返し処理によって読み取られる必要があります。
 
-The examples within this section only loops through tables to copy them to RAM addresses, but of course, loops can be used to implement much more complex logic.
+この項で紹介するコード例は、テーブルのデータを繰り返し処理によって読み取ってRAMアドレスへコピーするだけのものですが、
+繰り返し処理を利用することで、はるかに複雑なロジックを実装することもできます。
 
-### Looping with a loop counter check
-It's possible to loop from the beginning to the end of a table. The following code demonstrates this.
+### ループカウンタを用いた繰り返し処理
+以下のようにプログラムすることで、テーブルの先頭から末尾までの読み取りを繰り返すことができます。
 
 ```
-   LDX.b #$00               ; Initialize the loop counter
--  LDA Table,x              ; Reads out the values in the table
-   STA $00,x                ; Store them to addresses $7E0000-$7E0003
-   INX                      ; Increase loop counter by one
-   CPX.b #Table_end-Table   ; Use the size of the table as the check
-   BNE -                    ; If the loop counter doesn't equal this, then continue looping.
+   LDX.b #$00               ; ループカウンタの初期化
+-  LDA Table,x              ; テーブルの値の読み取り
+   STA $00,x                ; その値をアドレス$7E0000から$7E0003にストアする
+   INX                      ; ループカウンタを1インクリメントするI
+   CPX.b #Table_end-Table   ; テーブル長を条件に使用する
+   BNE -                    ; ループカウンタの値がテーブル長に一致しない場合、繰り返しを継続する
    RTS
 
-Table:   db $01,$02,$04,$08 ; The values are read out in order
+Table:   db $01,$02,$04,$08 ; 値はこの順番に読み取られる
 .end
 ```
-The code initializes the loop counter with the value `$00`. With every iteration, this loop counter increases by one, and is then compared with the size of the table. Therefore, the loop executes for every byte within this table.
+このコードでは、ループカウンタを数値`$00`で初期化しています。繰り返しを行うごとにループカウンタは1インクリメントされ、
+その値がテーブル長と比較されます。よって、繰り返し処理はテーブル内のすべてのデータに対して実行されます。
 
-### Looping with a negative check
-While it's possible to loop from the beginning towards the end of a table, it's also possible to loop from the end towards the beginning of the table. This method has a "shorthand" check in order to see if the loop should be terminated, by making clever use of the "negative" processor flag. When using this method, your loop will essentially run backwards.
+### 非負チェックを用いた繰り返し処理
+テーブルの先頭から末尾までの読み取りを繰り返すことができる一方で、テーブルの値を末尾から先頭へ向かって読み取ることもできます。
+この方法では、ネガティブフラグを有効活用することによって、繰り返しを終了するかどうかを「簡潔に」判定しています。
+また、この方法では、繰り返しは実質的に逆方向へ実行されることになります。
 
 ```
-   LDX.b #Table_end-Table-1 ; Get the length of the table ($03). The -1 is necessary, 
--  LDA Table,x              ; else the loop will be off-by-one. Use that as a loop counter.
-   STA $00,x                ; One by one store the values to addresses $7E0003 to $7E0000, in that order.
-   DEX                      ; Decrease the loop counter by one.
-   BPL -                    ; If the loop counter isn't negative, continue looping.
+   LDX.b #Table_end-Table-1 ; テーブル長を取得し、1デクリメントする（テーブル範囲を超えたデータが取得されないようにする）
+-  LDA Table,x              ; その値をループカウンタとして用いる
+   STA $00,x                ; $7E0003から$7E0000へ向かって順番に値を取得する
+   DEX                      ; ループカウンタを1デクリメントする
+   BPL -                    ; ループカウンタが負数でない場合、繰り返しを継続する
    RTS
 
-Table:   db $01,$02,$04,$08 ; The values are read out backwards as well
+Table:   db $01,$02,$04,$08 ; 値は末尾から順番に読み取られる
 .end
 ```
-Because the loop counter serves as an index to address $7E0000, as well as the table, it reads and stores the values in a backwards order, as the counter starts with the value `$03`.
+ループカウンタは、テーブルとアドレス$7E0000に対するインデックスを保持しています。
+ループカウンタの初期値は数値`$03`なので、読み取りとストアは末尾から順番に行われます。
 
-The `BPL` ensures that the loop breaks once the loop counter reaches the value `$FF`. That means the negative flag will be set, thus BPL will not branch to the beginning of the loop.
+`BPL`は、ループカウンタが数値`$FF`へ到達したときに繰り返しを終了することを保証します。
+つまり、ネガティブフラグがセットされると繰り返しが行われないということです。
 
-This loop method has a drawback however. When the loop counter is `$81-$FF`, the loop will execute once, then break immediately, as BPL will not branch. This is because after `DEX`, the loop counter is immediately negative. Remember that values `$80` to `$FF` are considered negative. However, if your initial loop counter is `$80`, it will first execute the code within the loop, decrease the loop counter by 1, *then* check if the loop counter is negative. Therefore with this loop, you can loop through 129 bytes of data at most.
+しかし、この処理方法には難点も存在します。
+というのも、ループカウンタの初期値に`$81から$FF`を設定すると、処理が一度しか実行されず、BPLによる分岐が実行されないのです。
+これは、`DEX`命令の直後にループカウンタが負数になるためです。
+既に学習した通り、数値`$80`から`$FF`は負数として扱われます。
+ただし、ループカウンタの初期値が`$80`の場合は、最初の処理が実行された後にループカウンタが1デクリメントされ、
+*その結果として*ループカウンタが負数になったかの確認がされるため、問題は発生しません。
+したがって、この処理方法における最大の繰り返し回数は129バイトになります。
 
-It's also possible to have the loop counter at 16-bit mode while having the accumulator at 8-bit mode. The following example demonstrates this:
+また、以下のように、アキュムレータが8-bitモードのときにループカウンタを16-bitモードで設定することもできます。
 
 ```
    REP #$10
-   LDX.w #Table_end-Table-1 ; Get the length of the table ($03). Notice the ".w" to force
--  LDA Table,x              ; the assembler to use a 16-bit value.
-   STA $00,x                ; One by one store the values into address $7E0000-$7E0003.
-   DEX                      ; Decrease the loop counter by one.
-   BPL -                    ; If the loop counter isn't negative, continue looping.
+   LDX.w #Table_end-Table-1 ; データ長（$03）を取得する
+-  LDA Table,x              ; ".w"で16-bitの読み取りを強制している
+   STA $00,x                ; 値をアドレス$7E0000から$7E0003にストアする
+   DEX                      ; ループカウンタを1デクリメントする
+   BPL -                    ; ループカウンタが負数でないならば、繰り返しを継続する
    SEP #$10
    RTS
 
 Table:   db $01,$02,$04,$08
 .end
 ```
-In this case, it's possible to loop through ‭32769 bytes of data at most.
+この場合、最大の繰り返し回数は32769バイトになります。
 
-### Looping with an "end-of-data" check.
-This method basically keeps looping and iterating through values, until it reaches some kind of an "end-of-data" marker. Generally speaking, this value is something that the code normally never uses as an actual value. The general consensus for this value is `$FF` or `$FFFF`, although the decision is entirely up to the programmer. Here's an example which uses such a marker.
+### 「データ終端記号」チェックを用いた繰り返し処理
+この処理方法は、「データ終端記号」となる値を読み取るまで繰り返しを継続する手法です。
+一般的には、プログラム内で実際の値として用いられることのない値をデータ終端記号に使用します。
+例えば`$FF`や`$FFFF`といったものがよく用いられますが、どのような値を用いるかはプログラマ次第です。
+このような手法を用いた処理は以下のコードのように記述します。
 
-This type of loop is especially handy when it needs to process multiple tables with the exact same logic, but with varying table sizes. One example of such implementation is loading levels; The logic to parse levels is always the same, but the levels vary in size. 
+特にこの処理方法は、複数のテーブルをまったく同じ方法で処理する場合に有用です。
+そうした実装を必要とする場合として、コースの読み取りが挙げられます。
+コースデータのパース処理は、すべてのコースデータに対して同じ方法で行われますが、
+データサイズはコースごとに異なりますね。
 
 ```
-   LDX.b #$00      ; Initialize the index
--  LDA Table,x     ; Read the value from the data table
-   CMP #$FF        ; If it's an end-of-data marker, then exit the loop.
+   LDX.b #$00      ; インデックスの初期化
+-  LDA Table,x     ; データテーブルからの読み取り
+   CMP #$FF        ; データ終端記号を読み取ったならば、繰り返し処理を終了
    BEQ +
-   STA $00,x       ; If it's not, then store the value.
-   INX             ; Increase the index to the table
-   BRA -           ; Continue the loop
+   STA $00,x       ; そうでないならば、その値をストアする
+   INX             ; テーブルに対するインデックスを1インクリメントする
+   BRA -           ; 繰り返しを継続する
 +  RTS
 
 Table:   db $01,$02,$04,$FF
 .end
 ```
-In the case of this example, the code loops through four bytes of data, three of which are actual data and one of which is the end-of-data marker. Once the loop encounters this marker, in this case the value `$FF`, the loop is immediately terminated.
+このコードでは、データから4バイトを読み取り、そのうち3つを実際のデータとして、1つをデータ終端記号として処理しています。
+データ終端記号（今回は`$FF`）を読み取った場合、繰り返しは即座に終了します。
 
-## Bigger branch reach
-In the [branches chapter](../programming/branches), it is mentioned that branches have a limited distance of -128 to 127 bytes. When you do exceed that limit, the assembler automatically detects that and throws some kind of error, such as the following:
+## 遠いラベルへの分岐
+[分岐の章](../programming/branches)で説明した通り、分岐命令の分岐先は基本的に-128バイトから127バイトの範囲に限定されています。
+以下のコードのように、この分岐先範囲を超えた命令を記述すると、アセンブラは自動的にそれを検出し、エラーを返します。
 
 ```
             LDA $00
             CMP #$03
-            BEQ SomeLabel ; Branch when address $7E0000 contains the value $03
-            NOP #1000     ; 1000 times "NOP"
+            BEQ SomeLabel   ; アドレス$7E0000が数値$03を保持している場合に分岐する
+            NOP #1000     ; 1000回の"NOP"
 SomeLabel:  RTS
 ```
-Would cause the following error in Asar, during assembly:
+このコードをアセンブルしようとすると、Asarでは以下のようなエラーが返されます。
 ```
 file.asm:3: error: (E5037): Relative branch out of bounds. (Distance is 1000). [BEQ SomeLabel]
 ```
-This means that the distance between the branch and the label is 1000 bytes, which definitely exceeds the 127 bytes limit. If you necessarily have to jump to that one label, you can invert the conditional and make use of the `JMP` opcode for a longer jump reach:
+このエラー文は、分岐命令とラベルが1000バイト離れており、127バイトの制限を超過していることを示しています。
+もし。このような遠くのラベルへジャンプしたい場合、分岐条件を変更してオペコード`JMP`を利用することで
+分岐先範囲の制限を回避できます。
 
 ```
             LDA $00
             CMP #$03
-            BNE +         ; Skip the jump when address $7E0000 doesn't contain the value $03
-            JMP SomeLabel ; This runs when address $7E0000 *does* contain the value $03
+            BNE +         ; もし$7E0000が数値$03を保持していないならば、ジャンプをスキップする
+            JMP SomeLabel ; この命令は、アドレス$7E0000が数値$03を保持して*いない*場合に実行される
 
-+           NOP #1000     ; Shorthand for 1000 times "NOP"
++           NOP #1000    　; 1000回の"NOP"
 SomeLabel:  RTS
 ```
+この方法を用いても論理構成は変わりません。つまり、アドレス$7E0000が数値$03を保持していなければ、1000回のNOPが実行されます。
+これによって「分岐先範囲外」のエラーは解消されました。
+加えて、`JMP`を`JML`に置き換えることで現在のバンク以外の*どこにでも*ジャンプできるようになります。
 
-This way, the logic still remains the same, namely, the thousand NOPs run when address $7E0000 doesn't contain the value $03. The out-of-bounds error is solved. Additionally, replacing the `JMP` with `JML` will allow you to jump *anywhere* instead of being restricted to the current bank.
-
-## Pointer tables
-A pointer table is a table with a list of pointers. Depending on the context, the pointers can either point to code or data. Pointer tables are especially useful if you need to run certain routines or access certain data for an exhaustive list of values. Without pointer tables, you would have to do a massive amount of manual comparisons instead. Here's an example of a manual version:
+## ポインタテーブル
+ポインタテーブルとは、ポインタの一覧となるテーブルです。
+実行中の文脈によって、ポインタはコードとデータのどちらも指し示すことができます。
+ポインタテーブルは、引数に対応して特定のルーチンやデータへアクセスする必要がある場合に有用です。
+こうした場合にポインタテーブルを用いなければ、大量の比較分岐をひとつずつ手作業で記述していくことになります。
+ポインタテーブルを用いない場合は、以下のようなコードになります。
 
 ```
   LDA $14
@@ -187,34 +240,37 @@ ThirdRoutine:
   STA $15
   RTS
 ```
-You can imagine that with a lot of values that are associated with routines, this comparison logic can get huge pretty quickly. This is where pointer tables come in handy.
+ルーチンに対応する値が大量にある場合、このような比較分岐処理も比例して大量に記述しなければなりませんね。
+こうした場合には、ポインタテーブルが有効な選択肢になります。
 
-This here is a pointer table:
+ポインタテーブルは以下のように記述します。
 ```
 Pointers: dw Label1
           dw Label2
           dw Label3
           dw Label4
 ```
-As you can see, it's nothing but a bunch of table entries pointing to addresses. You can use labels in order to point to ROM, or defines to point to RAM.
+ここから分かる通り、ポインタテーブルとは、アドレスを指定するテーブルエントリの集合に過ぎません。
+ROMを指定する場合にはラベルを、RAMを指定する場合には宣言を使用します。
 
-### Pointer tables for code
-There are a few instructions designed for making use of pointer tables. They are as follows:
+### コードを指定するポインタテーブル
+ポインタテーブルを利用するための命令を紹介します。
 
-|Instruction|Example|Explanation|
+|命令|例|説明|
 |-|-|-|
-|**JMP (*absolute address*)**|JMP ($0000)|Jumps to the absolute address located at address $7E0000|
-|**JMP (*absolute address*,x)**|JMP ($0000,x)|Jumps to the absolute address located at address $7E0000, which is indexed by X|
-|**JML [*absolute address*]**|JML [$0000]|Jumps to the long address located at address $7E0000|
-|**JSR (*absolute address*,x)**|JSR ($0000,x)|Jumps to the absolute address located at address $7E0000, which is indexed by X, then returns|
+|**JMP (*絶対アドレス*)**|JMP ($0000)|アドレス$7E0000が保持している絶対アドレスへジャンプする|
+|**JMP (*絶対アドレス*,x)**|JMP ($0000,x)|アドレス$7E0000にXレジスタでインデックスしたアドレスが保持している絶対アドレスへジャンプする|
+|**JML \[*絶対アドレス*\]**|JML [\$0000]|アドレス$7E0000が保持しているロングアドレスへジャンプする|
+|**JSR (*絶対アドレス*,x)**|JSR ($0000,x)|アドレス$7E0000が保持している絶対アドレスへジャンプし、最終的にリターンする|
 
-With these opcodes, as well as a pointer table, it is possible to run a subroutine depending on the value of a certain RAM address. Here's an example which runs a routine depending on the value of RAM address $7E0014:
+これらのオペコードとポインタテーブルを用いることで、特定のRAMアドレスの値に応じたサブルーチンを実行できます。
+例えば、RAMアドレス$7E0014の値に応じたルーチンの実行は以下のように記述できます。
 
 ```
-LDA $14            ; Load the value into A...
-ASL A              ; ...Multiply it by two...
-TAX                ; ...then transfer it into X
-JSR (Pointers,x)   ; Execute routines.
+LDA $14            ; 値をアキュムレータにロードする
+ASL A              ; その値を2倍する
+TAX                ; その結果をXレジスタに転送する
+JSR (Pointers,x)   ; サブルーチンを実行する
 RTS
 
 Pointers: dw Label1 ; $7E0014 = $00
@@ -238,33 +294,43 @@ Label4:   LDA #$55
           STA $66
           RTS
 ```
-The short explanation is that depending on the value of RAM address $14, the four routines are executed. For value `$00`, the routine at `Label1` is executed. For value `$01`, the routine at `Label2` is executed, and so on.
+簡単に説明すると、このコードではRAMアドレス$14の値に応じて4つのルーチンが実行されます。
+例えば数値`$00`の場合には`Label1`のルーチンが、数値`$01`では`Label2`のルーチンが実行されます。
 
-The long explanation is that we load the value into A and multiply it by two, because we use *words* for our pointer tables. Thus, we need to index every two bytes instead of every byte. This means that value `$00` stays as index value `$00` thus reading the `Label1` pointer. Value `$01` becomes index value `$02`, thus reading the `Label2` pointer. Value `$02` becomes index value `$04`, thus reading the `Label3` pointer. Value `$03` becomes index value `$06`, thus reading the `Label4` pointer. Because the JSR uses an "absolute, indirect" addressing mode, the labels are also absolute, thus they only run in the same bank as that JSR.
+詳しく説明します。
+まず初めに、RAMアドレス$14の値をアキュムレータにロードし、その値を2倍しています。
+2倍している理由は、ポインタテーブルのデータが*ワード*値であるためです。
+したがって、インデックスは1バイトごとではなくて2バイトごとに行う必要があります。
+数値`$00`の場合には、インデックスは`$00`のままで`Label1`のポインタを読み取ります。
+数値`$01`の場合には、インデックスは`$02`になり、`Label2`のポインタを読み取ります。
+数値`$02`の場合には、インデックスは`$04`になり、`Label3`のポインタを読み取ります。
+数値`$03`の場合には、インデックスは`$06`になり、`Label4`のポインタを読み取ります。
+JSRは「絶対アドレスインダイレクトモード」を取っているので、ラベルも絶対アドレスであり、実行できるのはJSRと同じバンク内に限られます。
 
-### Pointer tables for data
-The same concept can be applied for data instead of just subroutines. Imagine you want to read level data, depending on the level number. A pointer table would be a perfect solution for that. Here's an example:
+### データを指定するポインタテーブル
+サブルーチンではなくデータを指定する場合にも同じ考え方が当てはまります。
+例えば、コース番号に対応したコースのデータを読み取る場合には、ポインタテーブルが最適な実装方法になります。
 
 ```
-  LDA $14          ; Load the level number into A...
-  ASL A            ; ...Multiply it by three...
+  LDA $14          ; コース番号をアキュムレータにロードする
+  ASL A            ; その値を3倍する
   CLC
   ADC $14
-  TAY              ; ...then transfer it into Y
+  TAY              ; その結果をYレジスタに転送する
   LDA Pointers,y
   STA $00
   LDA Pointers+1,y
   STA $01
-  LDA Pointers+2,y ; Store the pointed address into RAM
-  STA $02          ; To use as an indirect pointer
+  LDA Pointers+2,y ; 指定されたアドレスをインダイレクトポインタとして使用するために
+  STA $02          ; RAMへストアする
 
   REP #$10
   LDY #$0000
-- LDA [$00],y      ; Read level data until you reach an end-of-data marker
+- LDA [$00],y      ; データ終端記号までコースデータを読み取る
   CMP #$FF
   BEQ Return
 
-  ; Do something with the loaded level data here
+  ; 読み込まれたコースデータをここで処理する
 
   INY
   BRA -
@@ -286,166 +352,208 @@ Level3:   db $D9,$B0,$A0,$21,$FF
 
 Level4:   db $C0,$92,$84,$81,$82,$99,$FF
 ```
-In the first section, we use the same concept of multiplying a value to access a pointer table. Except this time, we multiply by three, because the pointer tables contain values that are *long*. We use this value as an index to the pointer table, and store the pointer in `RAM $7E0000` to `$7E0002`, in little endian. After that, in the second section, we use `RAM $7E0000` as an indirect pointer and start looping through its values, using Y as an index again. We keep looping indefinitely, until we hit an "end-of-data" marker, in this case the value `$FF`. We use this method because levels could be variable in length. We also use 16-bit Y because level data *could* be bigger than 256 bytes in size. Finally, we finish the routine by setting Y back to 8-bit and then returning.
+最初のセクションでは、ポインタテーブルへアクセスするために数値の乗算を行うという点で、先ほどの例と同じことを行なっています。
+ただし、今回はポインタテーブルのデータが*ロング*値なので、値を3倍する必要があります。
+この結果をポインタテーブルに対するインデックスとして使用し、
+得られたポインタをリトルエンディアンで`RAMアドレス$7E0000`から`$7E0002`へストアしています。
+その後、次のセクションでは、`RAMアドレス$7E0000`をインダイレクトポインタとして使用し、
+再びYレジスタをインデックスとして用いてデータの読み取りを開始しています。
+読み取りの処理は「データ終端記号」（今回は数値`$FF`）が読み取られるまで繰り返し実行されます。
+コースデータのサイズはコースごとに異なっているため、この例ではデータ終端記号を用いた繰り返し処理を使用しています。
+また、コースデータのサイズが256バイトを超える*可能性がある*ため、Yレジスタを16-bitモードで使用しています。
+最終的に、Yレジスタを8-bitモードに戻してリターンし、ルーチンは終了します。
 
-This example also shows how to use 24-bit pointers rather than 16-bit pointers. The pointer table contains long values. We use this in combination with a "direct, indirect *long*" addressing mode (i.e. the square brackets).
+このコードからは、16-bitポインタではなく24-bitポインタの使い方も学ぶことができます。
+ポインタテーブルはロング値を保持しています。
+そのため、ポインタテーブルの読み取りには、角括弧で記述されるアドレッシングモード「ダイレクトインダイレクトロングモード」を使用しています。
 
-## Pseudo 16-bit math
-It is possible to perform 16-­bit `ADC` and `SBC` without actually switching to 16-­bit mode. This is actually quite useful in cases a 16-bit value is stored across two separate addresses as two 8-bit values. This is possible with the help of the carry flag as well as the behaviour of the opcodes `ADC` and `SBC`.
+## 擬似16-bit演算
+16-bitモードを使用しなくても`ADC`と`SBC`で16-bitの演算が実行できます。
+この方法は、1つの16-bit値が隣接していない2つのアドレスに2つの8-bit値として保持されている場合に有用です。
+この方法では、オペコード`ADC`と`SBC`の挙動に加えて、キャリーフラグの特性を利用しています。
 
-Pseudo 16-bit math also works with `INC` and `DEC`, although you'd have to use them on the addresses instead of the A, X and Y registers. By making clever usage of the negative flag, it's possible to perform pseudo 16-bit math with this opcode also.
+また、`INC`や`DEC`でも擬似16-bit演算は可能ですが、アキュムレータ、Xレジスタ、Yレジスタに対してではなく、アドレスに対して演算を行う必要があります。
+これらのオペコードでは、ゼロフラグを適切に利用することで擬似16-bit演算が可能になります。
 
 ### ADC
+`ADC`の擬似16-bit演算は以下のように記述します。
 Here's an example of a pseudo 16-bit `ADC`:
 
 ```
 LDA #$F0
-STA $00            ; Initialize address $7E0000 to value $F0 for this example
+STA $00            ; 例として、アドレス$7E0000を数値$F0で初期化する
 LDA #$05
-STA $59            ; Initialize address $7E0059 to value $05 for this example
-                   ; These would make the 16-bit value $05F0
+STA $59            ; 例として、アドレス$7E0059を数値$05で初期化する
+                   ; これら2つのアドレスは16-bit値$05F0を構成する
 
-LDA $00            ; Load the value $F0 into A
-CLC                ; Clear Carry flag for addition. C = 0
-ADC #$20           ; $F0+$20 = $10, C = 1
-STA $00            ; $7E0000 has now the value $10
+LDA $00            ; 数値$F0をアキュムレータにロードする
+CLC                ; 加算のためにキャリーフラグをクリアする。C = 0
+ADC #$20           ; $F0+$20 = $10。C = 1
+STA $00            ; $7E0000に数値$10をストアする
 
-LDA $59            ; Load the value $05 into A
-ADC #$00           ; Normally adds $00 to value $05. BUT C = 1, so this adds $01 to $05 instead
-STA $59            ; A is now $06, and we store it into $7E0059
-                   ; These would now make the 16-bit value $0610
-                   ; across two addresses
+LDA $59            ; 数値$05をアキュムレータにロードする
+ADC #$00           ; 通常は数値$00が数値$05に加算されるが、C = 1なので、数値$01が数値$05に加算される
+STA $59            ; アキュムレータは$06であり、それを$7E0059にストアする
+                   ; これらは2つのアドレスにまたがって
+                   ; 16-bit値$0610を構成する
 ```
-The carry flag is set after the first `ADC`. This means that the value has wrapped back to `$00` and increased from there. Because the carry flag is set, the second `ADC` adds $00 + carry, thus `$01`, thus increasing the second address by one.
+最初の`ADC`を実行した後、キャリーフラグがセットされます。
+これは、加算によって値が`$00`に戻り、そこから増加していったことを表します。
+キャリーフラグがセットされているため、2回目の`ADC`は$00にキャリーフラグを加えた値である`$01`を加算します。
+よって、2つ目のアドレスは1インクリメントされます。
 
 ### SBC
-Here's an example of a pseudo 16-bit `SBC`:
+`SBC`の擬似16-bit演算は以下のように記述します。
 
 ```
 LDA #$10
-STA $00            ; Initialize address $7E0000 to value $10 for this example
+STA $00            ; 例として、アドレス$7E0000を数値$10で初期化する
 LDA #$05
-STA $59            ; Initialize address $7E0059 to value $05 for this example
-                   ; These would make the 16-bit value $0510
+STA $59            ; 例として、アドレス$7E0059を数値$05で初期化する
+                   ; これら2つのアドレスは16-bit値$0510を構成する
 
-LDA $00            ; Load the value $10 into A
-SEC                ; Set Carry flag for subtraction. C = 1
-SBC #$20           ; $10-$20 = $F0, C = 0
-STA $00            ; $7E0000 has now the value $F0
+LDA $00            ; 数値$10をアキュムレータにロードする
+SEC                ; 減算のためにキャリーフラグをセットする。C = 1
+SBC #$20           ; $10-$20 = $F0。C = 0
+STA $00            ; $7E0000に数値$F0をストアする
 
-LDA $59            ; Load the value $05 into A
-SBC #$00           ; Normally subtracts $00 from value $05. BUT C = 0, so this subtracts $01 from $05 instead
-STA $59            ; A is now $04, and we store it into $7E0059
-                   ; These would now make the 16-bit value $04F0
-                   ; across two addresses
+LDA $59            ; 数値$05をアキュムレータにロードする
+SBC #$00           ; 通常は数値$05から数値$00が減算されるが、C = 0なので、数値$05から数値$01が減算される
+STA $59            ; アキュムレータは$04であり、それを$7E0059にストアする
+                   ; これらは2つのアドレスにまたがって
+                   ; 16-bit値$04F0を構成する
 ```
-The carry flag is cleared after the first `SBC`. This means that the value has wrapped back to `$FF` and decreased from there. Because the carry flag is cleared, the second `SBC` subtracts $00 + carry, thus `$01`, thus decreasing the second address by one.
+最初の`SBC`を実行した後、キャリーフラグがクリアされます。
+これは、減算によって値が`$FF`に戻り、そこから減少していったことを表します。
+キャリーフラグがクリアされているため、2回目の`SBC`は$00にキャリーフラグを加えた値である`$01`を減算します。
+よって、2つ目のアドレスは1デクリメントされます。
 
 ### INC
-Here's an example of a pseudo 16-bit `INC`:
+`INC`の擬似16-bit演算は以下のように記述します。
 
 ```
    LDA #$FF
-   STA $00          ; Initialize address $7E0000 to value $FF for this example
+   STA $00          ; 例として、アドレス$7E0000を数値$FFで初期化する
    LDA #$03
-   STA $59          ; Initialize address $7E0059 to value $03 for this example
-                    ; These would make the 16-bit value $$03FF
+   STA $59          ; 例として、アドレス$7E0059を数値$03で初期化する
+                    ; これら2つのアドレスは16-bit値$03FFを構成する
 
-   INC $00          ; The value in $7E0000 is increased by 1, making it have the value $00
-   BNE +            ; This sets the zero flag, thus the branch is not taken
-   INC $59          ; Thus, the value in $7E0059 is also increased by 1
-+  RTS              ; These would now make the 16-bit value $0400
-                    ; across two addresses
+   INC $00          ; $7E0000の値が1インクリメントされ、数値$00になる
+   BNE +            ; この結果はゼロフラグをセットするため、分岐は実行されない
+   INC $59          ; よって、$7E0059の値も1インクリメントされる
++  RTS              ; これらは2つのアドレスにまたがって
+                    ; 16-bit値$0400を構成する
 ```
-By making clever usage of the zero flag, we know that the result of `INC $00` is actually the value `$00`, because that's the only time the zero flag is set. If the result is indeed the value `$00`, then the other address needs to be increased also.
+ゼロフラグを適切に使用することによって、`INC $00`の結果が数値`$00`になったことを判定できます。
+これは、このコードにおいてゼロフラグがセットされる唯一の条件です。
+もし実際に、`INC`の結果が数値`$00`になった場合、もうひとつのアドレスも1インクリメントされる必要があります。
 
 ### DEC
-Here's an example of a pseudo 16-bit `DEC`:
+`DEC`の擬似16-bit演算は以下のように記述します。
 
 ```
    LDA #$00
-   STA $00          ; Initialize address $7E0000 to value $00 for this example
+   STA $00          ; 例として、アドレス$7E0000を数値$00で初期化する
    LDA #$03
-   STA $59          ; Initialize address $7E0059 to value $03 for this example
-                    ; These would make the 16-bit value $$0300
+   STA $59          ; 例として、アドレス$7E0059を数値$03で初期化する
+                    ; これら2つのアドレスは16-bit値$0300を構成する
 
-   DEC $00          ; Decrease the value in $7E0000 by 1
-   LDA $00          ; If it results in $FF, then we wrapped from the value $00 to $FF
-   CMP #$FF         ; Thus, we need to decrease the value in $7E0059 also
+   DEC $00          ; $7E0000の値が1デクリメントされる
+   LDA $00          ; 結果が$FFなら、数値が$00から$FFに戻ったことになる
+   CMP #$FF         ; その場合、$7E0050の値もデクリメントしなければならない
    BNE +
    DEC $59
-+  RTS              ; These would now make the 16-bit value $02FF
-                    ; across two addresses
++  RTS              ; これらは2つのアドレスにまたがって
+                    ; 16-bit値$02FFを構成する
 ```
-As you can see, there's an extra check for the value `$FF`, because there's no shorthand way to check if the result of a `DEC` is exactly the value `$FF`. If the result indeed is the value `$FF`, then the other address needs to be decreased also.
+ここから分かる通り、この例では数値`$FF`に対する比較を追加しています。
+なぜなら、より簡単に`DEC`の結果が数値`$FF`になったことを直接検出できる方法が存在しないからです。
+もし実際に`DEC`の結果が数値`$FF`になっていれば、もうひとつのアドレスも1デクリメントされる必要があります。
 
-## ADC and SBC on X and Y
-Increasing and decreasing A by a certain amount is easy because of `ADC` and `SBC`. However, these kind of instructions do not exist for X and Y. If you want to increase or decrease X and Y by a small amount, you would have to use `INX`, `DEX`, `INY` and `DEY`. This quickly gets impractical if you have to increase or decrease X and Y by great numbers (5 or more) though. In order to do that, you can temporarily transfer X or Y to A, then perform an `ADC` or `SBC`, then transfer it back to X or Y. 
+## XレジスタやYレジスタに対するADC・SBC
+アキュムレータの値を増やしたり減らしたりすることは`ADC`や`SBC`を用いることで簡単に実行できますが、
+こうした演算をXレジスタやYレジスタに対して実行する命令は存在しません。
+小さな値をXレジスタやYレジスタに加算、もしくは減算する場合には`INX`、`DEX`、`INY`、`DEY`を用いることができますが、
+大きな値（5以上）を加算、減算する場合には、これらの命令を使用することは有効ではありません。
+こうした場合には、一旦XレジスタやYレジスタの値をアキュムレータに転送してから`ADC`や`SBC`を実行し、
+その演算結果をXレジスタやYレジスタへ再度転送すると良いでしょう。
 
-### Addition
-Here's an example using `ADC`:
+### 加算
+以下のコードは`ADC`を用いた例です。
 ```
-TXA                ; Transfer X to A. A = X
+TXA                ; Xレジスタの値をアキュムレータに転送する。A = X
 CLC                ; 
-ADC #$42           ; Add $42 to A
-TAX                ; Transfer A to X. X has now increased by $42
+ADC #$42           ; アキュムレータに$42を加算する
+TAX                ; アキュムレータの値をXレジスタに転送する。Xレジスタの値に$42が加算できた
 ```
-By temporarily transferring X to A and back, the `ADC` practically is used on the X register, instead.
+Xレジスタの値を一旦アキュムレータに転送し、演算後に逆の転送を行うことで、Xレジスタに対して`ADC`を実行したのと同じことになります。
 
-### Subtraction
-Here's an example using `SBC`:
+### 減算
+以下のコードは`SBC`を用いた例です。
 ```
-TXA                ; Transfer X to A. A = X
+TXA                ; Xレジスタの値をアキュムレータに転送する。A = X
 SEC                ; 
-SBC #$42           ; Subtract $42 from A
-TAX                ; Transfer A to X. X has now decreased by $42
+SBC #$42           ; アキュムレータから$42を減算する
+TAX                ; アキュムレータの値をXレジスタに転送する。Xレジスタの値から$42を減算できた
 ```
-By temporarily transferring X to A and back, the `SBC` practically is used on the X register, instead.
+Xレジスタの値を一旦アキュムレータに転送し、演算後に逆の転送を行うことで、Xレジスタに対して`ADC`を実行したのと同じことになります。
 
-## Checking flags
-[Flags](../the-basics/binary.md), are bits which serve as some sort of an "on/off" switch on a certain property. One byte contains 8 bits, but how do you actually *check* if a flag is on or off? In ASM, when you usually use comparison and branching opcodes, you check for whole bytes rather than a single bit within that byte. There are two opcodes which are suitable for this. We will use the example from the binary chapter:
+## フラグ検査
+[フラグ](../the-basics/binary.md)とは、あるものに対する一種の「オンオフ」スイッチとして機能するビットのことです。
+1バイトは8-bitですが、では、そのフラグがオンになっているかオフになっているかを実施に*検査*するにはどうすれば良いのでしょうか。
+アセンブリ言語において、比較分岐のオペコードはバイト値そのものを検査するものの、そのバイト値を構成する各ビットは検査されません。
+こうした場合に有用な2つのオペコードを紹介します。
+また、この項では2進数の章で使用した例を改めて使用します。
+
 ```text
 10100000
-││└───── "Is daytime" flag
-│└───── "Is horizontal level" flag
-└───── "Is raining" flag
+││└───── "昼である"フラグ
+│└───── "横方向のコース"フラグ
+└───── "雨が降っている"フラグ
 ```
-Imagine this byte is stored in address $7E0095 for the examples to follow.
+また、以下のコードでは、このバイトがアドレス$7E0095にストアされているものとします。
 
-### The "AND" opcode
-`AND` is handled in the [Bitwise Operations](../math/logic.md) chapter. By using AND, you can basically "isolate" bits and check if any of them are set or cleared. For example, if we want to check if the "daytime" flag is set, you would load the address into A, then `AND` just that one bit:
+### オペコード"AND"
+`AND`については[ビット演算命令](../math/logic.md)の章で解説しました。
+ANDを用いることで、「個々のビットが」セットされているかクリアされているかを確認できます。
+例えば、「昼である」フラグがセットされていることを検査したい場合、そのアドレスの値をアキュムレータにロードし、
+そのうちの1ビットのみに対して`AND`を実行します。
 
 ```
 LDA $95
-AND #%00100000     ; can also be written as #$20
-BNE DayTimeIsSet   ; branches when the daytime flag is set
+AND #%00100000     ; #$20とも記述できる
+BNE DayTimeIsSet   ; もし「昼である」フラグがセットされているならば分岐する
 ...
 ```
-If that one bit in address $7E0095 is set, then the result of that `AND` will also be that A gets the value `$20`. Thus, the zero flag is cleared, and the branch is taken.
+もし、検査するビットがアドレス$7E0095でセットされているならば、`AND`の実行結果としてアキュムレータが`$20`となります。
+したがって、この場合ゼロフラグはクリアされ、分岐が実行されます。
 
-If you want to check if either of the two flags are set (e.g. the daytime flag *or* the raining flag), you'd use `AND` to check two bits, rather than one:
+2つのフラグのうちいずれかがセットされていることを検査したい場合（例えば、「昼である」フラグ*か*「雨が降っている」フラグ）、
+1つのビットではなく2つのビットに対して`AND`を実行します。
 ```
 LDA $95
-AND #%10100000         ; can also be written as #$A0
-BNE IsRainingOrDaytime ; branches when both rain OR daytime flags are set
+AND #%10100000         ; #$A0とも記述できる
+BNE IsRainingOrDaytime ; 「昼である」フラグか「雨が降っている」フラグのどちらかがセットされているならば分岐する
 ...
 ```
 
-If you want to check if both of the two flags are set (e.g. the daytime flag *and* the raining flag), you'd have to use `AND` and then a `CMP`. Then, you'd branch if the value resulting from the `AND` is equal to the flags you want set:
+2つのフラグの両方がセットされていることを検査したい場合は（例えば、「昼である」フラグ*と*「雨が降っている」フラグ）
+`AND`の後に`CMP`を実行します。この場合、`AND`の結果が評価されるフラグの状態と一致する場合に分岐が実行されます。
 ```
 LDA $95
-AND #%10100000         ; First filter the bits
-CMP #%10100000         ; Then check if both bits are set
-BEQ IsRainingOrDaytime ; branches when both rain AND daytime flags are set
+AND #%10100000         ; 各ビットの検査First filter the bits
+CMP #%10100000         ; 両方のビットがセットされている場合、すなわち「雨が降っている」フラグと
+BEQ IsRainingOrDaytime ; 「昼である」フラグの両方がセットされている場合に分岐する
 ...
 ```
 
-### The "BIT" opcode
-The `BIT` opcode, which is also handled in the [Bitwise Operations](../math/logic.md) chapter, is special because it can actually check if bits 7 and 6 (bits 15 and 14 in 16-bit mode) of an address' value are set, without having to modify A. Here's an example:
+### オペコード"BIT"
+オペコード`BIT`についても[ビット演算命令](../math/logic.md)の章で解説しました。
+このオペコードは、アキュムレータの値を変更することなく7ビット目と6ビット目の状態を検査できるという点で特殊なオペコードです。
 
 ```
 BIT $95
-BMI IsRaining          ; Branches when bit 7 (negative flag) is set
-BVS IsHorizontalLevel  ; Branches when bit 6 (overflow flag) is set
+BMI IsRaining          ; 7ビット目（ネガティブフラグ）がセットされている場合に分岐する
+BVS IsHorizontalLevel  ; 6ビット目（オーバーフローフラグ）がセットされている場合に分岐する
 ...
 ```

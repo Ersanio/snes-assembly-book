@@ -1,95 +1,116 @@
-# Hardware math
-The SNES processor is capable of [basic multiplication and division by 2ⁿ](../math/shift.md), but if you'd like to multiply or divide by other numbers, you'll have to make use of certain SNES hardware registers.
+# ハードウェア演算
+スーパーファミコンでは、[2ⁿによる基礎的な乗算と除算](../math/shift.md)に対応していますが、
+他の値による乗算と除算を行いたい場合には、スーパーファミコンの特定のハードウェアレジスタを使用する必要があります。
+## 非サイン値のハードウェア乗算
+非サイン値の乗算には、以下のハードウェアレジスタを使用します。
 
-## Hardware Unsigned Multiplication
-The SNES has a set of hardware registers used for unsigned multiplication:
-|Register|Access|Description|
+|レジスタ|アクセス方法|説明|
 |-|-|-|
-|$4202|Write|Multiplicand, 8-bit, unsigned.|
-|$4203|Write|Multiplier, 8-bit, unsigned. Writing to this also starts the multiplication process.|
-|$4216|Read|Unsigned multiply 16-bit product, low byte|
-|$4217|Read|Unsigned multiply 16-bit product, high byte|
+|$4202|Write|非サイン値である8-bitの被乗数|
+|$4203|Write|非サイン値である8-bitの乗数。このハードウェアレジスタへ値を書き込むと乗算処理が実行される|
+|$4216|Read|非サイン値である16-bitの乗算結果の下位バイト|
+|$4217|Read|非サイン値である16-bitの乗算結果の上位バイト|
 
-After you write to `$4203` to start the multiplication process, you will need to wait 8 [machine cycles](../indepth/cycles.md), which is typically done by adding four `NOP` instructions to the code. If you don't wait 8 machine cycles, the results are unpredictable.
+`$4203`へ書き込みを行うと、乗算処理が実行されます。
+結果を得る前に、8[マシンサイクル](../indepth/cycles.md)待機する必要があるので、
+多くの場合は、結果を読み取る命令の前に`NOP`命令を4つ記述します。
+`$4203`への書き込み後、8マシンサイクルが経過する前に結果を読み取ろうとした場合、
+得られる結果は予測できないものとなります。
 
-Here's an example of `42 * 129 = 5418` (in hexadecimal: `$2A * $81 = $152A`):
+`42 * 129 = 5418`（16進数で`$2A * $81 = $152A`）の計算は以下のように行います。
+
 ```
 LDA #$2A           ; 42
 STA $4202
 LDA #$81           ; 129
 STA $4203
-NOP                ; Wait 8 machine cycles
+NOP                ; 8マシンサイクル待機
 NOP
 NOP
 NOP
-LDA $4216          ; A = $2A (result low byte)
-LDA $4217          ; A = $15 (result high byte)
+LDA $4216          ; A = $2A (結果の下位バイト)
+LDA $4217          ; A = $15 (結果の上位バイト)
 ```
 
-## Hardware Signed Multiplication
-There's a set of hardware registers which can be used for fast, signed multiplication:
-|Register|Access|Description|
+## サイン値のハードウェア乗算
+サイン値の高速な乗算には、以下のハードウェアレジスタを使用します。
+
+|レジスタ|アクセス方法|説明|
 |-|-|-|
-|$211B|Write twice|Multiplicand, 16-bit, signed. First write: Low byte of multiplicand. Second write: High byte of multiplicand|
-|$211C|Write|Multiplier, 8-bit.|
-|$2134|Read|Signed multiply 24-bit product, low byte|
-|$2135|Read|Signed multiply 24-bit product, middle byte|
-|$2136|Read|Signed multiply 24-bit product, high byte|
+|$211B|Write twice|16-bitのサイン値である被乗数。1回目の書き込みでは被乗数の下位バイトを、2回目の書き込みでは被乗数の上位バイトを書き込む|
+|$211C|Write|8-bitの乗数|
+|$2134|Read|サイン値である24-bitの乗算結果の下位バイト|
+|$2135|Read|サイン値である24-bitの乗算結果の中間バイト|
+|$2136|Read|サイン値である24-bitの乗算結果の上位バイト|
 
-There's a catch to using these hardware registers, however, as they double as certain Mode 7 registers as well:
 
-- You can only use them for **signed** multiplication
-  - The result is signed 24-bit, meaning the results range from `-8,388,608` to `8,388,607`.
-- The results are instant. That means you don't have to use `NOP` to wait for the results.
-- You cannot use them when Mode 7 graphics are being rendered on the screen.
-  - This means that when Mode 7 is enabled, you can only use them inside NMI (V-blank).
-  - This also means that you can use them without any restrictions, outside of Mode 7.
+これらのハードウェアレジスタは、特定のモード7レジスタとしても使用されているため、
+ハードウェア乗算で使用する場合には注意が必要です。
 
-Note that register `$211B` is "write twice". This means that you have to write an 8-bit value twice to this same register which in total makes up a 16-bit value. First, you write the low byte, then the high byte of the 16-bit value.
+- これらのハードウェアレジスタは、**サイン値**の乗算にのみ使用する
+  - 結果は24-bitのサイン値として与えられる。すなわち、演算結果が取れる範囲は`-8,388,608`から`8,388,607`までである
+- 結果は即時に与えられる。すなわち、`NOP`を用いた待機は必要ない
+- スクリーンにモード7グラフィックが描画されているときに、これらのハードウェアレジスタは使用できない
+  - つまり、モード7が有効のとき、これらのハードウェアレジスタを用いたハードウェア乗算は、NMI（V-blank）の間でのみ使用できる
+  - 逆に、モード7を使用していないときは制限なく使用できる
 
-Here's an example of `-30000 * 9 = -270000` (in hexadecimal: `$8AD0 * $09 = $FBE150`):
+ハードウェアレジスタ`$211B`は"write twice"（二度書き）であることに注意してください。
+つまり、8-bitの数値を同じレジスタへ2回書き込むことで16-bit値を構成する、ということです。
+1回目では16-bit値の下位バイトを、2回目では上位バイトを書き込みます。
+
+`-30000 * 9 = -270000`（16進数では`$8AD0 * $09 = $FBE150`）の計算は以下のように行います。
 
 ```
-LDA #$D0           ; Low byte of $8AD0
+LDA #$D0           ; $8AD0の下位バイト
 STA $211B
-LDA #$8A           ; High byte of $8AD0
-STA $211B          ; This sets up the multiplicand
+LDA #$8A           ; $8AD0の上位バイト
+STA $211B          ; 被乗数の設定が完了した
 
 LDA #$09           ; $09
-STA $211C          ; This sets up multiplier
+STA $211C          ; 乗数の設定
 
-LDA $2134          ; A = $50 (result low byte)
-LDA $2135          ; A = $E1 (result middle byte)
-LDA $2136          ; A = $FB (result high byte)
+LDA $2134          ; A = $50 (結果の下位バイト)
+LDA $2135          ; A = $E1 (結果の中間バイト)
+LDA $2136          ; A = $FB (結果の上位バイト)
                    ; (= $FBE150)
 ```
-## Hardware Unsigned Division
-The SNES has a set of hardware registers used for unsigned division. They are laid out as follows:
-|Register|Access|Description|
+## 非サイン値のハードウェア除算
+非サイン値の除算には、以下のハードウェアレジスタを使用します。
+
+|レジスタ|アクセス方法|説明|
 |-|-|-|
-|$4204|Write|Dividend, 16-bit, unsigned, low byte.|
-|$4205|Write|Dividend, 16-bit, unsigned, high byte.|
-|$4206|Write|Divisor, 8-bit, unsigned. Writing to this also starts the division process.|
-|$4214|Read|Unsigned division 16-bit quotient, low byte|
-|$4215|Read|Unsigned division 16-bit quotient, high byte|
-|$4216|Read|Unsigned division remainder, low byte|
-|$4217|Read|Unsigned division remainder, high byte|
+|$4204|Write|非サイン値である16-bitの被除数の下位バイト|
+|$4205|Write|非サイン値である16-bitの被除数の上位バイト|
+|$4206|Write|非サイン値である8-bitの除数。このハードウェアレジスタへ値を書き込むと除算処理が実行される|
+|$4214|Read|非サイン値である16-bitの商の下位バイト|
+|$4215|Read|非サイン値である16-bitの商の上位バイト|
+|$4216|Read|非サイン値である16-bitの余の下位バイト|
+|$4217|Read|非サイン値である16-bitの余の上位バイト|
 
-Quotient means how many times the dividend can "fit" in the divisor. For example: `6 / 3 = 2`. Thus, the quotient is 2. Another way you can read this is: You can extract 3 **two** times from 6 and end up with exactly 0 as leftover.
+商とは、除数が被除数に「何回掛けられるか」を表します。例えば、`6 / 3 = 2`という計算における商は2です。
+言い換えるならば、6という数字からは3を**2回**引くことができ、余りは発生しません。
 
-Modulo is an operation that determines the remainder of the dividend that couldn't "fit" into the divisor. For example: `8 / 3 = 2`. You can subtract 3 two times from 8, but in the end, you have a 2 as a remainder. Thus, the modulo for this operation is `2`. Because there are hardware registers that support remainders, the SNES also supports the modulo operation.
+剰余とは、被除数が除数に「収まりきらなかった」余りです。
+例えば、`8 / 3 = 2`を考えてみましょう。
+8からは3を2回引くことができますが、最終的には余りとして2が残ります。
+よって、この除算における剰余は2です。
+スーパーファミコンには余りに対応したハードウェアレジスタが存在するため、剰余演算を行うことが可能です。
 
-After you write to `$4206` to start the division process, you will need to wait 16 [machine cycles](../indepth/cycles.md), which is typically done by adding eight `NOP` instructions to the code. If you don't wait 16 machine cycles, the results are unpredictable.
+`$4206`へ書き込みを行うと除算処理が実行されますが、結果を得るまでに16[マシンサイクル](../indepth/cycles.md)待機する必要があります。
+これには、`NOP`を8回記述するだけで構いません。
+`$4206`への書き込み後、16マシンサイクルが経過する前に結果を読み取ろうとした場合、
+得られる結果は予測できないものとなります。
 
-Here's an example of `256 / 2 = 128` (in hexadecimal: `$0100 / $02 = $0080`):
+`256 / 2 = 128`（16進数で`$0100 / $02 = $0080`）の計算は以下のように行います。
+
 ```
 LDA #$00
 STA $4204
-LDA #$01           ; Write $0100 to dividend
+LDA #$01           ; $0100を被除数として書き込む
 STA $4205
-LDA #$02           ; Write $02 to divisor
+LDA #$02           ; $02を除数として書き込む
 STA $4206
-NOP                ; Wait 16 machine cycles
+NOP                ; 16マシンサイクル待機
 NOP
 NOP
 NOP
@@ -97,21 +118,22 @@ NOP
 NOP
 NOP
 NOP
-LDA $4214          ; A = $80 (result low byte)
-LDA $4215          ; A = $00 (result high byte)
-LDA $4216          ; A = $00, as there are no remainders
-LDA $4217          ; A = $00, as there are no remainders
+LDA $4214          ; A = $80 (商の下位バイト)
+LDA $4215          ; A = $00 (商の上位バイト)
+LDA $4216          ; 余は0なので、A = $00
+LDA $4217          ; 余は0なので、A = $00
 ```
 
-Here's an example demonstrating modulo: `257 / 2 = 128, remainder 1` (in hexadecimal: `$0101 / $02 = $0080, remainder $0001`)
+`257 / 2 = 128あまり1`（16進数で`$0101 / $02 = $0080あまり$0001`）の計算は以下のように行います。
+
 ```
 LDA #$01
 STA $4204
-LDA #$01           ; Write $0101 to dividend
+LDA #$01           ; 被除数として$0101を書き込む
 STA $4205
-LDA #$02           ; Write $02 to divisor
+LDA #$02           ; 除数として$02を書き込む
 STA $4206
-NOP                ; Wait 16 machine cycles
+NOP                ; 16マシンサイクル待機
 NOP
 NOP
 NOP
@@ -119,10 +141,10 @@ NOP
 NOP
 NOP
 NOP
-LDA $4214          ; A = $80 (result low byte)
-LDA $4215          ; A = $00 (result high byte)
-LDA $4216          ; A = $01, as there is a remainder (remainder low byte)
-LDA $4217          ; A = $00 (remainder high byte)
+LDA $4214          ; A = $80 (商の下位バイト)
+LDA $4215          ; A = $00 (商の上位バイト)
+LDA $4216          ; A = $01（余の下位バイト）
+LDA $4217          ; A = $00（余の上位バイト）
 ```
 
-There is no hardware signed division.
+なお、サイン値のハードウェア除算は存在しません。

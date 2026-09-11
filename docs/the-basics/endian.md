@@ -1,11 +1,21 @@
-# Little-endian
+# リトルエンディアン
 
-Inside the SNES memory, 16-bit and 24-bit values are always stored in "little-endian". Take for example the value $1234 which we store in the RAM; $1234 does not appear as $12 $34. It appears as $34 $12, instead. This is how the SNES works. When this number is read in 16-bit mode, it reads $1234, NOT $3412. The SNES reverses this automatically again.
+スーパーファミコンのメモリ内では、16-bit、もしくは24-bitの値は常に「リトルエンディアン」形式で保持されています。
+RAMに保存した数値$1234を考えます。
+$1234は、「$12 $34」のように保管されているわけではありません。
+実際には「$34 $12」として保管されており、これが、スーパーファミコンにおける数値の保管方法です。
+もちろん、16-bitモードでこうした値が読まれる際には$3412ではなく$1234として読まれます。
+つまりスーパーファミコンは、自動的に再度数値を逆転させるのです。
 
-24-bit values are no exception. Values, such as $123456, are stored in the memory as $56 $34 $12.
+これは24-bit幅の数値も例外ではありません。
+$123456のような数値は、メモリ内に「$56 $34 $12」として保管されています。
 
-You can write everything in normal ASM without worrying about little-endian, because everything is dealt with automatically by the SNES and the assembler! You can worry about little-endian when you deal with 16-bit values in 8-bit mode. 
+スーパーファミコンとアセンブラがこの形式を自動的に処理してくれるため、
+普通にアセンブリを記述する際、リトルエンディアンについて心配する必要はありません。
+ただし、16-bit幅の数値を8-bitモードで扱う際には注意が必要です。
 
-For example: if you ever store the value $1234 at address $7E0000, it is stored as $34 $12. Then, if you ever want to access the low byte of $1234 (which is $34), you would need to read $7E0000, NOT $7E0001.
+例えば、アドレス$7E0000に$1234を保存したとします。
+このとき、数値は「$34 $12」として保管されています。
+次に、$1234の下位バイトである$34にアクセスしようとした場合、$7E0001ではなく、$7E0000にアクセスする必要があるのです。
 
-The concept of little-endian is especially important when dealing with "pointers", which is explained later in this tutorial.
+このリトルエンディアンの考え方は、この入門書の後半で解説する「ポインタ」を扱う際に、非常に重要となってきます。

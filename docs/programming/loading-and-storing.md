@@ -1,37 +1,49 @@
-# Loading and storing
+# ロードとストア
 
-The first thing you definitely should know when starting off with assembly, is how to load and store data using various the SNES registers. The basic opcodes for loading and storing data are `LDA` and `STA`. 
+アセンブリの学習を始める際、最初に必ず知っておくべきことは、
+どのようにして、スーパーファミコンのレジスタにデータを読み込むか、あるいは書き込むかということです。
+データを読み込む、あるいは書き込む基本的なオペコードは、`LDA`と`STA`です。
 
-As mentioned earlier, there are 3 main registers: 
-* A (the accumulator)
-* X (index)
-* Y (index)
+既に解説した通り、スーパーファミコンには3種類のレジスタが存在します。
 
-Although these registers can be either in 8-bit or 16-bit mode, in this tutorial we will consider them 8-bit by default.
+* アキュムレータ
+* Xレジスタ（インデックスレジスタ）
+* Yレジスタ（インデックスレジスタ）
 
-## LDA and STA
+これらのレジスタは、8-bitモードあるいは16-bitモードのいずれも取ることができますが、
+本書では特に断りがない場合、これらのレジスタは8-bitモードであるものとします。
 
-|Opcode|Full name|Explanation|
+## LDA・STA
+
+|オペコード|正式名称|説明|
 |-|-|-|
-|**LDA**|Load into accumulator|Load a value into A|
-|**STA**|Store from accumulator|Store A's value into an address|
+|**LDA**|Load into accumulator|アキュムレータに値を読み込む（ロードする）|
+|**STA**|Store from accumulator|アキュムレータの値をアドレスに書き込む（ストアする）|
 
-We will use RAM addresses for the sake of simplicity. Here is an example for loading and storing values.
+簡単のためにRAMアドレスを用いて考えると、値のロードとストアは以下の通りになります。
 
 ```
-LDA #$03           ; A = $03
+LDA #$03           ; アキュムレータ = $03
 STA $7E0001
 ```
 
-We will look at this code line by line.
+各行ごとに見ていきましょう。
+
 ```
 LDA #$03
 ```
-This loads the value `$03` into A. The "#" means that we're loading an actual value, not an address. After this instruction, the content of the A register is now `$03`. LDA can load values into A, ranging from `$00-$FF` in 8-bit mode and `$0000-$FFFF` in 16-bit mode.
+これは、アキュムレータに数値`$03`を読み込む命令です。
+「#」はアドレスではなく実際の数値を読み込んでいることを示します。
+この命令を実行すると、アキュムレータは`$03`になります。
+
 ```
 STA $7E0001
 ```
-This stores A's value into the RAM address $7E0001. Because A's value was $03, RAM address $7E0001's value also is now $03. The contents of the A register is *not* cleared. This means you can chain multiple stores, like this:
+
+これは、アキュムレータの値をRAMアドレス$7E0001にストアする命令です。
+アキュムレータの値は$03なので、RAMアドレス$7E0001の値は$03となります。
+このとき、アキュムレータの値は初期化*されません*。
+よって、以下のように書き込み命令を連続して実行できます。
 
 ```
 LDA #$03
@@ -39,64 +51,84 @@ STA $7E0001
 STA $7E0053
 ```
 
-A common beginner's mistake is writing `STA #$7E0001` or any form of "STA #$". This instruction doesn't exist. It also doesn't make sense; there's no logic behind storing the value of A into another value.
+初心者によくある間違いは、`STA #$7E0001`のように`STA #$`と記述してしまうことです。
+このような命令は存在しません。
+というよりもむしろ、このような命令、つまり、アキュムレータの値を別の「値」に書き込むといった命令は意味を持ちませんね。
 
 {% hint style="info" %}
-Remember, using $ instead of #$ after an opcode means that the parameter is an address, not an immediate value.
+「#$」ではなく「$」を用いると、オペランドは即値ではなく、アドレスとなります。
 {% endhint %}
 
-Putting a semicolon (;) will allow everything beyond that to be ignored by the assembler, during the assembly of the code. In other words, ; is used to place comments. Example:
+アセンブルの過程において、セミコロン（;）以降の内容はアセンブラによって無視されます。
+つまり、「;」はコメントを記述するのに使用されます。
 
 ```
 LDA #$03           ; This is a comment!
 ```
-### Loading and storing addresses
+### アドレスのロードとストア
 
-Of course, what would be the use to store things to a RAM address when you don't know how to access the address again? You can load a RAM address' contents into the A register by using LDA with a different addressing mode. Here is an example.
+もちろん、アドレスにアクセスする方法を知らなければ、そのRAMアドレスに数値をストアすることは何の価値もありません。
+LDAを異なるアドレッシングモードで使用することで、RAMアドレスの内容をアキュムレータに読み込むことができます。
 
 ```
 LDA $7E0013
 STA $7E0042
 ```
-Again, we will look at this example line by line.
+再度、各行ごとに見ていきます。
+
 ```
 LDA $7E0013
 ```
-This will load the contents of the RAM address `$7E0013` into A. Let's assume that the contents were `$33`. So now, A has the value `$33`. The content of `$7E0013` remains unchanged, because LDA copies the number rather than extracting it from the address. Note that this time we have used $ instead of #$. This is because we wanted to access a RAM address. In the end, A has `$33` and RAM `$7E0013` has the value `$33` also.
+これは、RAMアドレス`$7E0013`の内容をアキュムレータにロードする命令です。
+ここでは、そのRAMアドレスに`$33`が保持されているとします。
+このとき、アキュムレータの数値は`$33`となります。
+LDAは、アドレスの数値を抜き取るというよりも、コピーする命令なので、`$7E0013`自体の数値は変化しません。
+ここで、オペランドで「#$」ではなく「$」を使用したことに着目してください。
+これは、RAMアドレスにアクセスするためです。
+最終的に、アキュムレータと`$7E0013`はともに数値`$33`となります。
 
 ```
 STA $7E0042
 ```
-This instruction will store the contents of the A register into the RAM address `$7E0042`. Of course, A will remain unchanged. RAM address `$7E0042` is now `$33`. In short: the full example will copy the contents of `$7E0013` over to `$7E0042`.
+これは、アキュムレータの数値をRAMアドレス`$7E0013`にストアする命令です。
+もちろん、アキュムレータの数値は変化せず、RAMアドレス`$7E0042`の数値は`$33`になります。
+つまり、これらの命令は`$7E0013`の数値を`$7E0042`にコピーする命令なのです。
 
-## LDY, STY, LDX, STX
+## LDY・STY・LDX・STX
 
-Now that we have learned the basics of loading and store values into addresses, let's introduce the same loading opcodes, but for the index registers:
-|Opcode|Full name|Explanation|
+RAMアドレスに対するロードとストアの基本を学習したところで、今度は、インデックスレジスタに対するロードとストアの命令を学習します。
+
+|オペコード|正式名称|説明|
 |-|-|-|
-|**LDY**|Load into Y|Load a value into Y|
-|**STY**|Store from Y|Store Y's value into an address|
-|**LDX**|Load into X|Load a value into X|
-|**STX**|Store from X|Store X's value into an address|
+|**LDY**|Load into Y|Yレジスタに数値をロードする|
+|**STY**|Store from Y|Yレジスタの数値をアドレスにストアする|
+|**LDX**|Load into X|Xレジスタに数値をロードする|
+|**STX**|Store from X|Xレジスタの数値をアドレスにストアする|
 
-The above opcodes behave exactly like LDA and STA. The only difference is that these make use of the X and the Y registers instead of the accumulator. For example:
+上記のオペコードは、LDAやSTAと全く同じように動作します。
+唯一の違いは、これらのオペコードは、XレジスタとYレジスタを使用する、という点です。
+
 ```
 LDY #$03
 STY $0001
 ```
-Would store the number $03 into RAM address $7E0001, by utilizing the Y register. To use the X register, use LDX and STX. As for why the address is $0001 instead of $7E0001, please refer to this chapter: [Shorter addresses](./shorter-addresses.md)
+これらの命令は、Yレジスタを使って$03をRAMアドレス$7E0001に書き込む命令です。
+Xレジスタを使うには、LDXとSTXを使えば良いですね。
+なぜSTYのオペランドが$7E0001でなく$0001なのかは、[アドレスの短縮](./shorter-addresses.md)を参照してください。
 
 ## STZ
-There is another opcode which stores the number $00 into addresses directly.
+アドレスに直接、数値$00をストアする命令を紹介します。
 
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**STZ**|Store zero to memory|Sets the value of an address to 0|
+|**STZ**|Store zero to memory|アドレスの数値を$00にする|
 
-This opcode stores the number $00 into an address. It doesn't even need the A, X or Y registers to load $00 first.
+このオペコードは、アドレスに数値$00をストアします。アキュムレータ、Xレジスタ、およびYレジスタは使用されません。
 
-If you want to make a code that directly stores $00 in a RAM address, you could make it use 1 line:
+もし$00を直接RAMアドレスにストアしたいなら、たった1行の命令で実装可能です。
 ```
-STZ $01            ; $7E0001 = $00. The A register is unaffected.
+STZ $01            ; $7E0001 = $00。アキュムレータは影響を受けない
 ```
-STZ will store zero to a specified RAM address. After this opcode, RAM address $7E0001 will now contain the number $00. Using STZ when A is in 16-bit mode **will** store $0000 to both RAM addresses $7E0001 and $7E0002.
+STZは、指定されたRAMアドレスに$00を書き込みます。
+よって、この命令が実行されると、RAMアドレス$7E0001の数値は$00になります。
+なお、アキュムレータが16-bitモードの状態でSTZを使用すると、$7E0001と$7E0002の両方に$0000が書き込まれます。

@@ -1,23 +1,28 @@
-# Jumping to subroutines
+# サブルーチンジャンプ
 
-What if you want to use the same code twice, but you don't want to write, for example, the exact same 200 lines of codes again? You can turn code into "subroutines" and use jumping opcodes to run these subroutines. There are four jumping opcodes in total.
+もし、とあるコードを2回実行したいものの、それを2回コーディングするのは避けたい場合、
+つまり、全く同じ200行のコードを2箇所にわたって書くのは避けたい場合、どうしたらよいでしょうか。
+この場合、その200行のコードを「サブルーチン」というものにして、このサブルーチンへジャンプするオペコードを2回書けばよいのです。
+こうしたサブルーチンジャンプのオペコードは、全部で4種類存在します。
 
-There's a difference between "subroutine" and "code" in this tutorial, as you'll see in the coming paragraphs.
+以下で述べる通り、本書では、「サブルーチン」と「コード」という語を使い分けています。
 
-## JSR and JSL
-There are two opcodes which pretty much act like a function call in higher-level programming languages.
+## JSR・JSL
+高級言語における関数の呼び出しに相当する2つのオペコードを紹介します。
 
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**JSR**|Jump to subroutine|Jumps to a subroutine using an absolute address|
-|**JSL**|Jump to subroutine long|Jumps to a subroutine using a long address|
+|**JSR**|Jump to subroutine|絶対アドレスでサブルーチンへジャンプする|
+|**JSL**|Jump to subroutine long|ロングアドレスでサブルーチンへジャンプする|
 
-These opcodes call a piece of code, then continue executing code below said opcode. Here is an example of the usage of JSR:
+これらのオペコードはコードの一部分を呼び出し、その後、直下のオペコードを実行します。
+以下はJSRを使用した例です。
+
 ```
 LDA #$01
 STA $01
-JSR Label1         ; Execute the "subroutine" located at Label1 (current bank)
-LDA #$03           ; The RTS in Label1 will return to this line
+JSR Label1         ; 現在のバンク内のLabel1にある「サブルーチン」を実行する
+LDA #$03           ; Label1内のRTSは、実行位置をここにリターンする
 STA $00
 RTS
 
@@ -26,31 +31,42 @@ LDA #$02
 STA $02
 RTS
 ```
-This code will store $01 into $7E0001, will store $03 into $7E0000 AND execute the codes at Label1 at the current bank, so it also stores $02 into $7E0002.
 
-JSL has the same purpose as JSR, except it can jump everywhere. Above example can also be applied to JSL, except that the `RTS` is now an `RTL`.
+このコードは$01を$7E0001に、$03を$7E0000にストアして、かつ、現在のバンク内のLabel1にあるコードを実行します。
+よって、このコードは$02を$7E0002にもストアします。
 
-The opcode JSR will get assembled as `JSR $XXXX` by the assembler (because labels get turned into addresses), but you shouldn't worry about that. Furthermore, because JSR uses an absolute address as its parameter, it is limited to its current bank. Changing the data bank register doesn't affect JSR.
+JSLはJSRと同じ目的で使用されますが、どのバンクにもジャンプできます。
+先ほどの例のJSRをJSLに置き換えることもできますが、その場合、`RTS`は`RTL`になります。
 
-The opcode JSL will get assembled as `JSL $XXXXXX`, instead.
+オペコードJSRはアセンブラによって`JSR $XXXX`としてアセンブルされます（なぜなら、ラベルはアドレスに変換されるからです）が、
+このことについて考慮する必要はありません。
+加えて、JSRは絶対アドレスをオペランドに取るため、ジャンプ先は現在のバンクに制限されます。
+なお、データバンクレジスタを変更しても、JSRの動作には影響しません。
 
-## RTS and RTL
-When you call a subroutine, you also need a way to return back to your original code. For that, there are two return opcodes.
-|Opcode|Full name|Explanation|
+一方、オペコードJSLは`JSL $XXXXXX`としてアセンブルされます。
+
+## RTS・RTL
+サブルーチンを呼び出したとき、呼び出し元にリターンする方法も必要となります。
+リターン命令には2つのオペコードが存在します。
+
+|オペコード|正式名称|説明|
 |-|-|-|
-|**RTS**|Return from subroutine|Returns from a JSR|
-|**RTL**|Return from subroutine long|Returns from a JSL|
+|**RTS**|Return from subroutine|JSRへリターンする|
+|**RTL**|Return from subroutine long|JSLへリターンする|
 
-Code called by JSR and JSL should end with RTS and RTL, respectively.
+JSRで呼び出されたサブルーチンはRTSによって、JSLで呼び出されたサブルーチンはRTLによって終了します。
 
-## JMP and JML
-If you'd like to control the code flow rather than doing a function call, you will use regular jumps instead.
-|Opcode|Full name|Explanation|
+## JMP・JML
+関数の呼び出しではなく、コードフロー自体を制御したい場合、通常ジャンプを用いることができます。
+
+|オペコード|正式名称|説明|
 |-|-|-|
-|**JMP**|Jump|Jumps to code using an absolute address|
-|**JML**|Jump long|Jumps to code using a long address|
+|**JMP**|Jump|絶対アドレスでジャンプする|
+|**JML**|Jump long|ロングアドレスでジャンプする|
 
-What JMP and JML do is jumping to another location and executing the code there, ignoring everything after the JMP/JML opcode. The RTS in Label1 does NOT jump back to LDA #$03. Instead, it just finishes the current subroutine it was in.
+JMPとJMLが行っていることは、違う場所へジャンプして、その場所にあるコードを実行することであるため、
+JMP/JMLの後に続くコードは無視されます。
+Label1内のRTSはLDA #$03へリターンせず、現在実行されているサブルーチンを終了させる役割になります。
 ```
 JML Label1
 
@@ -63,23 +79,26 @@ STZ $00
 RTS
 ```
 
-JMP is limited to the current bank, like JSR. JML can jump anywhere like JSL. JMPs and JMLs don't have a return instruction, but you can still use an RTS or RTL to return from a JMP/JMP depending on the current situation. Example:
+JMPはJSR同様、ジャンプ先が現在のバンク内に制限されます。一方、JMLはJSLと同様にどこにでもジャンプできます。
+JMPとJMLはリターン命令を持ちませんが、以下のように状況に応じてRTSやRTLを使用できます。
+
 ```
 LDA #$01
 STA $00
-JSR Label1         ; Jump to subroutine "Label1"
+JSR Label1         ; "Label1"へサブルーチンジャンプする
 RTS                ; Label2 returns here. The code ends here.
 
 Label1:
-JMP Label2         ; Jump to Label2
+JMP Label2         ; Label2へジャンプする
 
 Label2:
-RTS                ; This DOESN'T return to Label1. Instead, it returns to the RTS above.
+RTS                ; このRTSはLabel1ではなく、上のRTSへリターンする
 ```
 
-It is good practice to put a blank line after a JMP or JML, so the reader knows that the program flow changes from that point on.
+JMPやJMLの後に空白行を挿入することで、その時点でプログラムのフローが変更されたことを視覚的に表現できます。
 
-## Additional notes
-The Data Bank does NOT get updated when you use a JSL or JML. You will have to do that yourself.
+## 備考
+JMLやJMLはデータバンクレジスタを更新しないので、必要に応じて手動でデータバンクレジスタを変更する必要があります。
 
-Remember how JSL/JML can jump everywhere? They can even jump to RAM, which implies code can be executed in RAM. You can write values to RAM which can be interpreted as code which can be executed.
+JSLやJMLはどこにでもジャンプできると説明しましたが、すなわち、この2つの命令ではRAMにジャンプすることも可能です。
+つまり、RAMに命令として実行可能な命令となる数列を記述してそれを命令として実行できる、ということです。

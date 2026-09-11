@@ -1,17 +1,34 @@
-# Introduction
+# はじめに
 
-This tutorial is an online version of my 65c816 assembly tutorial which is hosted on [SMW Central](https://www.smwcentral.net/). I originally wrote this tutorial in order to teach the SMW Central community the 65c816 assembly language in plain English. Nowadays, it's read by various people in the ROM hacking scene in general. Therefore, I decided to open source this tutorial on GitHub, so that people can make improvements or translations.
+本書は、[SMW Central](https://www.smwcentral.net/)で公開している65C816の解説書のオンライン版です。
+筆者は元々、「スーパーマリオワールドコミュニティに簡素な英語で65C816というアセンブリ言語を教える」という目的のために本書を執筆しました。
+しかしながら今では、ROMハックコミュニティの多くの人びとが本書を読んでいます。
+こうした経緯から筆者は、本書をGitHub上のオープンソースにすることとし、
+これによって人々が本書を改良したり、あるいは翻訳したりすることを期待しています。
 
-Although I'm a member of SMW Central, this tutorial is not associated with Super Mario World, thus this tutorial is not tailored towards that game. Instead, this tutorial can be applied in all SNES context.
+筆者はSMW Centralのメンバーである一方、本書はスーパーマリオワールドに特化したものではなく、また、スーパーマリオワールド専用の解説書でもありません。
+本書は、あらゆるスーパーファミコンの文脈において使えるものとなっています。
 
-## The language
+## 65C816という言語
 
-65c816 assembly is the language used by the Super Nintendo Entertainment System's \(SNES\) Ricoh 5A22 chip. Breaking down the different parts of the acronym 65c816: 816 means that the processor can be either 8-bit mode or 16-bit mode. The c stands for CMOS, 65 means that this processor is from the 65xx CPU family. The processor is supposed to be pretty revolutionary for its time. This tutorial explains mnemonics/instructions \(i.e. opcodes\) and how to use them properly. This tutorial does not focus on SNES-specific topics, such as hardware registers.
+65C816は、スーパーファミコン\(SFC/SNES\)に搭載されているRicoh 5A22プロセッサで使用されているアセンブリ言語です。
+「65C816」という名前について詳しく見てみましょう。
+「816」は、プロセッサが8-bitモードと16-bitモードを切り替えられることを表しており、
+「C」は、CMOSを表しています。
+「65」は、このプロセッサが65xxプロセッサのファミリーであることを表しています。
+このプロセッサは当時にしては非常に画期的なプロセッサでした。
+本書ではニーモニック（命令・オペコードともいいます）を解説し、また、それらをどう使いこなすかについて解説します。
+なお、ハードウェアレジスタといった、スーパーファミコンに特有の機能については紹介しません。
 
-With 65c816 ASM you can code things for SNES games \(such as custom features for Super Mario World\). ASM is a 2nd generation programming language, which is low-level compared to C\# for example. It is readable machine code, which eventually gets translated into hexadecimal machine code. All the opcodes consist of 3 letters, along with various parameters.
+65C816を使いこなすことで、スーパーファミコンのゲームのためのコーディングができるようになります（例えば、スーパーマリオワールドに独自の機能を追加するなど）。
+ところで、アセンブリ言語とは、いわば第2世代のプログラミング言語です。
+すなわち、アセンブリ言語は、例えばC\#といったプログラミング言語と比較して低級な言語である、ということです。
+つまり、アセンブリ言語とは人間が読める機械語であり、アセンブリ言語で書かれたコードは16進数で表される機械語に一対一対応します。
+65C816においては全てのオペコードはアルファベット3文字で構成されており、それに様々な種類の述語が後置されます。
 
-## Special thanks
+## 謝辞
 
-Many special thanks go to the following people for reviewing the original tutorial on SMW Central: **[spigmike](https://www.smwcentral.net/?p=profile&id=132), [Roy](https://www.smwcentral.net/?p=profile&id=845), [smkdan](https://www.smwcentral.net/?p=profile&id=411), [S.N.N](https://www.smwcentral.net/?p=profile&id=23), [andy\_k\_250](https://www.smwcentral.net/?p=profile&id=67), [Domiok](https://www.smwcentral.net/?p=profile&id=7211), [reghrhre](https://www.smwcentral.net/?p=profile&id=4176), [ChaoticFox](https://www.smwcentral.net/?p=profile&id=3462), [Tails\_155](https://www.smwcentral.net/?p=profile&id=6151), [GreenHammerBro](https://www.smwcentral.net/?p=profile&id=18802), [Vitor Vilela](https://www.smwcentral.net/?p=profile&id=8251)**
+下記の方々には、SMW Centralで公開した初版のレビューを行なっていただきました。この場を借りて感謝申し上げます：
+**[spigmike](https://www.smwcentral.net/?p=profile&id=132), [Roy](https://www.smwcentral.net/?p=profile&id=845), [smkdan](https://www.smwcentral.net/?p=profile&id=411), [S.N.N](https://www.smwcentral.net/?p=profile&id=23), [andy\_k\_250](https://www.smwcentral.net/?p=profile&id=67), [Domiok](https://www.smwcentral.net/?p=profile&id=7211), [reghrhre](https://www.smwcentral.net/?p=profile&id=4176), [ChaoticFox](https://www.smwcentral.net/?p=profile&id=3462), [Tails\_155](https://www.smwcentral.net/?p=profile&id=6151), [GreenHammerBro](https://www.smwcentral.net/?p=profile&id=18802), [Vitor Vilela](https://www.smwcentral.net/?p=profile&id=8251)**
 
-Many special thanks also go to the [contributors](https://github.com/Ersanio/snes-assembly-book/graphs/contributors) of this repository!
+また、本レポジトリの[コントリビュータ](https://github.com/Ersanio/snes-assembly-book/graphs/contributors)の皆様にも感謝申し上げます。

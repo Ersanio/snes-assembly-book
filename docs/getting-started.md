@@ -1,17 +1,22 @@
-# Getting started
+# 環境構築
 
 ## IDE
 
-There are no dedicated IDEs for 65c816 assembly. You can use any ASCII editor, such as Notepad or VS Code. However, some people made various plugins for existing code editors to add extra features, such as syntax highlighting:
+65C816に特化したIDE（統合開発環境）は存在しないため、メモ帳アプリやVSCodeといったどのようなASCIIエディタを用いても構いません。
+しかし、既存のコードエディタには、様々な人びとが開発した様々なプラグインがあり、シンタックスハイライトといった機能を利用することができます。
 
-* Josh Neta's "[65816 Assembly](https://marketplace.visualstudio.com/items?itemName=joshneta.65816-assembly)" plugin for VS Code
-* Vice's "[65816 SNES Assembly Language Server](https://marketplace.visualstudio.com/items?itemName=vicerust.snes-asm)" plugin for VS Code
-* lx5's "[Asar syntax highlight](https://github.com/TheLX5/AsarSyntaxHighlight-VSCode)" plugin for VS Code.
-* Telinc1's "[65c818 ASM syntax for highlight.js](https://github.com/telinc1/smwcentral-highlightjs-asar)" as a JavaScript plugin
 
-Assembly files are generally saved with the file extension ".asm".
+* Josh Netaの"[65816 Assembly](https://marketplace.visualstudio.com/items?itemName=joshneta.65816-assembly)"（VSCode用プラグイン）
+* Viceの"[65816 SNES Assembly Language Server](https://marketplace.visualstudio.com/items?itemName=vicerust.snes-asm)"（VSCode用プラグイン）
+* lx5の"[Asar syntax highlight](https://github.com/TheLX5/AsarSyntaxHighlight-VSCode)"（VSCode用プラグイン）
+* Telinc1の"[65c818 ASM syntax for highlight.js](https://github.com/telinc1/smwcentral-highlightjs-asar)"（Java Scriptプラグイン）
 
-## Assemblers
+また、アセンブリファイルは、一般に拡張子".asm"で保存します。
 
-This tutorial uses syntax which is used by an assembler called "Asar", originally written by Alcaro, now maintained by various members of the SMW Central community. This assembler is hosted on SMW Central and can be downloaded [here](https://www.smwcentral.net/?p=section&a=details&id=19043). The GitHub repository of Asar can be found [here](https://github.com/RPGHacker/asar).
+## アセンブラ
 
+本書では、Alcaroが開発し、その後SMW Centralコミュニティの多くのメンバーによってメンテナンスされている、
+"Asar"と呼ばれるアセンブラで用いられているシンタックスを使用しています。
+このアセンブラはSMW Centralで公開されており、[ここから](https://www.smwcentral.net/?p=section&a=details&id=19043)
+ダウンロードできます。
+また、AsarのGitHubレポジトリには[ここから](https://github.com/RPGHacker/asar)アクセスできます。

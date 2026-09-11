@@ -1,209 +1,262 @@
-# Addressing modes revisited
-In the [basic addressing modes](../the-basics/addressing.md) chapter, we briefly looked at the most commonly used addressing modes: "Immediate 8-bit and 16-bit", "direct page", "absolute" and "long". In this chapter, we will look at the more advanced addressing modes: "indirect", "indexed" and "stack relative". These advanced addressing modes expand upon the earlier introduced addressing modes. This chapter also introduces the concept of pointers.
+# 発展的なアドレッシングモード
+[アドレッシングモード](../the-basics/addressing.md)の章では、
+よく使われるアドレッシングモードである「即値（8-bitと16-bit）」、「ダイレクトモード」、
+「絶対アドレスモード」、「絶対ロングモード」について簡単に学習しました。
+この章では、より発展的なアドレッシングモードである「インダイレクトモード」、「インデックスモード」、「スタックレラティブモード」について学習します。
+この章で学習するアドレッシングモードは、既に学習したアドレッシングモードを拡張するものです。
+また、この章ではポインタの概念についても紹介します。
 
-## Pointers
-This is where "pointers" come into play. Pointers are values which pretty much "point" to a certain memory location. Imagine the following SNES memory:
+## ポインタ
+この項ではいよいよ「ポインタ」を導入します。
+ポインタとは、特定のメモリアドレスを「指し示す」値のことをいいます。
+例えば、スーパーファミコンのメモリが以下のようになっている場合を考えてみてください。
+
 ```
          ; $7E0000: 12 80 00 55 55 55 ..
 ```
-In this example: the RAM at address $7E0000 contains the values $12, $80 and $00. This is in little-endian, so reverse the values and you get $00, $80, $12. Treat this as a 24-bit "long" address and you have $008012. This means that RAM address $7E0000 has a 24-bit pointer to $008012. This is what "indirect" is; accessing address $7E0000 "indirectly" accesses address $008012.
+この例では、RAMアドレス$7E0000が数値$12、$80、$00を保持しています。
+これはリトルエンディアン形式なので、反転させることで$00、$80、$12となります。
+これを24-bitの「ロング」アドレスとして扱えば、この値が示すアドレスは$008012になります。
+つまり、RAMアドレス$7E0000が$008012への24-bitポインタを保持している、ということです。
+これこそが「インダイレクト」の考え方で、$7E0000への「インダイレクト」なアクセスは、$008012へのアクセスになります。
 
-You can access indirect pointers in two ways: 16-bits and 24-bits. They have a special assembler syntax:
-|Syntax|Terminology|Pointer size|
+インダイレクトポインタには16-bit、もしくは24-bitのポインタがあります。
+アセンブラにおける記法は以下の通りです。
+
+|記法|用語|ポインタ長|
 |-|-|-|
-|( )|Indirect|16-bit|
-|[ ]|Indirect long|24-bit|
+|( )|インダイレクト|16-bit|
+|[ ]|インダイレクトロング|24-bit|
 
-The bank byte of the 16-bit pointer depends on the type of instruction. When it comes to a `JSR`-opcode, which can only jump inside the current bank, the bank byte isn"t determined nor used. However, when it comes to a loading instruction, such as `LDA`, the bank byte is determined by the *data bank register*.
+16-bitポインタを使用する際のバンクは命令によって異なります。
+オペコード`JSR`では、現在のバンクへジャンプするだけで、バンクが何かによって決められることはありません。
+一方、`LDA`といったロードのオペコードでは、バンクは*データバンクレジスタ*によって決定されます。
 
-Pointers can point to both *code* and *data*. Depending on the type of instruction, the pointers are accessed differently. For example, a `JSR` which utilizes a 16-bit pointer accesses the pointed location as code, while an `LDA` accesses the pointed location as a bank.
+ポインタは、*コード*と*データ*の両方を示すことができます。
+命令の種類によって、ポインタを異なる形でアクセスに用います。
+例えば、`JSR`では16-bitポインタをコードを表すために使用しますが、`LDA`ではデータを表すために使用します。
 
-## Indirect
-Indirect addressing modes are basically accessing addresses in such a way, that you access the address they point to, rather than directly accessing the contents of the specified address.
+## インダイレクトモード
+インダイレクトモードでは、特定のアドレスを直接指定する代わりに、ここまでに説明したような方法でポインタが指定するアドレスへアクセスします。
 
-### Direct, Indirect
-As contradicting as it may sound, the naming actually makes sense. "Direct" stands for direct page addressing mode, while "indirect" means that we're accessing a pointer at the direct page address, rather than a value. Here's an example:
+### ダイレクトインダイレクトモード
+「ダイレクトインダイレクトモード」という名前は矛盾しているように思えますが、正式なアドレッシングモードの名称です。
+「ダイレクト」はダイレクトモードを表しており、「インダイレクト」はダイレクトページアドレスが指定するアドレスを
+数値ではなくポインタとして用いることを表しています。
+ダイレクトインダイレクトモードは以下のように記述します。
 
 ```
-; Setup indirect pointer
+; インダイレクトポインタの設定
 REP #$20
-LDA #$1FFF          ; $1FFF to RAM $7E0000
+LDA #$1FFF          ; $1FFFをRAMアドレス$7E0000にストアする
 STA $00
 SEP #$20
                     ; $7E0000: FF 1F .. .. .. .. ..
 
-; Access indirect pointer
-LDA ($00)   ; Load the value at address $1FFF into A
+; インダイレクトポインタへのアクセス
+LDA ($00)   ; アドレス$1FFFの値をアキュムレータにロードする
 ```
-This accesses a 16-bit pointer at address $000000, due to the nature of direct page always accessing bank $00. Due to the effects of mirroring in the SNES mirroring, practically speaking, this accesses a 16-bit pointer at RAM $7E0000.
+このコードでは、アドレス$000000が保持してる16-bitポインタへのアクセスを行っています（ダイレクトページアドレスは常にバンク$00から値を取得するためです）。
+実際には、スーパーファミコンのメモリミラーによって、このアクセスはRAM$7E0000が保持している16-bitポインタへのアクセスと同じことになります。
 
-You might think that `LDA ($00)` loads the `value $1FFF` into A. However, it doesn't work that way. It loads the `value in address $1FFF` into A, because we use an indirect addressing mode. 
+`LDA ($00)`では`数値$1FFF`がアキュムレータにロードされるのではないか、と思われるかもしれませんが、そうではありません。
+このロード命令ではインダイレクトモードを使用しているため、`アドレス$1FFFが保持してる値`がアキュムレータにロードされます。
 
-As we established earlier, parentheses denote 16-bit pointers. The bank of the indirect address, in the case of an LDA, depends on the data bank register. As a result, the `LDA ($00)` resolves into `LDA $1FFF`.
+既に導入した通り、括弧は16-bitポインタを表します。
+LDA命令の場合には、インダイレクトアドレスのバンクはデータバンクレジスタによって決定されるので、
+`LDA ($00)`は`LDA $1FFF`と同じになります。
 
-### Direct Indexed with X, Indirect
-As is the case with the previous addressing mode, the naming may seem contradicting. "Direct" stands for direct page addressing mode. "Indexed with X" means that this direct page address is indexed with X. "Indirect" means that the previous elements are treated as an indirect address. Here's an example usage:
+### ダイレクトインデックスXインダイレクトモード
+前述のアドレッシングモードと同様に、このアドレッシングモードの名称も矛盾しているように思えます。
+「ダイレクト」はダイレクトモードを表します。
+「インデックスX」は、ダイレクトページアドレスがXレジスタによってインデックスされていることを表します。
+「インダイレクト」は、これら2つの要素がインダイレクトアドレスとして取り扱われることを表します。
+ダイレクトインデックスXインダイレクトモードは以下のように記述します。
 
 ```
-; Setup indirect pointers
+; インダイレクトポインタの設定
 REP #$20
-LDA #$1FFF         ; $1FFF to RAM $7E0000
+LDA #$1FFF         ; $1FFFをRAMアドレス$7E0000にストアする
 STA $00
-LDA #$0FFF         ; $0FFF to RAM $7E0002
+LDA #$0FFF         ; $0FFFをRAMアドレス$7E0002にストアする
 STA $02
 SEP #$20
                    ; $7E0000: FF 1F FF 0F .. .. ..
 
-; Access indirect pointer
-LDX #$02           ; Set X to $02
-LDA ($00,x)        ; Loads the value at address $0FFF into A
+; インダイレクトポインタへのアクセス
+LDX #$02           ; Xレジスタに$02をロードする
+LDA ($00,x)        ; アドレス$0FFFの値をアキュムレータにロードする
 ```
-- The 16-bit value in address $7E0000 + $7E0001 is `$1FFF`.
-- The 16-bit value in address $7E0002 + $7E0003 is `$0FFF`.
+- アドレス$7E0000と$7E0001が保持している16-bit値は`$1FFF`
+- アドレス$7E0002と$7E0003が保持している16-bit値は`$0FFF`
 
-Thanks to using X as an indexer to the direct page address, `LDA ($00,x)` is resolved into `LDA ($02)`. This then resolves into `LDA $0FFF` because RAM $7E0002 points to `address $0FFF`.
+Xレジスタをダイレクトページアドレスに対するインデックスとして使用しているため、`LDA ($00,x)`は`LDA ($02)`として解釈されます。
+RAMアドレス$7E0002は`アドレス$0FFF`を表すポインタなので、この命令は`LDA $0FFF`と同じになります。
 
-### Direct, Indirect Indexed with Y
-This is practically the same as `Direct, Indirect` but the pointer is then indexed with the Y register:
+### ダイレクトインダイレクトインデックスYモード
+このアドレッシングモードは`ダイレクトインダイレクトモード`と同じですが、ポインタの指定するアドレスがYレジスタによってインデックスされます。
 ```
-; Setup indirect pointer
+; インダイレクトポインタの設定
 REP #$20
-LDA #$1FF0         ; $1FF0 to RAM $7E0000
+LDA #$1FF0         ; $1FF0をRAMアドレス$7E0000にストアする
 STA $00
 SEP #$20
                    ; $7E0000: F0 1F .. .. .. .. ..
 
-; Access indirect pointer
-LDY #$01           ; Set Y to $01
-LDA ($00),y        ; Load value at address $1FF1 into A
+; インダイレクトポインタへのアクセス
+LDY #$01           ; Yレジスタに$01をロードする
+LDA ($00),y        ; アドレス$1FF1の値をアキュムレータにロードする
 ```
-As a result, `LDA ($00),y` resolves into `LDA $1FF0,y`, which then resolves into `LDA $1FF1` because Y contains the value $01.
+結果として、`LDA ($00),y`は`LDA $1FF0,y`として解釈されます。
+Yレジスタは$01を保持しているので、最終的には`LDA $1FF1`として解釈されます。
 
-### Absolute, Indirect
-Exactly the same as `Direct, Indirect`, except the specified address is now 16-bit instead of 8-bit. This addressing mode is only used by jumping instructions. Example:
+### 絶対アドレスインダイレクトモード
+指定するアドレスが8-bitでなく16-bitであるという点を除けば、このアドレッシングモードは`ダイレクトインダイレクトモード`と全く同じです。
+このアドレッシングモードは、以下のようなジャンプ系命令でのみ使用されています。
+
 ```
-; Setup indirect pointer
+; インダイレクトポインタの設定
 REP #$20
-LDA #$8000         ; $8000 to RAM $7E0000
+LDA #$8000         ; $8000をRAMアドレス$7E0000にストアする
 STA $00
 SEP #$20
                    ; $7E0000: 00 80 .. .. .. .. ..
 
-; Access indirect pointer
-JMP ($0000)        ; Jumps to $8000.
+; インダイレクトポインタへのアクセス
+JMP ($0000)        ; $8000へジャンプする
 ```
-This has the same exact effect as the example in `Direct, Indirect`. As a result, the `JMP ($0000)` resolves into `JMP $8000`, thus jumps to `address $8000` in the current bank.
+このコードは`ダイレクトインダイレクトモード`で紹介したコードと全く同じ結果になります。
+つまり、`JMP ($0000)`は`JMP $8000`として解釈されるため、現在バンク内の`アドレス$8000`へジャンプが実行されます。
 
-### Absolute Indexed with X, Indirect
-Exactly the same as `Direct Indexed with X, Indirect`, except the specified address is now 16-bit instead of 8-bit. This addressing mode is only used by jumping instructions. Example:
+### 絶対アドレスインデックスXインダイレクトモード
+ポインタの指定するアドレスが8-bitではなく16-bitである点を除けば、このアドレッシングモードは`ダイレクトインデックスXインダイレクトモード`と全く同じです。
+このアドレッシングモードは、以下のようなジャンプ系命令でのみ使用されています。
 
 ```
 REP #$20
-LDA #$8000         ; $8000 to RAM $7E0000
+LDA #$8000         ; $8000をRAMアドレス$7E0000にストアする
 STA $00
-LDA #$9000         ; $9000 to RAM $7E0002
+LDA #$9000         ; $9000をRAMアドレス$7E0002にストアする
 STA $02
 SEP #$20
                    ; $7E0000: 00 80 00 90 .. .. ..
 
-; Access indirect pointer
-LDX #$02           ; Set X to $02
-JMP ($0000,x)      ; Jumps to $9000
+; インダイレクトポインタへのアクセス
+LDX #$02           ; Xレジスタに$02をロードする
+JMP ($0000,x)      ; $9000へジャンプする
 ```
-- The 16-bit value in address $7E0000 + $7E0001 is `$8000`. 
-- The 16-bit value in address $7E0002 + $7E0003 is `$9000`.
+- アドレス$7E0000と$7E0001が保持している16-bit値は`$8000`
+- アドレス$7E0002と$7E0003が保持している16-bit値は`$9000`
 
-Thanks to using X as an indexer to the direct page address, `JMP ($0000,x)` is resolved into `JMP ($0002)`. This then resolves into `JMP $9000` because RAM $7E0002 points to `address $9000`. This addressing mode is handy for jump tables.
+Xレジスタをダイレクトページアドレスに対するインデックスとして用いているため、`JMP ($0000,x)`は`JMP ($0002)`として解釈されます。
+RAMアドレス$7E0002は`アドレス$9000`を表すポインタなので、この命令は`JMP $9000`と同じになります。
+このアドレッシングモードは、ジャンプテーブルを参照する場合に有用です。
 
-### Direct, Indirect Long
-Exactly the same as `Direct, Indirect`, except the pointer located at an address is now 24-bits instead of 16-bits, meaning the bank byte of a pointer is also specified. Example:
+### ダイレクトインダイレクトロングモード
+ポインタの指定するアドレスが16-bitではなく24-bitである点を除けば、このアドレッシングモードは`ダイレクトインダイレクトモード`と全く同じです。
+つまり、このアドレッシングモードでは、バンクもポインタによって指定されます。
+
 ```
 REP #$20
-LDA #$1FFF         ; $1FFF to RAM $7E0000
+LDA #$1FFF         ; $1FFFをRAM$7E0000にストアする
 STA $00
 SEP #$20
-LDX #$7F           ; $7F to RAM $7E0002
-STX $02            ; $7E0000 now contains the 24-bit pointer $7F1FFF
+LDX #$7F           ; $7FをRAMアドレス$7E0002にストアする
+STX $02            ; $7E0000は24-bitポインタ$7F1FFFを保持している
                    ; $7E0000: FF 1F 7F .. .. .. ..
-LDA [$00]          ; Load the value at address $7F1FFF into A
+LDA [$00]          ; アドレス$7F1FFFの数値をアキュムレータにストアする
 ```
-`LDA [$00]` resolves into `LDA $7F1FFF`.
+`LDA [$00]`は`LDA $7F1FFF`として解釈されます。
 
-### Direct, Indirect Indexed Long with Y
-Exactly the same as `Direct, Indirect Indexed with Y`, except the pointer located at an address is now 24-bits instead of 16-bits, meaning the bank byte of a pointer is also specified. Example:
+### ダイレクトインダイレクトロングインデックスYモード
+ポインタの指定するアドレスが16-bitではなく24-bitである点を除けば、このアドレッシングモードは`ダイレクトインダイレクトインデックスYモード`と全く同じです。
+つまり、このアドレッシングモードでは、バンクもポインタによって指定されます。
+
 ```
-; Setup indirect pointer
+; インダイレクトポインタの設定
 REP #$20
-LDA #$1FF0         ; $1FF0 to RAM $7E0000
+LDA #$1FF0         ; $1FF0をRAMアドレス$7E0000にストアする
 STA $00
 SEP #$20
-LDX #$7F           ; $7F to RAM $7E0002
-STX $02            ; $7E0000 now contains the 24-bit pointer $7F1FF0
+LDX #$7F           ; $7FをRAMアドレス$7E0002にストアする
+STX $02            ; $7E0000は24-bitポインタ$7F1FF0を保持している
                    ; $7E0000: F0 1F 7F .. .. .. ..
 
-; Access indirect pointer
-LDY #$01           ; Set Y to $01
-LDA [$00],y        ; Load value at address $7F1FF1 into A
+; インダイレクトポインタへのアクセス
+LDY #$01           ; Yレジスタに$01をロードする
+LDA [$00],y        ; アドレス$7F1FF1の数値をアキュムレータにロードする
 ```
-As a result, `LDA [$00],y` resolves into `LDA $7F1FF0,y` (practically speaking), which then resolves into `LDA $7F1FF1` because Y contains the value $01.
+最終的に、`LDA [$00],y`は`LDA $7F1FF0,y`として解釈されます。
+Yレジスタは数値$01を保持しているので、これは`LDA $7F1FF1`として解釈されます。
 
-## Indexed
-Indexed addressing mode was actually briefly touched upon in an [earlier chapter](../collections/indexing.md). This chapter will discuss all the possible indexed addressing modes.
+## インデックスモード
+インデックスモードについては[既に](../collections/indexing.md)簡単に学習しました。
+この章では、すべてのインデックスモードについて紹介します。
 
-### Direct, Indexed with X
-This addressing mode indexes a direct page address with X. Example:
+### ダイレクトインデックスXモード
+このアドレッシングモードは、ダイレクトページアドレスをXレジスタでインデックスします。
+
 ```
 LDX #$02
-LDA $00,x          ; Loads the value at address $7E0002 into A
+LDA $00,x          ; アドレス$7E0002の値をアキュムレータにロードする
 ```
 
-### Direct, Indexed with Y
-This addressing mode indexes a direct page address with Y. This addressing mode only exists on the `LDX` and `STX`-opcodes. Example:
+### ダイレクトインデックスYモード
+このアドレッシングモードは、ダイレクトページアドレスをYレジスタでインデックスします。
+このアドレッシングモードは、オペコード`LDX`と`STX`でのみ使用可能です。
+
 ```
 LDY #$02
-LDX $00,y          ; Loads the value at address $7E0002 into X
+LDX $00,y          ; アドレス$7E0002の値をXレジスタにロードする
 ```
 
-### Absolute, Indexed with X
-This addressing mode indexes an absolute address with X. Example:
+### 絶対アドレスインデックスXモード
+このアドレッシングモードは、絶対アドレスをXレジスタでインデックスします。
+
 ```
 LDX #$02
-LDA $0000,x        ; Loads the value at address $7E0002 into A
+LDA $0000,x        ; アドレス$7E0002の値をアキュムレータにロードする
 ```
 
-### Absolute, Indexed with Y
-This addressing mode indexes an absolute address with Y. Example:
+### 絶対アドレスインデックスYモード
+このアドレッシングモードは、絶対アドレスをYレジスタでインデックスします。
+
 ```
 LDY #$02
-LDA $0000,y        ; Loads the value at address $7E0002 into A
+LDA $0000,y        ; アドレス$7E0002の値をアキュムレータにロードする
 ```
 
-### Absolute, Long Indexed with X
-This addressing mode indexes a long address with X. Example:
+### 絶対ロングインデックスXモード
+このアドレッシングモードは、ロングアドレスをXレジスタでインデックスします。
+
 ```
 LDX #$02
-LDA $7E0000,x      ; Loads the value at address $7E0002 into A
+LDA $7E0000,x      ; アドレス$7E0002の値をアキュムレータにロードする
 ```
 
-## Stack Relative
-Stack relative is a special type of an indexing addressing mode. It uses the stack pointer register as a 16-bit index, rather than using the X or Y register. The index is **always** 16-bit, regardless of the register size of A, X and Y.
+## スタックレラティブ
+スタックレラティブとはインデックスモードの特別な形だと考えてください。
+このアドレッシングモードでは、XレジスタやYレジスタではなくスタックポインタレジスタを16-bitのインデックスとして用います。
+このインデックスは*常に*16-bitであり、アキュムレータ、Xレジスタ、Yレジスタのモードには影響されません。
 
-### Stack Relative
-This loads a value from the RAM, relative to the stack pointer. The bank byte is always $00. Example:
+### スタックレラティブモード
+このアドレッシングモードを使用すると、スタックポインタに相対して指定したRAMから値をロードできます。
+バンクは常に$00で固定されます。
 ```
-; Stack pointer register: $1FF0
-LDA $00,s          ; ($001FF0) Loads the value in the current free slot in the stack, into A.
-LDA $01,s          ; ($001FF1) Loads the last pushed value into A.
-LDA $02,s          ; ($001FF2) Loads the second last pushed value into A.
+; スタックポインタ：$1FF0
+LDA $00,s          ; ($001FF0) 現在使用されるスタックの空きスロットの数値をアキュムレータにロードする
+LDA $01,s          ; ($001FF1) 最後にプッシュされた数値をアキュムレータにロードする
+LDA $02,s          ; ($001FF2) 最後にプッシュされた数値の前にプッシュされた数値をアキュムレータにロードする
 LDA $03,s          ; ($001FF3) ...
 ```
-In 16-bit A mode, these instructions would read 16-bit values, rather than 8-bit values. If you don't use increments of 2, you'll start reading overlapping values.
+アキュムレータが16-bitモードの場合、これらの命令は8-bit値ではなく16-bit値をロードします。
+よって、インデックスされる数値を2ずつインクリメントしなければ、数値が重複して読み取られてしまいます。
 
-### Stack Relative, Indirect Indexed with Y
-This is pretty much the same as `Direct, Indirect Indexed with Y`, except the value is loaded from a stack relative address. Example:
+### スタックレラティブインダイレクトインデックスYモード
+ポインタの指定するアドレスがスタックレラティブである点を除けば、このアドレッシングモードは`ダイレクトインダイレクトインデックスYモード`と全く同じです。
 
 ```
-; Stack pointer register = $01FD
+; スタックポインタ = $01FD
 REP #$20
 LDA #$0100
 PHA
@@ -211,6 +264,9 @@ SEP #$20
 LDY #$03
 LDA ($01,s),y      ; → LDA ($01FE),y → LDA $0100,y → LDA $0103
 ```
-`$01,s` refers to the last pushed value into A, which is $0100 in the case of this example. The parentheses applies on this stack relative address, resolving the instruction to an `LDA $0100,y`. This finally resolves into `LDA $0103` because of the indexer.
 
-This addressing mode is handy if you'd like to treat certain pushed values as an indexed memory address.
+`$01,s`は、最後にプッシュされた値（このコードでは$0100）をアキュムレータにロードすることを表します。
+スタックレラティブアドレスが括弧で囲まれているため、この命令は`LDA $0100,y`として解釈されます。
+インデックスが行われているので、これは最終的に`LDA $0103`として解釈されます。
+
+このアドレッシングモードは、プッシュされた値の中から特定の値をインデックスされたメモリアドレスとして使用したい場合に有用です。

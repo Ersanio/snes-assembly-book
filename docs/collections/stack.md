@@ -1,5 +1,8 @@
-# The stack
-The stack is a special type of "table" which is located inside the SNES RAM. Imagine the stack as a stack of plates. You can only add (push) or remove (pull/pop) a plate from the top. You can visualize it as something like this:
+# スタック
+スタックは、スーパーファミコンのRAM内に存在する特別な「テーブル」です。
+スタックとは、縦に積み重ねられたお皿であると考えてみてください。
+お皿をさらに積み重ねたり（プッシュする）お皿を取り出したりする（プルする）ことは、積み重ねられたお皿の一番上でしか行えません。
+このことは、以下のように図式化できます。
 
 ```
 |   |
@@ -9,15 +12,16 @@ The stack is a special type of "table" which is located inside the SNES RAM. Ima
 |[ ]|
 ‾‾‾‾‾
 ```
-The empty "boxes" in above example are basically the values inside the stack, and they can hold any value. The collection of boxes are closed off from all sides, except from the top.
+上の図における空の「箱」は、スタック内の数値を表しており、その箱はどのような数値も取ることができます。
+これらの箱は密閉されていますが、一番上の箱には上面からしかアクセスできます。
 
 {% hint style="info" %}
-Technically speaking, because the stack is an area inside the RAM, you can access any value you want, using special stack-relative addressing modes rather than using only push and pull opcodes. For the purposes of this chapter, we'll assume the stack indeed is a perfect stack of plates. 
+技術的には、スタックはRAM内部に存在するので、単純なプッシュ命令・プル命令ではなく、「スタックレラティブモード」という特殊なアドレッシングモードを使用することで、スタック領域内のどの値にもアクセスできます。しかし、この章では簡単のために、スタックとは完全に積み上げられたお皿であると考えます。
 {% endhint %}
 
 
-## Push
-"Pushing" is the act of adding a value on top of the stack. Here's an example:
+## プッシュ
+「プッシュ」とは、スタックの上部に数値を追加することを示します。例えば、以下のようなものです。
 
 ```
  [$32]
@@ -30,10 +34,12 @@ Technically speaking, because the stack is an area inside the RAM, you can acces
 |[$14]|   |[$14]|
 ‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾
 ```
-As you can see, the value $32 is added on top of the stack. The stack now has five values instead of four.
+図から分かる通り、4つの数値を保持しているスタックの上部に数値$32が追加されました。
+この操作を実行すると、スタックは全部で5つの数値を保持していることになります。
 
-## Pull/Pop
-"Pulling" (or "popping") is the act of reading a value from the top of the stack. Here's an example:
+## プル（ポップ）
+「プル」（もしくは「ポップ」）とは、スタックの一番上にある値を読み取ることです。
+例えば、以下のようなものです。
 
 ```
            [$32]
@@ -46,60 +52,66 @@ As you can see, the value $32 is added on top of the stack. The stack now has fi
 |[$14]|   |[$14]|
 ‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾
 ```
-As you can see, the value $32 is retrieved from the top of the stack.
+図から分かる通り、数値$32がスタックの上部から取り出されています。
 
 {% hint style="info" %}
-*All* pulling instructions affect the Negative and the Zero processor flags.
+**全ての**プル命令は、ネガティブフラグとゼロフラグに影響を与える可能性があります。
 {% endhint %}
 
-## Push A, X, Y
-There are opcodes to push the current value inside the A, X or Y registers onto the stack:
-|Opcode|Full name|Explanation|
+## アキュムレータ、Xレジスタ、Yレジスタのプッシュ
+アキュムレータ、Xレジスタ、Yレジスタが保持している値をスタックにプッシュするオペコードを紹介します。
+|オペコード|正式名称|説明|
 |-|-|-|
-|**PHA**|Push A onto stack|Pushes the current value of A onto the stack|
-|**PHX**|Push X onto stack|Pushes the current value of X onto the stack|
-|**PHY**|Push Y onto stack|Pushes the current value of Y onto the stack|
+|**PHA**|Push A onto stack|アキュムレータが現在保持している値をスタックにプッシュする|
+|**PHX**|Push X onto stack|Xレジスタが現在保持している値をスタックにプッシュする|
+|**PHY**|Push Y onto stack|Yレジスタが現在保持している値をスタックにプッシュする|
 
-## Pull A, X, Y
-There are also opcodes to pull the current value from the stack into the A, X or Y registers:
-|Opcode|Full name|Explanation|
+## アキュムレータ、Xレジスタ、Yレジスタへのプル
+スタックの値をアキュムレータ、Xレジスタ、Yレジスタにプルするオペコードを紹介します。
+|オペコード|正式名称|説明|
 |-|-|-|
-|**PLA**|Pull into A|Pulls a value from the stack into the A register|
-|**PLX**|Pull into X|Pulls a value from the stack into the X register|
-|**PLY**|Pull into Y|Pulls a value from the stack into the Y register|
+|**PLA**|Pull into A|スタックから値をアキュムレータにプルする|
+|**PLX**|Pull into X|スタックから値をXレジスタにプルする|
+|**PLY**|Pull into Y|スタックから値をYレジスタにプルする|
 
-## Example
-Imagine the following scenario: The X register has to stay at the value $19, no matter what, but you really have to use X for something else. How would one do that? You use PHX to preserve the value in X in the stack, before you use an instruction which modifies the contents of X:
+## コード例
+「Xレジスタの値は$19のままにしたいけど、別の目的でXレジスタを使わないといけない」という状況に遭遇した場合、どうすれば解決できるでしょうか。
+このような場合は、別の命令がXレジスタの値を書き換える前にPHXでXレジスタの値をスタックに保管しておけば良いのです。
+
 ```
-                   ; Imagine X has the value $19 in the stack
-PHX                ; Push X ($19) onto stack. Result: Stack 1st value = $19
-LDX $91            ; Load the value in address $7E0091 into X
-LDA $1000,x        ; \ X is now modified, and we use it to index RAM
+                   ; Xレジスタは$19を保持しているとする
+PHX                ; Xレジスタ（$19）をスタックにプッシュする。結果として、スタックの一番上の数値が$19になる
+LDX $91            ; アドレス$7E0091の値をXレジスタにロードする
+LDA $1000,x        ; \ ここで、書き換わったXレジスタをRAMに対するインデックスとして用いる
 STA $0100          ; /
-PLX                ; Restore X. X is now $19 again
+PLX                ; Xレジスタを復元する。ここでXレジスタは再度$19になる
 ```
 
 {% hint style="info" %}
-The A, X and Y registers do not have a separate stack. There is only one stack, specified by the "stack pointer register". For detailed explanations about the stack pointer register, see: [Stack pointer register](../processor/stackpointer.md)
+アキュムレータ、Xレジスタ、Yレジスタがそれぞれ固有のスタックを持っているわけではありません。
+スタックは、「スタックポインタ」によって特定される1つの領域のみが存在するのです。
+スタックポインタについての詳しい解説は[スタックポインタ](../processor/stackpointer.md)の章を確認してください。
 {% endhint %}
 
-## 16-bit mode stack operations
-All the previous explanations and behaviours apply to 16-bit stack operations as well. It's just that you're pushing and pulling 16-bit values, not 8-bit values.
+## 16-bitモードにおけるスタック操作
+ここまで説明した挙動は16-bitモードにおけるスタック操作にも当てはめることができます。
+ただ単に、プッシュ・プルする値が8-bitではなく16-bitになるだけです。
 
-This also means that if you push two 8-bit values onto the stack, you can pull a single 16-bit value later.
+つまり、2つの8-bit値をプッシュしておけば、それを後で1つの16-bit値としてプルできるということです。
 
-## Other push and pull operations
-There are also other push and pull commands, which are not affected by 8-bit or 16-bit mode A, X and Y:
+## その他のプッシュ命令・プル命令
+他にもプッシュ、プルを行うオペコードが存在しますが、
+それらのオペコードは、アキュムレータ、Xレジスタ、Yレジスタが8-bitモードであるか16-bitモードであるかには影響されません。
 
-|Opcode|Full name|Explanation|Value size|
+|オペコード|正式名称|説明|操作サイズ|
 |-|-|-|-|
-|**PHB**|Push data bank register|Pushes the data bank register's current value onto the stack|8-bit|
-|**PLB**|Pull data bank register|Pulls a value from the stack into the data bank register|8-bit|
-|**PHD**|Push direct page register|Pushes the direct page register's current value onto the stack|16-bit|
-|**PLD**|Pull direct page register|Pulls a value from the stack into the direct page register|16-bit|
-|**PHP**|Push processor flags|Pushes the processor flags register's current value onto the stack|8-bit|
-|**PLP**|Pull processor flags|Pulls a value from the stack into the processor flag register|8-bit|
-|**PHK**|Push program bank|Pushes the bank value of the currently executed opcode (which is PHK) onto the stack|8-bit|
-|**PEA $XXXX**|Push effective address|Pushes the specified 16-bit value onto the stack. Don't let the name of the opcode mislead you. This doesn't read out any address|16-bit|
-|**PEI ($XX)**|Push effective indirect address|Pushes the value at the given direct page address onto the stack. The direct page register can affect the given address|16-bit|
-|**PER *label***|Push program counter relative|A rather complicated push. In short: it pushes the absolute address of the given label onto the stack. What happens during assembly is that the assembler calculates the relative distance between PER and the given label. This relative distance is a signed 16-bit value and is used as the parameter for PER. The opcode finally assembles into `PER $XXXX`. Because of its relative nature, the opcode can also be used in the SNES RAM|16-bit|
+|**PHB**|Push data bank register|データバンクレジスタが現在保持している値をスタックにプッシュする|8-bit|
+|**PLB**|Pull data bank register|スタックからデータバンクレジスタへ数値をプルする|8-bit|
+|**PHD**|Push direct page register|ダイレクトページレジスタが現在保持している値をスタックにプッシュする|16-bit|
+|**PLD**|Pull direct page register|スタックからダイレクトページレジスタへ数値をプルする|16-bit|
+|**PHP**|Push processor flags|プロセッサフラグが現在保持している値をスタックにプッシュする|8-bit|
+|**PLP**|Pull processor flags|スタックからプロセッサフラグへ数値をプルする|8-bit|
+|**PHK**|Push program bank|現在実行されているオペコード（PHK）があるバンクをスタックにプッシュする|8-bit|
+|**PEA $XXXX**|Push effective address|オペランドで指定された16-bit値をスタックにプッシュする。オペコードの名前が非常に紛らわしいが、このオペコードでは、実際のアドレスから値を読み取ることはない|16-bit|
+|**PEI ($XX)**|Push effective indirect address|ダイレクトページアドレスによって与えられた数値をスタックにプッシュする。ダイレクトページレジスタの値は与えられたアドレスに影響を与える|16-bit|
+|**PER *label***|Push program counter relative|若干複雑なプッシュ命令。簡単にいうと、与えられたラベルが表すアドレスをスタックにプッシュする。アセンブルの過程においては、アセンブラが、PERと与えられたラベルが表すアドレスとの相対距離を計算している。この相対距離はサイン16-bit値であり、PERのオペランドとして用いられる。このオペコードは最終的に`PER $XXXX`としてアセンブルされる。これは相対距離なので、スーパーファミコンのRAMの中で用いることも可能である|16-bit|

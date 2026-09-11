@@ -1,140 +1,169 @@
-# Arithmetic operations
+# 算術演算
 
-At some point, you would probably want to *increase* RAM address $7E000F by $01, but a simple LDA and STA won't work, because this simply changes the RAM Address' contents to $01 – not increase it by one. Maybe you'd like to increase it by 2 instead, or even multiply by 2.
+プログラムを書いていると、RAMアドレス$7E000Fの値を1**増やしたい**、といった場面に出会うことが少なくありません。
+しかし、単純なLDAとSTAの組み合わせでは、このような処理は実装できません。
+LDAとSTAは、指定したRAMアドレスの値を$01に変えることはできても、1増やすことはできないからです。
+あるいは、RAMの値を2増やしたい、あるいは2倍にしたい、といった状況も出てくるでしょう。
 
-The SNES has a few instructions capable of doing basic math operations.
+スーパーファミコンでは、こうした単純な算術演算に使えるいくつかの命令が提供されています。
 
-## INC and DEC
-These are opcodes to increase or decrease a value by 1.
+## INC・DEC
+数値を1インクリメント、もしくは1デクリメントするオペコードを紹介します。
 
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**INC**|Increase|Increases accumulator or memory by 1|
-|**DEC**|Decrease|Decreases accumulator or memory by 1|
+|**INC**|Increase|アキュムレータ、もしくはメモリの値を1インクリメントする|
+|**DEC**|Decrease|アキュムレータ、もしくはメモリの値を1デクリメントする|
 
-INC and DEC support both the accumulator as well as addresses. Here's an example of increasing the accumulator by 1:
+INC・DEC命令はアキュムレータとアドレスのどちらに対しても操作を行えます。
+以下のコードでは、アキュムレータの値を1インクリメントしています。
 ```
-LDA #$02           ; Load the value $02 into the accumulator
-INC A              ; Increase the accumulator by 1. It is now $03
+LDA #$02           ; アキュムレータに数値$02をロードする
+INC A              ; アキュムレータを1インクリメントし、$03にする
 ```
-Here's an example to decrease the accumulator by 1:
+以下のコードでは、アキュムレータの値を1デクリメントしています。
 ```
-LDA #$02           ; Load the value $02 into the accumulator
-DEC A              ; Decrease the accumulator by 1. It is now $01
-```
-
-Here's an example to increase the value of an address by 1, without affecting the accumulator at all:
-```
-INC $0F            ; Increase the value in $7E000F by one
-RTS                ; Return. A remains unchanged
-```
-Here's also an example to decrease a value by one
-```
-DEC $0F            ; Decrease the value in $7E000F by one
-RTS                ; Return. A remains unchanged
+LDA #$02           ; アキュムレータに数値$02をロードする
+DEC A              ; アキュムレータを1デクリメントし、$01にする
 ```
 
-There are also edge cases with these operations. When you use INC when the value that is being modified is currently $FF, it would result in a $00 and the zero flag being set. When you use DEC and the value that is being modified is currently $00, it would result in a $FF.
+以下のコードでは、アドレスの値を1インクリメントしており、アキュムレータの値には影響を与えていません。
+```
+INC $0F            ; $7E000Fの値を1インクリメントする
+RTS                ; リターン処理。アキュムレータの値は変更されていない
+```
+以下のコードでは、アドレスの値を1デクリメントしています。
+```
+DEC $0F            ; $7E000Fの値を1デクリメントする
+RTS                ; リターン処理。アキュムレータの値は変更されていない
+```
+
+これらの命令には、いくつか特殊なケースがあります。
+操作対象が数値$FFを保持している状態でINCを実行したとき、INCの結果は$00になり、ゼロフラグがセットされます。
+操作対象が数値$00を保持している状態でDECを実行したとき、DECの結果は$FFになります。
 
 {% hint style="info" %}
-INC and DEC don't work with long addressing modes. They only work with absolute or direct page addressing modes. Therefore, instructions like `INC $7E000F` do not exist. Instead, you should use `INC $000F` or `INC $0F`.
+INC・DEC命令は、ロングモードを取ることができません。
+これらの命令は、絶対アドレスモード、もしくはダイレクトモードでのみ使用できます。
+したがって、`INC $7E000F`のような命令は存在せず、`INC $000F`、もしくは`INC $0F`のように記述する必要があります。
 
-Why isn't there a long addressing mode? The processor is simply made that way, so you'll have to deal with it, one way or another.
+なぜロングモードを取ることができないのでしょうか。
+それは単純に、プロセッサがそのように作られているからです。
+プログラマである皆さんは、その仕様の範囲内でプログラムを書いていかなければなりません。
 {% endhint %}
 
-## INX, DEX, INY and DEY
-There are also instructions to increase or decrease the value inside the index registers:
+## INX・DEX・INY・DEY
+インデックスレジスタの値を1インクリメント、もしくは1デクリメントするオペコードを紹介します。
 
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**INX**|Increase X|Increases X by 1|
-|**DEX**|Decrease X|Decreases X by 1|
-|**INY**|Increase Y|Increases Y by 1|
-|**DEY**|Decrease Y|Decreases Y by 1|
+|**INX**|Increase X|Xレジスタの値を1インクリメントする|
+|**DEX**|Decrease X|Xレジスタの値を1デクリメントする|
+|**INY**|Increase Y|Yレジスタの値を1インクリメントする|
+|**DEY**|Decrease Y|Yレジスタの値を1デクリメントする|
 
-You cannot use the above 4 opcodes to manipulate an address. They are solely used for the X and the Y registers.
+これら4つのオペコードでは、アドレスの値は操作できません。
+これらの命令は、XレジスタとYレジスタに対してのみ使用できます。
 
-## ADC and SBC
-If you wanted to increase or decrease a value by, say, 95, you wouldn't want to write INC or DEC 95 times. Thankfully, the SNES has instructions for such situations as well.
+## ADC・SBC
+例えば、数値を95インクリメントしたい、もしくは95デクリメントしたい場合に、INCやDECを95回も記述するのは疲れてしまいますね。
+ありがたいことにスーパーファミコンでは、こうした場合に使える命令も提供されています。
 
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**ADC**|Add with carry|Adds a given value to A|
-|**SBC**|Subtract with carry|Subtracts a given value from A|
+|**ADC**|Add with carry|与えられた数値をアキュムレータに加算する|
+|**SBC**|Subtract with carry|与えられた数値をアキュムレータから減算する|
 
 {% hint style="warning" %}
-Just for emphasis: ADC adds a value to the accumulator, not a RAM address. SBC subtracts a value from the accumulator.
+ADCはRAMアドレスではなくアキュムレータに数値を加算するということを強調しておきます。
+同様に、SBCはアキュムレータから数値を引きます。
 {% endhint %}
 
-With ADC and SBC, you can do add and subtract operations on addresses. Here's an example which adds 4 to the value of an address:
+ADCやSBCを用いることで、アドレスの数値に対する加算・減算が可能になります。
+以下のコードでは、アドレスの数値に4を足しています。
 ```
-LDA $0F            ; Load the address value in A
-CLC                ; Clear carry flag
-ADC #$04           ; What you will add to A. It is $04 in this case.
-STA $0F            ; Store A in $0F
+LDA $0F            ; アドレスの数値をアキュムレータにロードする
+CLC                ; キャリーフラグをクリアする
+ADC #$04           ; アキュムレータに4を加える
+STA $0F            ; アキュムレータの数値を$0Fにストアする
 ```
-Because ADC modifies A rather than addresses, you must first load the address value into A, then do the addition, then store the result back into the address. 
+ADCはアドレスではなくアキュムレータの値を変更するため、最初にアドレスの値をアキュムレータへロードする必要があります。
+その後アキュムレータに数値を加え、それをアドレスにストアしなおすことで、アドレスに対する加算が可能になります。
 
-If the carry flag wasn't cleared, the addition would've been $05 instead of $04, depending on the state of the carry flag at that moment. Therefore, it's important to be extra sure about the carry flag and just clear it with a `CLC`, before the ADC.
+この例において、もしキャリーフラグがクリアされていなければ、加算の結果はキャリーフラグの状態に応じて$04ではなく$05になる可能性があります。
+したがって、ADCの前には必ずキャリーフラグをクリアしておくことが重要です。
 
-The opposite is also true for subtracting:
+減算の場合は、この反対になります。
 
 ```
-LDA $0F            ; Load the current value in A
-SEC                ; Set Carry Flag
-SBC #$04           ; How many you will subtract from A. It is $04 in this case.
-STA $0F            ; Store A in $0F
+LDA $0F            ; アドレスの数値をアキュムレータにロードする
+SEC                ; キャリーフラグをセットする
+SBC #$04           ; アキュムレータから4を減じる
+STA $0F            ; アキュムレータの数値を$0Fにストアする
 ```
-This will subtract 4 from the RAM address' content (`$0F-#$04`). You'll notice that for subtracting, we set the carry flag rather than clear it. If you didn't set the carry flag, it would subtract $05 instead of $04. This might seem backwards, but it's just how the processor works.
+このコードは、指定したアドレスから4を減算します（`$0F-#$04`）。
+お気づきの通り、減算ではキャリーフラグをクリアするのではなく、セットすることが必要になります。
+もしキャリーフラグをセットしなければ、減算の結果は$04ではなく$05になる可能性があります。
+これは反対に思えるかもしれませんが、これが実際のプロセッサの動作になります。
 
 {% hint style="info" %}
-In short: when adding, use `CLC`. When subtracting, use `SEC`.
+単純に、加算では`CLC`を、減算では`SEC`を使うと覚えましょう。
 {% endhint %}
 
-### Carry flag
-When you use ADC, and the value in A wraps from $FF to $00, the carry flag will be set. This is also true for 16-bit A, when the value wraps from $FFFF to $0000.
+### キャリーフラグ
+ADCを実行してアキュムレータの値が$FFから$00に戻った場合、キャリーフラグがセットされます。
+また、アキュムレータが16-bitモードのときは、アキュムレータの値が$FFFFから$0000へ戻った場合にキャリーフラグがセットされます。
 
-When you use SBC, and the value in A wraps from $00 to $FF, the carry flag will be cleared. This is also true for 16-bit A, when the value wraps from $0000 to $FFFF.
+SBCを実行してアキュムレータの値が$00から$FFに戻った場合、キャリーフラグはクリアされます。
+また、アキュムレータが16-bitモードのときは、アキュムレータの値が$0000から$FFFFへ戻った場合にキャリーフラグがクリアされます。
 
-With this, you can use the carry flag to check if some sort of value wrapping has occured.
+したがって、キャリーフラグを用いることで、数値の巻き戻りが発生したかどうかを検知できます。
 
-### Overflow flag
-The opcodes ADC and SBC are unique in the sense that they're two of the three opcodes which can affect the *signed overflow* processor flag as a result of a calculation.
+### オーバーフローフラグ
+ADCとSBCは、その結果に応じて**サインドオーバーフロー**フラグを変更する3つのオペコードのうちの2つであるという点で特殊なオペコードです。
 
-The overflow flag is especially relevant when you decide to treat values as signed values. Remember the hexadecimal chapter with the signed and unsigned values? Values `$00-$7F` are considered positive, and values `$80-$FF` are considered negative. 
+オーバーフローフラグは、数値をサイン値として取り扱うときに重要となってくるフラグです。
+16進数の章でサイン値と非サイン値について学習しました。
+サイン値においては、数値`$00-$7F`が正数、数値`$80-$FF`が負数としてみなされるのでした。
 
-The overflow flag is set when the result of an operation doesn't make sense in the math world:
-* Adding a negative value to a negative value, and getting a positive value as a result, when it should be negative
-* Adding a positive value to a positive value, and getting a negative value as a result, when it should be positive
-* Subtracting a positive value from a negative value, and getting a positive value as a result, when the negative value should be even more negative
-* Subtracting a negative value from a positive value, and getting a negative value as a result, when the value should be even more positive
+オーバーフローフラグは、演算結果が数学的に成立しない場合にセットされます。具体的には、以下の4つの場合が当てはまります。
 
-Math rules are at play here. Adding two negative numbers results in a negative number (e.g. `-10 + -1 = -11`). Subtracting two negative numbers results in a negative number (e.g. `-10 - -1 = -9`). Subtracting a negative value equals an addition (e.g. `10 - -1 = 11`). Adding a negative value equals a subtraction (e.g. `10 + -1 = 9`). The scenarios described in those bullet points break these rules. 
+* 負数に負数を足して結果が正数になった（結果は負数であるべき）
+* 正数に正数を足して結果が負数になった（結果は正数であるべき）
+* 負数から正数を引いて結果が正数になった（結果は負数であるべき）
+* 正数から負数を引いて結果が負数になった（結果は正数であるべき）
 
-Here are some examples of the overflow flag getting set:
-```
-LDA #$88           ; Number -120
-CLC                ; We do -120 + -16, which should result in -136
-ADC #$F0           ; $88 + $F0 = $78, which is 120, which doesn't make sense mathematically
-```
+オーバーフローフラグを考える場合には、数学の法則が重要となります。
+2つの負数を足すと結果は負数になります（例えば`-10 + -1 = -11`）。
+【**訳註：** 以下一文は不正確につき訳出不能。書いてあることは「2つの負数同士を引くと結果は負数になります（例えば`-10 - -1 = -9`）」。当然、`-1 - -10 = 9`なので、この命題は偽】
+負数を引くことは加算と同じことを表します（例えば`10 - -1 = 11`）。
+上で挙げた4つのケースは、これらの法則的に破綻しています。
 
-```
-LDA #$80           ; Number -128
-SEC                ; We do -128 - 16, which should result in -144
-SBC #$10           ; $80 - $10 = $70, which is 112, which doesn't make sense mathematically
-```
+オーバーフローフラグがセットされる例を紹介します。
 
 ```
-LDA #$30           ; Number 48
-CLC                ; We do 48 + 112, which should result in 160
-ADC #$70           ; $30 + $70 = $A0, which is -96, which doesn't make sense mathematically
+LDA #$88           ; 数値-120
+CLC                ; -120 + -16を計算している。結果は-136になるはずである
+ADC #$F0           ; $88 + $F0 = $78。これは120であり、結果が数学的に破綻している
 ```
 
 ```
-LDA #$10           ; Number 16
-SEC                ; We do 16 - -128, which should result in 144
-SBC #$80           ; $10 - $80 = $90, which is -112, which doesn't make sense mathematically
+LDA #$80           ; 数値-128
+SEC                ; -128 - 16を計算している。結果は-144になるはずである
+SBC #$10           ; $80 - $10 = $70。これは112であり、結果が数学的に破綻している
 ```
 
-## 16-bit mode math
-All the previous explanations and behaviours apply to 16-bit math as well.
+```
+LDA #$30           ; 数値48
+CLC                ; 48 + 112を計算している。結果は160になるはずである
+ADC #$70           ; $30 + $70 = $A0。これは-96であり、結果が数学的に破綻している
+```
+
+```
+LDA #$10           ; 数値16
+SEC                ; 16 - -128を計算している。結果は144になるはずである
+SBC #$80           ; $10 - $80 = $90。これは-112であり、結果が数学的に破綻している
+```
+
+## 16-bitモードにおける算術演算
+この章におけるすべての説明は16-bitモードにおける算術演算においても当てはまります。

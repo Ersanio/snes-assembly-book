@@ -1,25 +1,36 @@
-# Machine cycles
+# マシンサイクル
 
-The SNES processes instructions, but each instruction takes up a predetermined amount of time to execute. The time an instruction takes to execute is called "machine cycle" (or "cycle" in short).
+スーパーファミコンは、命令を処理する際、あらかじめ決まっている実行時間をかけて命令を実行します。
+この実行時間は「マシンサイクル」（もしくは簡略化して「サイクル」）と呼ばれています。
 
-Each instruction has its own cycle. [This page](https://wiki.superfamicom.org/65816-reference) has a full reference of how many cycles each instruction takes. Pay attention to the footnotes, as the amount of used cycles can differ depending on the context of the code. For example, a taken branch takes 1 cycle longer compared to a branch that's not taken.
+各命令にはそれぞれにサイクルが決まっています。
+[このページ](https://wiki.superfamicom.org/65816-reference)には、すべての命令におけるサイクルが記載されています。
+消費されるサイクルはコードの文脈によって変わることがあるので、上記ページを参照する際は、脚注に注意してください。
+例えば、分岐が成立する分岐命令は、分岐が成立しない分岐命令よりも1サイクル長い実行時間を要します。
 
-The less cycles, the less slowdown the code suffers from. Slowdown is often noticeable in games with many sprites on the screen. To avoid slowdown, you need to write efficient code. Here is an example of inefficient vs. efficient code:
+サイクルが少なくなればなるほどコードのパフォーマンスは向上します、
+パフォーマンスの低下は、画面上に多くのスプライトが表示されている場合に顕著となります。
+つまり、パフォーマンス低下を避けるにはコードを効率的に記述する必要があります。
+以下のコードは、効率的なコードと非効率なコードの比較です。
 
 ```
-; Inefficient
-LDA #$00           ; 2 cycles
-STA $7E0000        ; 5 cycles
-                   ; = 7 cycles
-; Efficient
-LDA #$00           ; 2 cycles
-STA $00            ; 3 cycles
-                   ; = 5 cycles
+; 非効率なコード
+LDA #$00           ; 2サイクル
+STA $7E0000        ; 5サイクル
+                   ; = 7サイクル
+; 効率的なコード
+LDA #$00           ; 2サイクル
+STA $00            ; 3サイクル
+                   ; = 5サイクル
 
-; Very efficient
-STZ $00            ; 3 cycles
-                   ; = 3 cycles
+; 非常に効率的なコード
+STZ $00            ; 3サイクル
+                   ; = 3サイクル
 ```
-At first, we use a full notation to write the value $00 to address $7E0000. But then, in the next example, we shorten the address, saving 2 cycles. Finally, we figure that we can use `STZ`, as we store zero to an address anyway.
+このコードの最初の例では、数値$00をアドレス$7E0000へストアするために、完全な記述を行なっています。
+しかし、2番目の例ではアドレスを短縮して、2サイクルを節約できました。
+目標がアドレスに$00をストアするなので、結局、3番目の例では`STZ`命令を使用することとしました。
 
-Having a low cycle count is especially important when executing code during an NMI, because there are limited machine cycles there. Exceeding that limit causes black scanlines to flicker on the top of the SNES display.
+消費するマシンサイクルを少なくすることは、コードをNMI中に実行する場合、特に重要となります。
+なぜなら、NMI中に消費できるマシンサイクルは限られているからです。
+その制限を超えてコードを実行すると、スーパーファミコンのディスプレイ上部に黒い走査線がちらついてしまいます。

@@ -1,54 +1,60 @@
-# Processor flags
-As seen in the [previous chapter](../processor/flags.md), the SNES supports 9 processor flags. There are ways to affect these processor flags, which are explained in this chapter.
+# プロセッサフラグの変更
+[前の章](../processor/flags.md)で学んだ通り、スーパーファミコンには全部で9つのプロセッサフラグが存在します。
+同時に、この章で解説するようなプロセッサフラグを変更する方法も存在します。
 
 ## SEP
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**SEP**|Set processor flags|Sets specified processor flags to 1|
+|**SEP**|Set processor flags|指定したプロセッサフラグを1にセットする|
 
-SEP sets the selected processor flag bits to 1.
+SEPは、指定されたプロセッサフラグのビットを1にセットします。
 
-SEP is used as following:
+SEPは以下のように使用します。
 ```
 ;nvmxdizc = 0000 0000
 SEP #$80 ;= 1000 0000
 ;Nvmxdizc = 1000 0000
 ```
-The uppercased letters are the activated processor flags. This code sets the negative flag.
+"nvmxdizc"表記における大文字は、そのフラグに1がセットされていることを表します。
+よって、このコードはネガティブフラグを1にセットします。
 
 ## REP
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**REP**|Reset processor flags|Sets specified processor flags to 0|
+|**REP**|Reset processor flags|指定したプロセッサフラグを0にセットする|
 
-REP resets the selected processor flag bits to 0.
+REPは、指定されたプロセッサフラグのビットを0にセットします。
 
-REP is used as following:
+REPは以下のように使用します。
 ```
 ;NvmxDizc = 1000 1000
 REP #$08 ;= 0000 1000
 ;Nvmxdizc = 1000 0000
 ```
-In the beginning, the decimal mode was enabled, and the negative flag was set, but after `REP #$08`, the decimal mode flag got disabled and the negative flag is still set.
+最初の状態では、デシマルモードフラグが有効で、かつネガティブフラグがセットされていました。
+しかし、`REP #$08`を実行することで、ネガティブフラグの状態はそのままに、デシマルモードのみを無効にできました。
 
-## XCE and the emulation mode
-Because the emulation mode bit is "hidden" above the carry flag, there's a dedicated opcode which exchanges the carry flag with the emulation mode flag.
+## XCEとエミュレーションモード
+エミュレーションフラグはキャリーフラグに「覆い隠されて」いるので、キャリーフラグとエミュレーションフラグを入れ替えるための特別なオペコードが存在します。
 
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**XCE**|Exchange carry and emulation|Swaps the values of carry flag and emulation mode flag|
+|**XCE**|Exchange carry and emulation|キャリーフラグとエミュレーションフラグの値を入れ替える|
 
-You can access the emulation mode by using `SEC` then `XCE`, and leave it using `CLC` then `XCE`. By default, SNES starts up in emulation mode. This is why you often see the opcodes `CLC` and `XCE` among the very first opcodes in disassemblies.
+エミュレーションモードを有効にするには`SEC`を実行し、その後で`XCE`命令を実行します。
+また、`CLC`を実行し、その後`XCE`を実行することで、エミュレーションモードを終了できます。
+標準では、スーパーファミコンはエミュレーションモードで起動します。
+このため、ROMの逆アセンブルを読んでいると、ROMの最初のオペコードとして`CLC`と`XCE`をよく見かけることがあります。
 
-## Other opcodes
-There are other opcodes which immediately affect a single processor flag.
+## その他のオペコード
+特定のプロセッサフラグを直接変更する他のオペコードを紹介します。
 
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**SEI**|Set interrupt disable flag|Sets the interrupt disable flag, setting it to 1, thus disabling IRQ|
-|**CLI**|Clear interrupt disable flag|Clears the interrupt disable flag, setting it to 0, thus enabling IRQ|
-|**SED**|Set decimal flag|Sets the decimal mode flag, setting it to 1, changing the SNES into decimal mode|
-|**CLD**|Clear decimal flag|Clears the decimal flag, setting it to 0, changing the SNES into hexadecimal mode|
-|**SEC**|Set carry flag|Sets the carry flag, setting itt o 1|
-|**CLC**|Clear carry flag|Clears the carry flag, setting it to 0|
-|**CLV**|Clear overflow flag|Clears the overflow flag, setting it to 0|
+|**SEI**|Set interrupt disable flag|割り込み禁止フラグを1にセットし、IRQを無効にする|
+|**CLI**|Clear interrupt disable flag|割り込み禁止フラグを0にセットし、IRQを有効にする|
+|**SED**|Set decimal flag|デシマルモードフラグを1にセットし、デシマルモードを有効にする|
+|**CLD**|Clear decimal flag|デシマルモードフラグを0にセットし、デシマルモードを無効にする|
+|**SEC**|Set carry flag|キャリーフラグを1にセットする|
+|**CLC**|Clear carry flag|キャリーフラグを0にセットする0|
+|**CLV**|Clear overflow flag|オーバーフローフラグを0にセットする|

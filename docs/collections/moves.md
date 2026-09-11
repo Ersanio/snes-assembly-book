@@ -1,119 +1,141 @@
-# Copying data
-65c816 assembly has two opcodes dedicated to moving huge blocks of data from one memory location to another.
+# データ転送
+65C816には、大きなデータのまとまりをメモリ内のある位置から別の位置へ転送するための命令が2つ存在します。
 
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**MVN**|Move block negative|Moves a block of data, byte by byte, starting from the beginning and working towards the end|
-|**MVP**|Move block positive|Moves a block of data, byte by byte, starting from the end and working towards the beginning|
+|**MVN**|Move block negative|データのまとまりをバイトごとに先頭から転送する|
+|**MVP**|Move block positive|データのまとまりをバイトごとに末尾から転送する|
 
-MVP and MVN practically do a mass amount of LDA and STA to some RAM addresses. You can't move data to ROM, because ROM is read-only.
+MVPとMVNが行うことは、複数のRAMアドレスに対して膨大な回数のLDAとSTAを繰り返すようなものです。
+当然、ROMは読み取り専用なので、データをROMに対して転送はできません。
 
-It's highly recommended to have the A, X and Y registers at 16-bit mode. It's also highly recommended to preserve the data bank using the stack, as the move opcodes implicitly change this. Here's an example of a proper block move setup:
+これらの命令を使用する際には、アキュムレータ、Xレジスタ、Yレジスタをすべて16-bitモードにしておくことが強く推奨されます。
+また、これらの命令はデータバンクレジスタを暗黙的に書き換えてしまうので、現在のデータバンクレジスタの値をスタックに保管しておくことが必要です。
+データ転送は以下のような流れで行います。
+
 ```
-PHB                ; Preserve data bank
-REP #$30           ; 16-bit AXY
-                   ; ← Move instructions are located here
-SEP #$30           ; 8-bit AXY
-PLB                ; Recover data bank
+PHB                ; データバンクレジスタの値を保管しておく
+REP #$30           ; アキュムレータ、Xレジスタ、Yレジスタを16-bitモードにする
+                   ; ← データ転送命令をここに記述する
+SEP #$30           ; アキュムレータ、Xレジスタ、Yレジスタを8-bitモードにする
+PLB                ; データバンクレジスタを元に戻す
 ```
 
 ## MVN
-When using MVN, the three main registers all have a special purpose.
+MVNを使用する際には、3つの汎用レジスタがそれぞれ特別な役割を持ちます。
 
-|Register|Purpose|
+|レジスタ|目的|
 |-|-|
-|A|Specifies the amount of bytes to transfer, plus 1|
-|X|Specifies the high and low bytes of the data source memory address|
-|Y|Specifies the high and low bytes of the destination memory address|
+|アキュムレータ|転送を行うバイト数を+1して特定する|
+|Xレジスタ|データ転送元となるメモリアドレスの上位バイトと下位バイトを特定する|
+|Yレジスタ|データ転送先となるメモリアドレスの上位バイトと下位バイトを特定する|
 
-The A register is "plus 1". This means that if you want to move 4 bytes of data, you load $0003, as this means $0003+1, thus 4 bytes.
+アキュムレータは「足す1」して転送するバイト数を特定します。
+つまり、もし4バイトのデータを転送したい場合、アキュムレータには$0003をロードする必要があり、
+これによって、実際の転送バイト数が$0003+1で$0004バイトとして特定されます。
 
-MVN can be written in two ways: 
+MVNには、以下で示す2種類の表記方法が存在します。
+
 ```
 MVN $xxyy
 ; or
 MVN $yy, $xx
 ```
-Where `xx` is the source bank, and `yy` is the destination bank.
+`xx`は転送元のバンク、`yy`は転送先のバンクを表します。
 
-When executing the MVN opcode, the SNES stalls at that same opcode for each byte transferred. When a byte is transferred, the following happens:
-|Register|Event|
+MVNを実行すると、プロセッサは転送が完了するまで停止し、各バイトを転送するごとに以下の処理が実行されます。
+
+|レジスタ|挙動|
 |-|-|
-|A|Decreases by 1|
-|X|Increases by 1|
-|Y|Increases by 1|
-|Data bank|Is set to the bank of the destination address|
+|アキュムレータ|1デクリメントされる|
+|Xレジスタ|1インクリメントされる|
+|Yレジスタ|1インクリメントされる|
+|データバンクレジスタ|転送先アドレスのバンクに設定される|
 
-Seeing that A decreases by 1, eventually it will reach the value $0000, then it'll wrap to $FFFF. Once that wrap happens, the block move finishes and the SNES proceeds to execute the opcodes that follow.
+アキュムレータは1バイトの転送ごとに1デクリメントされるので、アキュムレータの値は最終的に$0000になり、その次は$FFFFに巻き戻ります。
+アキュムレータの値が$FFFFになるとデータ転送は終了し、実行位置はMVN直下の命令へ進みます。
 
-Here's an example of a block move:
+データ転送は以下のように行います。
+
 ```
-PHB                ; Preserve data bank
-REP #$30           ; 16-bit AXY
+PHB                ; データバンクレジスタの値を保管しておく
+REP #$30           ; アキュムレータ、Xレジスタ、Yレジスタを16-bitモードにする
 LDA #$0004         ; \
 LDX #$8908         ;  |
-LDY #$A000         ;  | Move 5 bytes of data from $1F8908 to $7FA000
+LDY #$A000         ;  | 5バイトのデータを$1F8908から$7FA000へ転送する
 MVN $7F, $1F       ; /
-SEP #$30           ; 8-bit AXY
-PLB                ; Recover data bank
+SEP #$30           ; アキュムレータ、Xレジスタ、Yレジスタを8-bitモードにする
+PLB                ; データバンクレジスタを元に戻す
 ```
-This example will move 5 bytes of data from address $1F8098 to $7FA000.
+
+このコードは、5バイトのデータを$1F8908から$7F9FFCへ転送します。
 
 ## MVP
-When using MVP, the three main registers all have a special purpose.
+MVPを使用する際には、3つの汎用レジスタがそれぞれ特別な役割を持ちます。
 
-|Register|Purpose|
+|レジスタ|目的|
 |-|-|
-|A|Specifies the amount of bytes to transfer, plus 1|
-|X|Specifies the high and low bytes of the data source memory address|
-|Y|Specifies the high and low bytes of the destination memory address|
+|アキュムレータ|転送を行うバイト数を+1して特定する|
+|Xレジスタ|データ転送元となるメモリアドレスの上位バイトと下位バイトを特定する|
+|Yレジスタ|データ転送先となるメモリアドレスの上位バイトと下位バイトを特定する|
 
-The A register is "plus 1". This means that if you want to move 4 bytes of data, you load $0003, as this means $0003+1, thus 4 bytes.
+アキュムレータは「足す1」して転送バイト数を特定します。
+つまり、もし4バイトのデータを転送したい場合、アキュムレータには$0003をロードする必要があり、
+これによって、実際の転送バイト数が$0003+1で$0004バイトとして特定されます。
 
-MVP can be written in two ways: 
+MVPには、以下で示す2種類の表記方法が存在します。
+
 ```
 MVP $xxyy
 ; or
 MVP $yy, $xx
 ```
-Where `xx` is the source bank, and `yy` is the destination bank.
+`xx`は転送元のバンク、`yy`は転送先のバンクを表します。
 
 {% hint style="warning" %}
-Note that the `MVP/MVN $yy, $xx` notation is indeed written as `MVP/MVN destination, source`. Various sources indicate that it should be the other way around (`source, destination`), however, this tutorial follows Asar's assembly syntax.
+`MVP/MVN $yy, $xx`の記法は、`MVP/MVN destination, source`です。
+いくつかの文献ではオペランドが反対に（`source, destination`）記載されていますが、
+本書ではAsarのアセンブリシンタックスに準拠しています。
 {% endhint %}
 
-When executing the MVP opcode, the SNES loops at that same opcode for each byte transferred. From this point on, this is where MVP differs from MVN. When a byte is transferred, the following happens:
-|Register|Event|
+MVPを実行すると、プロセッサはこのオペコードを繰り返します。この点で、MVPはMVNと異なります。
+スーパーファミコンは各バイトを転送するごとに以下の処理を実行します。
+
+|レジスタ|挙動|
 |-|-|
-|A|Decreases by 1|
-|X|Decreases by 1|
-|Y|Decreases by 1|
-|Data bank|Is set to the bank of the destination address|
+|アキュムレータ|1デクリメントされる|
+|Xレジスタ|1デクリメントされる|
+|Yレジスタ|1デクリメントされる|
+|データバンクレジスタ|転送先アドレスのバンクに設定される|
 
-Considering that X and Y decrease, rather than increase, this means that MVP moves blocks of data from the end towards the beginning.
+XレジスタとYレジスタはインクリメントではなくデクリメントされるため、MVPはデータを末尾から先頭へ向かって転送していきます。
 
-Here's an example of a block move:
+MVPには、以下で示す2種類の表記方法が存在します。
+
 ```
-PHB                ; Preserve data bank
-REP #$30           ; 16-bit AXY
+PHB                ; データバンクレジスタの値を保管しておく
+REP #$30           ; アキュムレータ、Xレジスタ、Yレジスタを16-bitモードにする
 LDA #$0004         ; \
 LDX #$8908         ;  |
-LDY #$A000         ;  | Move 5 bytes of data from ($1F8908-$0004) to ($7FA000-$0004)
+LDY #$A000         ;  | 5バイトのデータ（$1F8908から4バイト前まで）を$7FA000から4バイト前までへ転送する
 MVP $7F, $1F       ; /
-SEP #$30           ; 8-bit AXY
-PLB                ; Recover data bank
+SEP #$30           ; アキュムレータ、Xレジスタ、Yレジスタを8-bitモードにする
+PLB                ; データバンクレジスタを元に戻す
 ```
-This example will move 5 bytes of data from address $1F8904 to $7F9FFC. Although the transfer happens backwards, the transferred data isn't reversed. It still copies over as you'd expect.
+このコードは、5バイトのデータを$1F8908から$7F9FFCへ転送します。
+データ転送はMVNと反方向に行われますが、転送されるデータは反転されません。
+データ転送は、期待通りに動作します。
 
-## Edge cases
-* When you set the A register to $0000, it means you will move 1 byte.
-* When you set the A register to $FFFF, it means you will move 65536 bytes.
-* When either the source or destination addresses cross a bank boundary, the high and low bytes reset to $0000, while the data bank remains unchanged.
+## 特殊な場合
+* アキュムレータを$0000に設定した場合は、転送サイズが1バイトであることを表す
+* アキュムレータを$FFFFに設定した場合は、転送サイズが65536バイトであることを表す
+* データ転送元、もしくはデータ転送先のアドレスが転送途中にバンクを跨ぐ場合、その上位バイトと下位バイトは$0000にリセットされ、データバンクは変更されない
 
-## Easy notation
-Asar supports labels as parameters for LDA, LDX and LDY, so you can write block moves without having to calculate the source table size or address locations. The following examples allow for tables of all sizes, and assume the destination to be memory address $7FA000.
+## 簡単な記法
+Asarは、LDA、LDX、LDYのオペランドにラベルを認めているので、データ転送元テーブルのサイズやアドレスを計算することなくデータ転送命令を記述できます。
+以下のコードでは、どのようなサイズのテーブルであっても、転送先アドレス$7FA000にデータを転送できます。
 
-An example for MVN:
+MVNの例：
 ```
 PHB
 REP #$30
@@ -128,7 +150,7 @@ RTS
 SomeTable: db $00,$01,$02,$03,$04
 .end
 ```
-An example for MVP:
+MVPの例：
 ```
 PHB
 REP #$30
@@ -143,4 +165,4 @@ RTS
 SomeTable: db $00,$01,$02,$03,$04
 .end
 ```
-As you can see, MVP is considerably more complicated to setup.
+これらのコードからも分かるように、MVPの設定はMVNと比べて複雑になります。

@@ -1,10 +1,18 @@
-# Binary
+# 2進数
 
-Another important counting system is "binary". Binary has only two possible digits for each place value: 0 and 1. A binary digit is also called a "bit". In assembly syntax, bits are prefixed by "%".
+他に重要な記数法として「2進数」が挙げられます。
+2進数は各位で0か1の2パターンしか取りません。
+2進数における各位は「ビット」と呼ばれます。
+また、アセンブリの表記法では、ビット数値には「%」が前置されます。
 
-A byte is made of eight "bits". Because a binary digit has two possible values, and a byte has 8 bits, this means there are 2⁸ possible values in a byte.
+バイトは8「ビット」から構成されます。
+2進数は各位で2パターンしか取らず、バイトは8桁であるため、
+バイトでは2⁸通りの数値を取ることができます。
 
-For example, a byte can consist of the following bits: `1001 0110` or `1001 0101`. The first bit from the left is called "bit 7" and the final bit is called "bit 0". They are NOT called bits 0-7, nor bits 8-1. Here's an overview:
+例えば、各ビットが`1001 0110`と`1001 0101`であるバイトを考えます。
+左端のビットは「7ビット目」で、右端のビットは「0ビット目」です。
+0から7だったり、8から1とは数えません。
+つまり、以下のようになります。
 
 ```
 Bit 7654 3210
@@ -14,7 +22,7 @@ Bit 7654 3210
     .... ....
 ```
 
-The table below shows a relatively easy way to memorize binary, as it displays a pattern.
+次の表は、2進数の周期を示しており、この表を用いることで比較的簡単に2進数を覚えられるでしょう。
 
 | Binary | Hexadecimal |
 | :--- | :--- |
@@ -27,9 +35,13 @@ The table below shows a relatively easy way to memorize binary, as it displays a
 | `%0100 0000` | `$40` |
 | `%1000 0000` | `$80` |
 
-Note that there is a space inbetween 4 bits for easier readability, although assemblers generally don't accept this syntax. Groups of 4 bits are called "nibbles" and for the purposes of this chapter, they are there to make binary easier to read, because one nibble corresponds to one digit in hexadecimal.
+可読性のため、4桁ごとに空白が挿入されているものの、アセンブラではこの表記法は認められていません。
+この章では便宜上、4桁のまとまりを「ニブル」と呼びます（ひとつのニブルにつき16進数1桁に相当します）。
 
-The SNES is capable of working with both 8-bit and 16-bit numbers. While 8-bit numbers are called a byte, 16-bit numbers are called a "word". They would look like they have 16 bits in binary (e.g. `10000101 11010101`, which is `$85D5` in hexadecimal). In the case of 16-bit numbers, the leftmost bit is called "bit 15" while the rightmost bit is called "bit 0":
+スーパーファミコンは8-bit、および16-bitの数値を扱うことができます。
+8-bitの数値は「バイト」と呼ばれ、16-bit数値は「ワード」と呼ばれています。
+16-bit数値は、2進数で16桁になります（例： `10000101 11010101`は16進数で`$85D5`）。
+なお、16-bit数値の場合、左端の桁は「15ビット目」で、右端は「0ビット目」です。
 
 ```
     1111 11             (read from top to bottom)            
@@ -39,22 +51,27 @@ Bit 5432 1098 7654 3210
     .... .... .... ....
 ```
 
-## Flags
+## フラグ
 
-Binary is immensely useful when you're giving a hex value multiple purposes, kind of like an on/off toggle for certain features. These bits are called "flags" and are generally used to save space in the working memory of games.
+2進数は、1つの16進数を多様な用途で使用する際に非常に有用となります（例えば、オンオフの切り替えなど）。
+これらのビットは「フラグ」と呼ばれ、一般に、ゲームのWRAM内に保存されます。
 
-For example, you can divide a byte into 8 bits with each bit having a different meaning. Bit 7 could indicate that a level has rain or not. Bit 6 could indicate that a level layout is horizontal or vertical. Bit 5 could indicate that the level setting is during day or night, etc. This way you can compress information into a single byte. It would look like this in binary:
+例えば、バイトを8桁に分割し、それぞれの桁を異なったフラグとして用いることができます。
+7ビット目をコースの天候が雨か晴れかを示すフラグ、6ビット目をコースのレイアウトが縦か横かを示すフラグ、5ビット目をコースの時間帯が昼か夜かを示すフラグ、
+といった感じです。
+この方法により、複数の情報を1バイトにまとめることが可能となります。2進数では以下のように表されます。
 
 ```text
 10100000
-││└───── "Is daytime" flag
-│└───── "Is horizontal level" flag
-└───── "Is raining" flag
+││└───── "昼である"フラグ
+│└───── "横方向のコース"フラグ
+└───── "雨が降っている"フラグ
 ```
 
-Finally, here's an overview of how to count up in decimal, hexadecimal and binary:
+以下は、数値を10進数、16進数、2進数でそれぞれどのように数えるかを示した一覧です。
 
-| Decimal | Hexadecimal | Binary |
+
+| 10進数 | 16進数 | 2進数 |
 | :--- | :--- | :--- |
 | `00` | `$00` | `%0000 0000` |
 | `01` | `$01` | `%0000 0001` |
@@ -78,18 +95,22 @@ Finally, here's an overview of how to count up in decimal, hexadecimal and binar
 | `254` | `$FE` | `%1111 1110` |
 | `255` | `$FF` | `%1111 1111` |
 
-## Notation
+## 注意
 
-Sometimes, bits could be written inconsistently, like `11` or `110 0000`. This makes the binary number harder to read, because the general convention is to write bits in groups of eight. In order to read them, you will need to add leading 0s to the digits until there are either 8 bits or 16 bits in total.
+ビットは`11`や`110 0000`のように異なった表記で表される場合があります。
+一般的に2進数は8桁のグループごとに表記されるため、こうした表記は、2進数の数値を読みづらくしてしまいます。
+こうした数値を読む際には、全体で8桁もしくは16桁になるように、0を最初にいくつか付すとよいでしょう。
 
-In 8-bit:
+8-bitの場合：
 
-* `11` becomes `00000011`
-* `1100000` becomes `01100000`
+* `11`は`00000011`
+* `1100000`は`01100000`
 
-In 16-bit:
+16-bitの場合：
 
-* `11` becomes `00000000 00000011`
-* `1100000` becomes `00000000 01100000`
+* `11`は`00000000 00000011`
+* `1100000`は`00000000 01100000`
 
-You can convert between decimal, hexadecimal and binary, by using Windows calculator's "programming" mode. There are also many calculators online which can do this. Assembly syntax accepts decimal and binary also, so you usually don't need to convert between decimal and hexadecimal.
+Windowsに搭載されている電卓アプリの「プログラミング」モードを使用することで、10進数値、16進数値、2進数値を相互に変換できます。
+他にも同様の機能を持った電卓は、オンライン上に数多く存在します。
+ただし、アセンブリのシンタックスにおいては、10進数や2進数もそのまま使用できるため、通常、10進数と16進数を相互に変換する必要はありません。

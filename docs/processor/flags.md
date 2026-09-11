@@ -1,8 +1,12 @@
-# Processor flags
-As you saw in the "8-bit and 16-bit mode" chapter earlier, the SNES can switch between 8-bit and 16-bit mode by using the opcodes REP and SEP. These affect the processor flags, which affect the behaviour of the SNES. Two of the processor flags are dedicated to A and X & Y being 8-bit or 16-bit mode. There are in total 9 processor flags stored in the processor flags register as a single byte:
+# プロセッサフラグ
+『8-bitモードと16-bitモード』で解説した通り、オペコードREP・SEPを用いることで
+スーパーファミコンの8-bitモードと16-bitモードを切り替えることができます。
+これらのオペコードは、プロセッサフラグを変更することでスーパーファミコンの動作を変更できます。
+プロセッサフラグのうち2つのフラグがアキュムレータ、Xレジスタ、Yレジスタの8-bitモードと16-bitモードの切り替えに関わっています。
+レジスタとしてのプロセッサフラグには全部で9つのプロセッサフラグが存在し、それらはまとめて1バイトの数値として管理されています。
 
 ```text
-Processor flags
+プロセッサフラグ
 Bits: 7   6   5   4   3   2   1   0
 
                                  |e├─── Emulation: 0 = Native Mode
@@ -18,41 +22,51 @@ Bits: 7   6   5   4   3   2   1   0
       └───────────────────────────────── Negative: 1 = Negative set
 ```
 
-The processor flags are usually displayed as a single mnemonic in debuggers: "nvmxdizc". This chapter will explain all the processor flags in detail.
+プロセッサフラグはデバッガにおいて"nvmxdizc"のような文字列として表記されることがあります。
+この章では、すべてのプロセッサフラグについて詳しく見ていきます。
 
-## Negative flag (n)
-Most opcodes modify the negative flag depending on the results of that opcode. These opcodes generally are opcodes which are handled in the mathematics chapter, but also loads, comparisons and pulls.
+## ネガティブフラグ（n）
+ほとんどのオペコードは、その結果に応じてネガティブフラグを変更します。
+このようなオペコードの多くは算術演算命令の章で紹介するものですが、ロード、比較、プル命令もネガティブフラグに影響します。
 
-The negative flag doesn't affect the behaviour of the SNES. Rather, there are some branches which make use of the negative flag.
+ネガティブフラグはスーパーファミコンの動作に影響を与えるものではありませんが、
+いくつかの分岐命令は、その分岐条件としてネガティブフラグを参照しています。
 
-## Overflow flag (v)
-There are 3 opcodes which affect the overflow flag after a calculation: [`ADC`, `SBC`](../math/arithmetic.md) and [`BIT`](../math/logic.md). For detailed explanations of when the overflow flag is set, see the links.
+## オーバーフローフラグ（v）
+オペコード[`ADC`、`SBC`](../math/arithmetic.md)、[`BIT`](../math/logic.md)の3つのオペコードがその計算結果に応じて
+オーバーフローフラグを変更します。オーバーフローフラグが立つ条件については、それぞれのリンクを参照してください。
 
-The overflow flag doesn't affect the behaviour of the SNES. Rather, there are some branches which make use of the overflow flag.
+オーバーフローフラグはスーパーファミコンの動作に影響を与えるものではありませんが、
+いくつかの分岐命令は、その分岐条件としてオーバーフローフラグを参照しています。
 
-## Memory select (m)
-The memory select processor flag determines whether the accumulator is 8-bit or 16-bit. 
+## メモリモードフラグ（m）
+メモリモードフラグによって、アキュムレータが8-bitモードか16-bitモードかが決定されます。
 
-When it's set to 1, the accumulator is 8-bit.
-When it's set to 0, the accumulator is 16-bit.
+メモリモードフラグが1のとき、アキュムレータは8-bitモードになります。
+メモリモードフラグが0のとき、アキュムレータは16-bitモードになります。
 
-## Index select (x)
-The index select processor flag determines whether the X and Y registers are 8-bit or 16-bit. 
+## インデックスモードフラグ（x）
+インデックスモードフラグによって、XレジスタとYレジスタが8-bitモードか16-bitモードかが決定されます。
 
-When it's set to 1, both X and Y are 8-bit.
-When it's set to 0, both X and Y are 16-bit.
+インデックスモードフラグが1のとき、XレジスタとYレジスタは8-bitモードになります。
+インデックスモードフラグが0のとき、XレジスタとYレジスタは16-bitモードになります。
 
-## Decimal mode flag (d)
-Setting this flag to 1 means the SNES enters decimal mode. This *only* affects the `ADC`, `SBC` and `CMP` opcodes.
+## デシマルモードフラグ（d）
+デシマルモードフラグを1に設定すると、スーパーファミコンはデシマルモードで動作するようになります。
+デシマルモードは、オペコード`ADC`、`SBC`、`CMP`でのみ有効になります。
 
-These opcodes adjust the accumulator on-the-fly. This means that, if you for example add `$03` to `$09`, the result is `$12` instead of `$0C`.
+これらのオペコードはアキュムレータの数値をその場で変更します。
+例えば、`$03`に`$09`を加えると、結果は`$0C`ではなく`$12`になります。
 
-Although decimal-mode math properly affects the carry flag and negative flag, it doesn't do this with the overflow flag.
+デシマルモードにおける算術演算は、キャリーフラグとネガティブフラグを変更する可能性がありますが、
+オーバーフローフラグには影響を与えません。
 
-### Binary-coded decimal
-Because numbers are treated as decimal, they are called "binary-coded decimal" (BCD). BCD is basically the same as hexadecimal, with the values $0A-0F, $1A-1F, etc. ignored. Here's a table showing how counting in BCD goes like:
+### 二進化十進数
+デシマルモードでは数値が十進数として取り扱われます。このように取り扱われる数値を「二進化十進数」（BCD）といいます。
+二進化十進数は基本的に16進数と同じですが、$0Aから$0F、$1Aから1F…といった数値がなくなります。
+以下の表は、二進化十進数がどのような計数法であるかを表したものです。
 
-|Binary|Hexadecimal|Decimal|BCD|
+|2進数|16進数|10進数|二進化十進数|
 |-|-|-|-|
 |%0000 0000|$00|#00|%0000 0000|
 |%0000 0001|$01|#01|%0000 0001|
@@ -80,21 +94,30 @@ Because numbers are treated as decimal, they are called "binary-coded decimal" (
 |%1001 1011|$9B|Not available|Not available|
 |...|...|...|...|
 
-In decimal mode, the SNES supports calculation results from `$00` to `$99`. In 16-bit A mode, this would be from `$0000` to `$9999`.
+デシマルモードでは演算結果に`$00`から`$99`までを取ることができ、
+アキュムレータが16-bitモードの場合は、`$0000`から`$9999`を取ることができます。
 
-## Interrupt disable flag (i)
-This flag determines whether the IRQ of the SNES is disabled or not.
+## 割り込み禁止フラグ（i）
+割り込み禁止フラグでは、スーパーファミコンのIRQを無効にできます。
 
-When it's set to 1, IRQ is disabled.
-When it's set to 0, IRQ is enabled.
+割り込み禁止フラグが1のとき、IRQは無効になります。
+割り込み禁止フラグが0のとき、IRQは有効になります。
 
-## Zero flag (z)
-Most opcodes modify the zero flag depending on the results of that opcode. These opcodes generally are opcodes which are handled in the mathematics chapter, but also loads, comparisons and pulls.
+## ゼロフラグ（z）
+ほとんどのオペコードはその結果に応じてゼロフラグを変更します。
+このようなオペコードの多くは算術演算命令の章で紹介するものですが、ロード、比較、プル命令もゼロフラグに影響します。
 
-The zero flag doesn't affect the behaviour of the SNES. Rather, there are some branches which make use of the zero flag.
+ゼロフラグはスーパーファミコンの動作に影響を与えるものではありませんが、
+いくつかの分岐命令は、その分岐条件としてゼロフラグを参照しています。
 
-## Carry flag (c)
-The SNES supports math in the form of adding and subtracting numbers. It also supports bitwise operations such as bitshifting. The "carry flag" is a processor flag used for most of these arithmetic and bitshifting operations. Additionally, the carry flag is also used for branching. The carry flag is the same concept as the "carry" you learn in elementary school. In a typical pencil-and-paper addition, you'd write it out like this:
+## キャリーフラグ（c）
+スーパーファミコンは加算や減算といった算術演算に対応しています。
+加えて、ビット演算やビットシフトにも対応しています。
+「キャリーフラグ」はこうした算術演算命令やビット演算命令で用いられるプロセッサフラグです。
+加えて、キャリーフラグは分岐命令にも用いられています。
+キャリーフラグは、小学校で習う「繰り上がり」と同じような概念です。
+典型的な加算は以下のように筆算しますね。
+
 ```
   ¹
   27
@@ -102,28 +125,37 @@ The SNES supports math in the form of adding and subtracting numbers. It also su
 ----
   86
  ```
-7+9 equals 16, thus *carry* the 1 to the left.
+7+9は16なので、1が左の位に**繰り上がり**ます。
 
-Considering the carry is a "flag", when the carry flag is clear, the carry (C) will be 0. When it's set, the carry will be 1. You can safely assume that the carry flag is the "9th bit" of the A register when A is in 8-bit mode, and the "17th bit" when A is in 16-bit mode. Assuming A is in 8-bit mode, the carry flag will look like this:
+繰り上がりが「フラグ」であると考えると、
+キャリーフラグがクリアされているときの繰り上がりは0で、キャリーフラグがセットされているときの繰り上がりは1です。
+アキュムレータが8-bitモードのとき、キャリーフラグはアキュムレータの「9つ目のビット」、あるいは、
+アキュムレータが16-bitモードのとき、キャリーフラグはアキュムレータの「17つ目のビット」であると考えても良いでしょう。
+アキュムレータが8-bitモードのとき、キャリーフラグは以下のように表せます。
+
 ```
 AAAAAAAA C
 ```
-Where C is the Carry Flag and A are the bits of the A register.
+ここで、Cはキャリーフラグを、Aはアキュムレータの各ビットを表します。
 
-Depending on the carry flag, various mathematical and bit shifting instructions will behave differently.
+キャリーフラグの状態によって、いくつかの算術命令とビットシフト命令は異なった挙動になります。
 
-## Emulation mode flag (e)
-Setting this flag causes the 65c816 to behave as the 6502. When you enter emulation mode:
+## エミュレーションフラグ（e）
+エミュレーションフラグを1にセットすると、65C816は6502のような挙動になります。
+エミュレーションモードが有効になると以下のような機能が有効になります。
 
-* The stack pointer register's high byte remains static as $01
-* The A, X and Y registers are always 8-bit
-* The program bank and data bank registers are set to $00
-* The direct page register is initialized to $0000, and the high byte remains static as $00
+* スタックポインタの上位バイトは$01に固定される
+* アキュムレータ、Xレジスタ、Yレジスタはすべて8-bitモードで固定される
+* プログラムバンクレジスタとデータバンクレジスタが$00に設定される
+* ダイレクトページレジスタが$0000に初期化され、上位バイトが$00に固定される
 
-The emulation mode of the 65c816 also fixes some of the bugs that the 6502 had. For example, indirect addressing mode `JMP` now wraps addresses properly. For example: `JMP ($10FF)` will now get the high byte from `$1100`, rather than `$1000`.
+65C816におけるエミュレーションモードは、6502に存在したいくつかのバグを修正しています。
+例えば、インダイレクトモードの`JMP`命令における上位バイトのインクリメントが正確な挙動になりました。
+具体例を挙げると、`JMP ($10FF)`命令において、6502では実行アドレスの上位バイトを`$1000`から参照していましたが、
+エミュレーションモードの65C816では正しく`$1100`を参照するようになりました。
 
-### Processor flags
-The emulation mode has a different set of processor flags.
+### エミュレーションモードにおけるプロセッサフラグ
+エミュレーションモードが有効のとき、プロセッサフラグの各ビットの役割が変わります。
 
 ```text
 Processor flags
@@ -142,10 +174,12 @@ Bits: 7   6   5   4   3   2   1   0
       └───────────────────────────────── Negative: 1 = Negative set
 ```
 
-As you can see, it's very similar to the processor flags of the SNES, with a few exceptions. The A and X & Y memory select bits are replaced.
+ここから分かる通り、いくつかの例外を除いて、ほとんどはスーパーファミコンにおけるプロセッサフラグの役割と同じです。
+メモリモードフラグとインデックスモードフラグの2つが別のフラグに置き換えられています。
 
-### Unused flag
-This processor flag is unused and is always set to 1.
+### 未使用フラグ
+このプロセッサフラグは未使用であり、常に1で固定されています。
 
-### Break flag
-This processor flag is set to 1 when the emulation mode comes across a `BRK` opcode, thus it only indicates that there was a break; the processor flag doesn't actually affect the SNES.
+### ブレイクフラグ
+ブレイクフラグは、オペコード`BRK`が実行された際にセットされます。
+したがって、このフラグは「`BRK`が実行された」ということをのみを表し、スーパーファミコンの動作には影響を与えません。

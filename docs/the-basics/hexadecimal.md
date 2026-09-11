@@ -1,8 +1,10 @@
-# Hexadecimal
+# 16進数
 
-To program in 65c816 ASM, you will need to grasp the basics of hexadecimal. Hexadecimal, also known as "hex", is a counting system much like decimal, which is the everyday counting system people use. In hexadecimal, there are additional 6 digits per place value, which are denoted through the values A-F, as seen in the table below.
+65C816を用いてプログラミングを行うには、16進数の基礎を理解する必要があります。
+16進数（Hexadecimal, hex）は、人間が日常的に使用している10進数によく似た記数法です。
+16進数は10進数よりも1つの位で6多く数えることができ、それらは数値AからFで表現されます。
 
-| Decimal | Hexadecimal |
+| 10進数 | 16進数 |
 | :--- | :--- |
 | 0 | 0 |
 | 1 | 1 |
@@ -25,21 +27,25 @@ To program in 65c816 ASM, you will need to grasp the basics of hexadecimal. Hexa
 | ... | ... |
 | 255 | FF |
 
-There are various ways to write hex numbers so readers cannot confuse them with actual decimal numbers. They are as follows:
+16進数の数値を表記する際には、10進数を混同しないようにするため、様々な表記方法が存在します。
 
-* Prefix hexadecimal numbers with "0x" (e.g. 0x42)
-* Prefix hexadecimal numbers with "$" (e.g. $42)
-* Sufffix hexadecimal numbers with "H" (e.g. 42H)
+* 16進数の数値に「0x」を前置する（例：0x42）
+* 16進数の数値に「$」を前置する（例：$42）
+* 16進数の数値に「H」を後置する（例：42H）
 
-In this tutorial, the convention is to prefix hexadecimal numbers with "$".
+本書では、16進数の数値には「$」を前置して表します。
 
-In assembly, a hexadecimal number with two digits is called a "byte". This means that values between $00-$FF are considered a byte.
+アセンブリ言語において、16進数2桁の数値は、「バイト値」と呼ばれます。すなわち、数値$00から$FFがバイト値です。
 
-## Signed and unsigned values
+## サイン値と非サイン値
 
-In the real world, numbers can be positive or negative. In assembly, depending on the code, values can be treated as "signed" or "unsigned". Signed values mean that they can also be negative: The value $80 and higher are considered to be negative numbers in decimal, starting from -128, and counting down as the hex number is counting up, as you can see in the table below.
+現実の世界では、数値は正負を取ることができます。
+しかし、アセンブリの世界では、コードに依存して、数値は「サイン値」もしくは「非サイン値」のいずれかとして扱われます。
+サイン値は、その値が「負の数値かもしれない」ということを表します。
+以下の表で示されている通り、数値$80を超えた値は10進数-128から始まる負の数値としてみなされ、
+16進数が大きくなるごとに、10進数での表現は減少していきます。
 
-| Decimal | Hexadecimal |
+| 10進数 | 16進数 |
 | :--- | :--- |
 | 126 | $7E |
 | 127 | $7F |
@@ -48,12 +54,16 @@ In the real world, numbers can be positive or negative. In assembly, depending o
 | ... | ... |
 | -1 | $FF |
 
-The presence of negative numbers depends on the game's programming. For example, a player can have positive and negative speed (resulting in going forward or backward), but a player cannot have negative extra lives or points (because normally that doesn't make sense). Needless to say, the value -0 does not exist.
+数値が負数かどうかはゲームのプログラムに依存しています。
+例えば、プレイヤーの速度は、正負どちらの数値も取ることができますね（その結果、前方にも後方にも動けるようになります）。
+しかし、プレイヤーが負の残機数や負のポイントを得ることはありません（なぜなら、そのようなことは意味を持たないからです）。
+また、言うまでもなく、-0という数値は存在しません。
 
-## Four-digit hexadecimal values
-Hexadecimal numbers can count well past two digits, as you can see below.
+## 4桁で表現される16進数の数値
 
-| Decimal | Hexadecimal |
+以下で示す通り、16進数の値は2桁以上にもなりえます。
+
+| 10進数 | 16進数 |
 | :--- | :--- |
 | 254 | $FE |
 | 255 | $FF |
@@ -62,7 +72,7 @@ Hexadecimal numbers can count well past two digits, as you can see below.
 | ... | ... |
 | 65535 | $FFFF |
 
-The format of such a hexadecimal number is as follows: $HHLL.
+こうした16進数の数値の表現は、「$HHLL」のようになります。
 
-* HH is the "high byte" of the number
-* LL is the "low byte" of the number
+* HHは、数値の「上位バイト」を表す
+* LLは、数値の「下位バイト」を表す

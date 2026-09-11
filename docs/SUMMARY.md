@@ -1,47 +1,47 @@
-# Table of contents
+# 目次
 
-* [Introduction](README.md)
-* [Getting started](getting-started.md)
-* [Contributing](contributing.md)
+* [はじめに](README.md)
+* [環境構築](getting-started.md)
+* [コントリビュート](contributing.md)
 
-## The fundamentals
-* [Hexadecimal](the-basics/hexadecimal.md)
-* [Binary](the-basics/binary.md)
-* [The SNES memory](the-basics/memory.md)
-* [The SNES registers](the-basics/registers.md)
-* [Addressing modes](the-basics/addressing.md)
-* [Little-endian](the-basics/endian.md)
-* [Glossary](the-basics/glossary.md)
+## 基礎
+* [16進数](the-basics/hexadecimal.md)
+* [2進数](the-basics/binary.md)
+* [スーパーファミコンのメモリ](the-basics/memory.md)
+* [スーパーファミコンのレジスタ](the-basics/registers.md)
+* [アドレッシングモード](the-basics/addressing.md)
+* [リトルエンディアン](the-basics/endian.md)
+* [用語集](the-basics/glossary.md)
 
-## The basics
-* [Loading and storing](programming/loading-and-storing.md)
-* [Shorter addresses](programming/shorter-addresses.md)
-* [8-bit and 16-bit mode](programming/816.md)
-* [Comparing, branching, labels](programming/branches.md)
-* [Jumping to subroutines](programming/subroutine.md)
+## 基本
+* [ロードとストア](programming/loading-and-storing.md)
+* [アドレスの短縮](programming/shorter-addresses.md)
+* [8-bitモードと16-bitモード](programming/816.md)
+* [比較・分岐・ラベル](programming/branches.md)
+* [サブルーチンジャンプ](programming/subroutine.md)
 
-## Collection of values
-* [Tables and indexing](collections/indexing.md)
-* [The stack](collections/stack.md)
-* [Copying data](collections/moves.md)
+## 集合
+* [テーブルとインデックス](collections/indexing.md)
+* [スタック](collections/stack.md)
+* [データ転送](collections/moves.md)
 
-## Processor flags and registers
-* [The processor flags](processor/flags.md)
-* [Changing the processor flags](processor/repsep.md)
-* [Transfers](processor/transfer.md)
-* [Stack pointer register](processor/stackpointer.md)
+## プロセッサフラグとレジスタ
+* [プロセッサフラグ](processor/flags.md)
+* [プロセッサフラグの変更](processor/repsep.md)
+* [レジスタ間転送](processor/transfer.md)
+* [スタックポインタ](processor/stackpointer.md)
 
-## Mathemathics and logic
-* [Arithmetic operations](math/arithmetic.md)
-* [Bit shifting operations](math/shift.md)
-* [Bitwise operations](math/logic.md)
-* [Hardware math](math/math.md)
+## 算術演算と論理演算
+* [算術演算](math/arithmetic.md)
+* [ビットシフト](math/shift.md)
+* [論理演算](math/logic.md)
+* [ハードウェア演算](math/math.md)
 
-## Deep dives
-* [Addressing modes revisted](indepth/addressing.md)
-* [Miscellaneous opcodes](indepth/misc.md)
-* [Machine cycles](indepth/cycles.md)
-* [Hardware vectors](indepth/vector.md)
-* [Techniques](indepth/techniques.md)
-* [Common assembler syntax](indepth/syntax.md)
-* [Programming cautions](indepth/cautions.md)
+## 応用
+* [発展的なアドレッシングモード](indepth/addressing.md)
+* [その他のオペコード](indepth/misc.md)
+* [マシンサイクル](indepth/cycles.md)
+* [ハードウェアベクタ](indepth/vector.md)
+* [コーディングテクニック](indepth/techniques.md)
+* [一般的なアセンブラシンタックス](indepth/syntax.md)
+* [プログラミング上の注意点](indepth/cautions.md)

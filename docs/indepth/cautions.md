@@ -1,31 +1,35 @@
-# Programming cautions
+# プログラミング上の注意点
 
-When you're coding, you will have to keep an eye out on (common) mistakes.
+プログラミングを行う際には（よくある）間違いに注意しなければなりません。
 
-## Confusing 8-bit values with 16-bit values
-Don't try to load an 8-bit value into AXY when AXY is in 16-bit mode, and the other way around. For example, don't write `LDA #$0000` when A is in 8-bit mode, as the third byte of this opcode will be interpreted as an opcode rather than a value.
+## 紛らわしい8-bit値と16-bit値
+アキュムレータ、Xレジスタ、Yレジスタが16-bitモードの場合に、それらのレジスタに8-bit値をロードしてはいけません。
+同様に、レジスタが8-bitモードのときに、16-bit値をロードしてはいけません。
+例えば、アキュムレータが8-bitモードのときに`LDA #$0000`という処理を記述してはいけません。
+この場合、この命令の3バイト目が数値ではなくオペコードとして解釈されてしまいます。
 
-Consequence(s): The game will most likely crash by interpreting instructions you never wrote.
+結果：プログラムしていない処理によってゲームがクラッシュする
 
-Fixing the issue: Use the correct value size.
+解決方法：適切なビット幅の数値を用いる
 
-## Looping conditions
-When creating loops, don't make a small mistake which results in an infinite loop (a loop which doesn't exit).
+## 繰り返し条件
+繰り返し処理をプログラムするとき、小さな実装ミスによって無限ループ（繰り返しから抜け出せなくなる繰り返し処理）が発生してしまいます。
 
-Consequence(s): The game will lock up; the only way to exit is to reset the SNES.
+結果：ゲームがフリーズしてしまい、スーパーファミコンをリセットするしかなくなる
 
-Fixing the issue: Check at the end of the loop (often a comparison) to see why it doesn't allow the loop to exit. You might need a debugger for this.
+解決方法：繰り返し処理の最後の方（多くの場合は比較処理）をよく確認し、なぜ無限ループが発生しているかを確認する。この確認にはデバッガを用いると良い
 
-## Bank boundaries and edge cases
-Make sure your code doesn't cross bank-boundaries ($XX:FFFF → $XX:0000) inside the ROM.
+## バンクの境界と特殊な場合
+プログラムがROMの中でバンクの境界をまたがない（例えば$XX:FFFF→$XX:0000）ことを確認してください。
 
-Consequence(s): The SNES would read bogus instructions and most likely crash.
+結果：スーパーファミコンは意図しない命令を読み取り、ほとんどの場合ゲームがクラッシュする
 
-Fixing the issue: The code should remain within a bank. If your code doesn't fit inside a bank, you should split up your code across banks and make use of the `JSL` and `JML` instructions.
+解決方法：一連のプログラムは1つのバンク内になければならない。もしプログラムが1つのバンクでは収まりきらない場合、複数バンクにコードを分割して、
+`JSL`や`JML`命令を使用する
 
-## Pushes and pulls
-Make sure you pull the same amount of bytes as you have pushed, before a return instruction (RTS, RTL).
+## プッシュとプル
+リターン命令を実行する前に、ジャンプ後に行ったプッシュと同じバイト数のプルを実行していることを確認してください。
 
-Consequence(s): If you don't, the SNES won't get the right return address from the stack and most likely crash.
+結果：適切にプルが行われていないとスーパーファミコンはスタックから正しいリターンアドレスを取得できず、ほとんどの場合ゲームがクラッシュする
 
-Fixing the issue: Keep the amounts of pushes and pulls at an equilibrium. Especially keep an eye out on different A, X and Y modes (8-bit and 16-bit), as pushing in 16-bit mode means pulling twice in 8-bit mode. The other way around is also true.
+解決方法：プッシュとプルはサブルーチン内で同じ回数を実行する。特に、アキュムレータ、Xレジスタ、Yレジスタの異なるビットモード（8-bitモードと16-bitモード）に注意する。16-bitモードにおけるプッシュは、8-bitモードで2回のプルを必要とする。逆の場合も同様である

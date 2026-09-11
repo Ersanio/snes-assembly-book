@@ -1,128 +1,162 @@
-# Comparing, branching, labels
+# 比較・分岐・ラベル
+65C816では、特定の条件によってコードの一部分のみを実行する処理が実行できます。
+こうした処理を実装するには、比較と分岐のオペコードを利用します。
+比較のオペコードは、アキュムレータ、Xレジスタ、もしくはYレジスタの値と指定した値を比較します。
+また、分岐のオペコードは、比較の結果に応じてプログラムのフローを制御します。
 
-You can run certain pieces of code depending on certain conditions. For this, you'll have to make use of comparison and branching opcodes. Comparison opcodes compare the contents of A, X or Y with another value. A branching opcode then controls the program flow, depending on the comparison.
+## 分岐
+分岐は比較の結果に応じてフローを制御するオペコードで、分岐は**ラベル**にジャンプします。
 
-## Branches
-Branches are opcodes which control the flow of the code depending on the outcome of comparisons. Branches jump to a **label**.
+分岐のオペコードは-128バイトから127バイトまでの範囲に分岐できます。
+つまり、分岐のオペコードはプログラムカウンタの位置から128バイト前、もしくは127バイト先までジャンプすることが可能ということです。
+ただし、例外としてBRL（Branch Long）命令があります。
+BRLは32768バイト（すなわち16進数で8000）の分岐幅を持っており、ひとつのバンク内のどこにでもジャンプできます。
+もし分岐命令がそのオペコードのレンジを超える場合、アセンブラはエラーを出力します。
+よって、分岐先のラベルは分岐の範囲内に配置しなければなりません。
+これについては『コーディングテクニック』の章で詳しく解説します。
 
-The branching opcodes have a range of -128 to 127 bytes. This means they can either jump 128 bytes backwards, or they can jump 127 bytes forward, relative to the program counter. One exception is BRL (Branch Long). BRL has a range of 32768 bytes (8000 in hex), which is a whole bank. If the branch goes out of range, the assembler gives an error. You'll have to find a way to put the destination label into the branch's reach. The "tips and tricks" chapter covers this.
-
-## Labels
-Labels are basically text placed in code to locate an entry point of a jump or a "table". Labels are no opcodes or anything. It's basically an easier way to specify an offset/address, because the labels get turned into numbers by the assembler. It is good practice to give labels meaningful names, for your own sake. Examples codes in this chapter will make use of labels.
+## ラベル
+ラベルとは一般に、コードがジャンプ先、もしくはテーブルへのエントリポイントを特定するために用いられるテキストのことです。
+ラベルはオペコードではなく、あくまでオフセットやアドレスの簡略された記述方法で、ラベルはアセンブル時に数値へ変換されます。
+ラベルには、自身にとって意味のある名前をつけると良いでしょう。
+なお、本章のコード例にはラベルを使用しています。
 
 ## CMP
-To make comparisons, you usually compare the contents of A with something else. The primary way for that is the opcode `CMP`.
+比較はアキュムレータの値と何かの数値を比較して行われます。
+こうした場合、基本的に用いられるオペコードは`CMP`です。
 
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**CMP**|Compare A|Compares A with something else|
+|**CMP**|Compare A|アキュムレータの数値と与えられた数値を比較する|
 
-CMP takes whatever is in A, and compares it with a specified parameter. After using a CMP instruction, you need to use an opcode that will perform the type of "branch" that you wish to occur.
+CMPはアキュムレータが保持している数値をオペランドで指定された数値と比較します。
+CMP命令を使う場合、その直下に分岐を実行するための分岐のオペコードを配置します。
 
-It's also possible to compare 16-bit values. Just change `CMP #$xx` to `CMP #$xxxx`.
+当然、16-bit値同士の比較も可能で、単純に`CMP #$xx`を`CMP #$xxxx`とするだけです。
 
-## BEQ and BNE
-There are branch opcodes which branch depending on if a value equals or doesn't equal.
-|Opcode|Full name|Explanation|
+## BEQとBNE
+数値同士を比較して、その数値同士が等しいか否かで分岐を行うオペコードを紹介します。
+
+|オペコード|正式名称|説明|
 |-|-|-|
-|**BEQ**|Branch if equals|Branches if the comparison equals with the compared value|
-|**BNE**|Branch if not equals|Branches if the comparison doesn't equal with the compared value|
+|**BEQ**|Branch if equals|比較する数値同士が一致する場合に分岐する|
+|**BNE**|Branch if not equals|比較する数値同士が一致しない場合に分岐する|
 
-BEQ branches if the comparison is equal with the compared value. Here's an example:
+BEQは、以下のように比較する数値同士が一致する場合に分岐します。
 
 ```
-LDA $00            ; Loads the current value of RAM address $7E0000 into A
-CMP #$02           ; Compares A with the immediate value $02
-BEQ Label1         ; If A = $02, go to the codes in Label1. NOTE: Case-Sensitive
-LDA #$01           ; \ Else
-STA $1245          ; / Store value $01 into RAM $7E1245.
-RTS                ; This instruction is used to end a routine.
+LDA $00            ; RAMアドレス$7E000が現在保持している値をアキュムレータへロードする
+CMP #$02           ; アキュムレータの値を即値$02と比較する
+BEQ Label1         ; もしアキュムレータが$02ならば、実行位置をLabel1へ分岐する。なお、ラベルの大文字と小文字は区別される
+LDA #$01           ; \ そうでないならば、
+STA $1245          ; / 数値$01をRAM$7E1245にストアする
+RTS                ; この命令は、ルーティンの終了に用いられる
 
 Label1:           
-STZ $19            ; Store zero in $7E0019
-RTS                ; End.
+STZ $19            ; $7E0019に$00をストアする
+RTS                ; 終了
 ```
-This code will store zero ($00) in $7E0019 when $7E0000 contains the value $02. If it doesn't have $02 as its value, the code will then store value $01 in $7E1245. As you can see, BEQ will "jump" to a portion of the code when compared values are equal, skipping certain code. In this case, the code jumps to the code located at the label "Label1".
+このコードは、$7E0000が数値$02を保持している場合に$7E0019へ$00をストアし、
+もしその数値が$02ではないならば、このコードは数値$01を$7E1245にストアします。
+見て分かる通り、BEQは比較される数値同士が一致する場合に実行位置をコードのまとまりへ「ジャンプ」させるものであり、
+その際に、特定のコードはスキップされます。
+この例では、コードはラベル"Label1"に位置するコードへジャンプします。
 
-BNE branches if the comparison doesn't equal with the compared value. Here's an example:
+BNEは、以下のように、比較する数値同士が一致しない場合に分岐します。
+
 ```
-LDA $00            ; Loads the current value of RAM address $7E0000 into A
-CMP #$02           ; Compares A with $02
-BNE Label1         ; A = NOT $02, finish the code, do nothing.
-LDA #$01           ; \ Else
-STA $1245          ; / Store something in RAM $7E1245
+LDA $00            ; RAMアドレス$7E000が現在保持している値をアキュムレータへロードする
+CMP #$02           ; アキュムレータの値を$02と比較する
+BNE Label1         ; アキュムレータが$02ではないならば、何も行わずにコードを終了する
+LDA #$01           ; \ そうでないならば、
+STA $1245          ; / 数値$01をRAM$7E1245にストアする
 Label1:            ;
-RTS                ; End.
+RTS                ; 終了
 ```
-This code will store $01 to $7E1245, if $7E0000 has the value $02. If RAM address $7E0000 doesn't have the value $02, the code will instead do nothing and simply return.
+このコードは、$7E0000が数値$02を保持している場合に$7E0019へ$01をストアします。
+もしRAMアドレス$7E000が$02以外の数値を保持している場合、このコードは何も行わず、単純にリターンします。
 
-## Comparing addresses
-You can also compare RAM addresses with each other. For example:
+## アドレス間比較
+以下のように、RAMアドレス同士を比較することも可能です。
+
 ```
-LDA $00            ; Load $7E0000's value into A
-CMP $02            ; Compare A with $7E0002
-BEQ Equal          ; Branch if equal
+LDA $00            ; $7E0000の値をアキュムレータにロードする
+CMP $02            ; アキュムレータの値を$7E0002と比較する
+BEQ Equal          ; 比較が一致するなら分岐する
 ```
-When RAM addresses $7E0000 and $7E0002 have the same values, the branch will be taken.
+RAMアドレス$7E0000と$7E0002が等しい値を保持している場合、分岐が実行されます。
 
-## CPX and CPY
-You can also compare values by using the registers X and Y.
+## CPX・CPY
+以下のように、XレジスタとYレジスタを用いた比較も可能です。
 
-|Opcode|Full name|Explanation|
+|オペコード|正式名称|説明|
 |-|-|-|
-|**CPX**|Compare X|Compares X with something else|
-|**CPY**|Compare Y|Compares Y with something else|
+|**CPX**|Compare X|Xレジスタの値と比較する|
+|**CPY**|Compare Y|Yレジスタの値と比較する|
 
-It's not just A which is capable of doing comparisons. For example, you can load a value into X or Y and compare it with something else. Here's an example using X:
+これらの命令は、単純にアキュムレータを用いない比較命令です。
+具体的には、数値をXレジスタ、もしくはYレジスタにロードして、その数値を他の数値と比較できます。
+以下はXレジスタを用いた例です。
 
 ```
-LDX $00            ; Load $7E0000's value into X
-CPX $02            ; Compare X with $7E0002
-BEQ Equal          ; Branch if equal
+LDX $00            ; $7E0000の値をXレジスタにロードする
+CPX $02            ; Xレジスタの値を$7E0002と比較する
+BEQ Equal          ; 比較が一致するなら分岐する
 ```
-It will have the same result as the example with comparing addresses. You can compare Y too by using CPY. However, you cannot mix registers. The the following is wrong:
+このコードは、アドレス同士の比較のコードと同じ結果になります。
+また、CPYを用いることでYレジスタの値を比較に用いることもできますが、異なるレジスタ同士を比較することはできません。
+よって、以下の例は誤りです。
 ```
 LDX $00
 CMP $02
 BEQ Equal
 ```
-CMP $02 would try to compare address $7E0002 with the register A, instead of X. This will cause unexpected results.
+CMP $02は、Xレジスタではなくアキュムレータとアドレス$7E0002を比較しようとするので、このコードは予期しない結果となります。
 
-## BMI and BPL
-These are branch opcodes which branch depending on if a value is signed or unsigned.
-|Opcode|Full name|Explanation|
+## BMI・BPL
+与えられた数値がサイン値か非サイン値かによって分岐を行うオペコードを紹介します。
+
+|オペコード|正式名称|説明|
 |-|-|-|
-|**BMI**|Branch if minus|Branches if the last operation resulted in a negative value (thus, negative flag set)|
-|**BPL**|Branch if plus|Branches if the last operation resulted in a positive value (thus, negative flag clear)|
+|**BMI**|Branch if minus|最後に実行した命令の結果が負数の場合（つまり、ネガティブフラグがセットされている場合）に分岐する|
+|**BPL**|Branch if plus|最後に実行した命令の結果が正数の場合（つまり、ネガティブフラグがクリアされている場合）に分岐する|
 
-BMI branches if the last operation is a minus/negative value. Minus values are the values $80-$FF. BPL branches if the last operation is not a minus value; it branches when the value is $00-$7F.
+BMIは、最後に実行した命令の結果が負数の場合に分岐します。
+ここでいう負数とは、$80から$FFまでの数値のことです。
+BPLは、最後に実行した命令の結果が正数の場合、すなわち$00から$7Fまでの数値の場合に分岐します。
 
-## BCS and BCC
-These are branch opcodes which branch depending on if a value is greater than or less than.
-|Opcode|Full name|Explanation|
+## BCS・BCC
+与えられた数値間の大小によって分岐を行うオペコードを紹介します。
+
+|オペコード|正式名称|説明|
 |-|-|-|
-|**BCS**|Branch if carry set|Basically branches if the loaded value is greater than or equal to the compared value (thus, carry flag set)|
-|**BCC**|Branch if carry clear|Basically branches if the loaded value is less than the compared value (thus, carry flag clear)|
+|**BCS**|Branch if carry set|ロードされた数値が与えられた数値以上の場合（つまり、キャリーフラグがセットされている場合）に分岐する|
+|**BCC**|Branch if carry clear|ロードされた数値が与えられた数値未満の場合（つまり、キャリーフラグがクリアされている場合）に分岐する|
 
-BCS branches if the loaded value is equal or greater than the compared value. Alternatively, this also branches when the carry flag is set.
+BCSは、ロードされた数値が与えられた数値以上の場合に分岐します。
+あるいは、キャリーフラグがセットされている場合にも分岐が実行されます。
 
-BCC branches if the loaded value is lesser than the compared value. Alternatively, this also branches when the carry flag is clear. Please note that this BCC doesn't get taken if the compared value is equal, unlike BCS.
+BCCは、ロードされた数値が与えられた数値未満の場合に分岐します。
+あるいは、キャリーフラグがクリアされている場合にも分岐が実行されます。
+なお、BCCはBCSと異なり、比較される数値同士が一致する場合には分岐が実行されません。
 
-## BVS and BVC
-These are branch opcodes which branch depending on if a value results in a mathematical overflow or not, thus, when the overflow flag is set or clear.
-|Opcode|Full name|Explanation|
+## BVS・BVC
+直前の処理が算術オーバーフローしているか、すなわちオーバーフローフラグがセットされているかよって分岐を行うオペコードを紹介します。
+
+|オペコード|正式名称|説明|
 |-|-|-|
-|**BVS**|Branch if overflow set|Branches if the comparison causes a mathematical overflow (thus, overflow flag set)|
-|**BVC**|Branch if overflow clear|Branches if the comparison doesn't cause a mathematical overflow (thus, overflow flag clear)|
+|**BVS**|Branch if overflow set|比較が算術オーバーフローした場合（つまり、オーバーフローフラグがセットされている場合）に分岐する|
+|**BVC**|Branch if overflow clear|比較が算術オーバーフローしていない場合（つまり、オーバーフローフラグがクリアされている場合）に分岐する|
 
-The "overflow" flag is a processor flag, explained later in the tutorial.
+「オーバーフロー」フラグはプロセッサフラグの一種で、本書の後の章で解説します。
 
-## BRA and BRL
-These are unconditional branches which are always taken.
-|Opcode|Full name|Explanation|
+## BRA・BRL
+最後に、必ず分岐を行うオペコードを紹介します。
+
+|オペコード|正式名称|説明|
 |-|-|-|
-|**BRA**|Branch always|Always branches|
-|**BRL**|Branch always long|Always branches, but with greater reach|
+|**BRA**|Branch always|常に分岐する|
+|**BRL**|Branch always long|常に分岐するが、分岐範囲が大きい|
 
-BRA will ALWAYS branch; it doesn't even check for conditions.
-BRL does the same, but it has a longer reach, enough to cover half a bank for each direction.
+BRAは常に分岐を行い、分岐条件はありません。
+BRLも同様ですが分岐範囲が大きく、前後にバンクの半分の分岐先を取れます。
